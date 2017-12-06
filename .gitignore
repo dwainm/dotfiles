@@ -1,0 +1,20 @@
+#macOs temp files
+.DS_Store
+#VIM temp files
+*.sw[nop]
+*~
+.env
+.netrwhist
+#Javascript
+node_modules/**
+node_modules/.*
+.yarn-integrity
+#Hub
+.config/hub
+
+.atom/packages/*
+.atom/packages
+.vim/plugged/*
+.vim/plugged
+
+.private
