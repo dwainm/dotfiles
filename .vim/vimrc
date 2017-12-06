@@ -1,0 +1,211 @@
+" Vim-Plug
+call plug#begin('~/.vim/plugged')
+
+Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+Plug 'amiel/vim-tmux-navigator'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'Chiel92/vim-autoformat'
+Plug 'vimwiki/vimwiki'
+Plug '907th/vim-auto-save'
+Plug 'kshenoy/vim-signature'
+Plug 'w0rp/ale'
+Plug 'junegunn/vim-easy-align'
+Plug 'mhinz/vim-grepper'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'takac/vim-hardtime'
+
+call plug#end()
+"'''' end Vim-Plug
+
+filetype plugin indent on " required!
+
+"UltiSnip Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-u>"
+let g:UltiSnipsJumpBackwardTrigger="<c-i>"
+let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips/', 'UltiSnips']
+
+" AutoSave from 907th/vim-auto-save
+let g:auto_save = 1  " enable Auto Save on Vim startup
+let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
+let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
+
+"Exit normal mode
+inoremap jk <esc>
+
+"Colors
+highlight ColorColumn ctermbg=8
+syntax enable
+set background=dark
+colorscheme solarized
+highlight Normal ctermbg=black
+
+"Editor Settings
+set spell spelllang=en_us
+hi clear SpellBad
+hi SpellBad cterm=undercurl
+set number
+set relativenumber
+set ruler
+set undofile "Undo history between sessions
+"column 80
+set colorcolumn=+1
+hi ColorColumn guibg=#2d2d2d ctermbg=246
+set cc=80                                        "Make it obvious where 80 characters is
+nnoremap <leader>ss 1z=
+
+"Tabs, Spaces  and Indentation
+set autoindent
+set noet ci pi sts=0 sw=4 ts=4
+set list
+set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·
+set tabstop=4  "four spaces will make up for one tab
+set noexpandtab  "tell vim to keep tabs instead of inserting spaces
+retab            "let vim handle your case
+autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
+autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
+" Set leader as easily accessible for both hands
+nnoremap <SPACE> <Nop>
+let mapleader=' '
+
+set undofile
+
+" Allow us to use Ctrl-s and Ctrl-q as keybinds
+silent !stty -ixon
+
+" Restore default behaviour when leaving Vim.
+autocmd VimLeave * silent !stty ixon
+
+"Navigation
+nnoremap k gk
+nnoremap gk k
+nnoremap j gj
+nnoremap gj j
+
+" Quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+"Buffers
+nnoremap <silent> [B :bfirst<CR>
+nnoremap <silent> ]B :blast<CR>
+
+"Open VIMRC in a vertical tab
+nnoremap <leader>vr <C-w><C-v><C-l>:e $MYVIMRC<cr>
+
+"FzF
+nnoremap <c-p> :Files<CR>
+nnoremap <c-b> :Buffers<CR>
+
+"Split navigation
+set splitbelow                                "open new horizontal splits below
+set splitright                                "open new vertical splits rigth
+
+"Map Ctrl + S to save in any mode
+noremap <silent> <C-s>          :update<CR>
+vnoremap <silent> <C-s>         <C-C>:update<CR>
+inoremap <silent> <C-s>         <C-O>:update<CR>
+
+"quit quickly
+nnoremap <leader>q :q<CR>
+nnoremap <leader>qn <ESC>:qa!<CR>                     "quit without saving
+
+"Easily edit files in the same directory
+nnoremap <leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
+
+"Open Explorer
+nnoremap <leader>n :Explore<CR>
+
+"TmuxTmux navigation
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+
+"Airline
+set laststatus=2
+let g:airline#extensions#bufferline#enabled = 0
+let g:airline_section_z = ''
+let g:airline_section_y = ''
+let g:airline_section_c = '%t | %{strftime("%H:%M")}'
+let g:airline_theme='papercolor'
+let g:airline_detect_spell=0
+
+"Line Numbers
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set norelativenumber
+    set nonumber
+  else
+    set relativenumber
+    set number
+  endif
+endfunc
+
+nnoremap <leader>nt :call NumberToggle()<cr>
+
+"Clear line
+nnoremap <silent> cl 0D
+
+"Search
+set hlsearch
+vnoremap // y/<C-R>"<CR>
+nnoremap <silent> cs :nohlsearch<cr>
+nnoremap <silent> [q :cprev<cr>
+nnoremap <silent> ]q :cnext<cr>
+set ignorecase
+set smartcase
+
+"Move UP/Down in all modes
+nnoremap [e :m .-2<CR>
+nnoremap ]e :m .+1<CR>
+vnoremap [e :m '<-2<CR>gv
+vnoremap ]e :m '>+1<CR>gv
+
+"VIM wiki
+nnoremap <silent> <leader>sl ?==<cr>jV}k:sort!<cr>:nohls<cr>
+nnoremap <silent> <leader>ll I-<space>[<space>]<space><esc>
+vnoremap <silent> <leader>ll <C-v>I-<space>[<space>]<space><esc>
+nnoremap <silent> <leader>li I-<space><esc>
+let g:vimwiki_url_maxsave=0
+
+"Copy/Pasting
+set clipboard^=unnamed,unnamedplus
+
+"ALE
+let g:ale_open_list = 1
+let g:ale_php_phpcs_standard='WordPress'
+map <leader>at :ALEToggle<CR>
+"jump to errors
+nnoremap ]r :lnext<CR>
+nnoremap [r :lprev<CR>
+
+" Allignemnt
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+"ZSH in VIM
+set shell=/usr/local/bin/zsh
+
+"Remove all trailing spaes on save
+autocmd FileType c,html,css,js,php autocmd BufWritePre <buffer> %s/\s\+$//e
+
+"Grepper
+nnoremap <leader>g :Grepper<cr>
+let g:grepper = { 'next_tool': '<leader>g' }
+
+"Hard Time - Break bad habits
+let g:hardtime_allow_different_key = 1
+let g:hardtime_default_on = 1

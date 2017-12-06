@@ -1,0 +1,76 @@
+snippet elp "error log printr"
+error_log( print_r( $1, true ) );
+endsnippet
+
+snippet trace "simple stack trace"
+$e = new \Exception;
+error_log(' :: TRACE ::' .PHP_EOL . preg_replace( '/\s(\/[\w\-]*){5}/', ' ', $e->getTraceAsString() ) );
+endsnippet
+
+snippet <?
+<?php
+
+${0:${VISUAL}}
+endsnippet
+
+snippet <?e
+<?php echo ${0} ?>
+endsnippet
+
+snippet t.
+$this->
+endsnippet
+
+snippet f
+function ${1}( ${3} ) {
+	${0:${VISUAL}}
+}
+endsnippet
+
+snippet =?:
+	$${1:foo} = ${2:true} ? ${3:a} : ${0};
+endsnippet
+
+snippet ?:
+	${1:true} ? ${2:a} : ${0}
+endsnippet
+
+snippet docf
+/**
+ * ${1:undocumented function}
+ *
+ * @param ${2:void}
+ * @return ${2:void}
+ */
+endsnippet
+
+snippet vd
+var_dump(${0});
+endsnippet
+
+snippet vdd
+var_dump(${1}); die(${0:});
+endsnippet
+
+snippet af "create wordpress basic filter with closure"
+add_filter( '$1', function ( $2 ) {
+	$0
+	return $2;
+} );
+endsnippet
+
+snippet for "For $i; condition; incrememtn"
+for ( ${2:$i = 0}; $i ${3:< count( $i)}; $i++ ) {
+	$1
+}
+endsnippet
+
+snippet fore "foreach"
+foreach ( ${1:$arr} as ${2:$index =>} ${3: $arr} ) {
+	$0
+}
+endsnippet
+
+snippet  sq "easy single quote surounds"
+'$0'
+endsnippet
