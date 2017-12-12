@@ -121,7 +121,7 @@ function download() {
 ##
 alias gap="git add -p"
 	# Dotfiles gitifie
-alias config='/usr/bin/git --git-dir=$HOME/.mydotfiles/ --work-tree=$HOME'
+alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
 #delete branche
 function gbdel(){
   git branch | grep $1 | xargs git branch -D
@@ -228,7 +228,6 @@ alias wd="WOODEPLOY_ALL_PLUGINS_DIR=$WOODEPLOY_ALL_PLUGINS_DIR WOODEPLOY_BEANSTA
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
