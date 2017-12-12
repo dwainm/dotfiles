@@ -20,7 +20,8 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'takac/vim-hardtime'
-
+Plug 'jiangmiao/auto-pairs'
+Plug 'mileszs/ack.vim'
 call plug#end()
 "'''' end Vim-Plug
 
@@ -209,3 +210,17 @@ let g:grepper = { 'next_tool': '<leader>g' }
 "Hard Time - Break bad habits
 let g:hardtime_allow_different_key = 1
 let g:hardtime_default_on = 1
+
+
+"Ack grepping using ag
+cnoreabbrev Ack Ack!
+nnoremap <Leader>a :Ack!<Space>
+if executable('ag')
+	  let g:ackprg = 'ag --vimgrep'
+endif
+
+
+"Creating zap from wiki todo
+vnoremap <leader>zpl :s/- \[X\]/\:point_left\:/g<CR>
+vnoremap <leader>zpr :s/- \[ \]/\:point_right\:/g<CR>
+
