@@ -39,9 +39,6 @@ let g:auto_save = 1  " enable Auto Save on Vim startup
 let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
 let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
 
-"Exit normal mode
-inoremap jk <esc>
-
 "Colors
 highlight ColorColumn ctermbg=8
 syntax enable
@@ -54,7 +51,6 @@ set spell spelllang=en_us
 hi clear SpellBad
 hi SpellBad cterm=undercurl
 set number
-set relativenumber
 set ruler
 set undofile "Undo history between sessions
 "column 80
@@ -144,19 +140,6 @@ let g:airline_section_c = '%t | %{strftime("%H:%M")}'
 let g:airline_theme='papercolor'
 let g:airline_detect_spell=0
 
-"Line Numbers
-function! NumberToggle()
-  if(&relativenumber == 1)
-    set norelativenumber
-    set nonumber
-  else
-    set relativenumber
-    set number
-  endif
-endfunc
-
-nnoremap <leader>nt :call NumberToggle()<cr>
-
 "Clear line
 nnoremap <silent> cl 0D
 
@@ -221,6 +204,6 @@ endif
 
 
 "Creating zap from wiki todo
-vnoremap <leader>zpl :s/- \[X\]/\:point_left\:/g<CR>
-vnoremap <leader>zpr :s/- \[ \]/\:point_right\:/g<CR>
+vnoremap <leader>zpl :s/- \[X\]/\:point_left\:/g<CR>:nohls<CR>
+vnoremap <leader>zpr :s/- \[ \]/\:point_right\:/g<CR>:nohls<CR>
 
