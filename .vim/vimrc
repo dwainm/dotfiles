@@ -93,16 +93,13 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
-"Buffers
-nnoremap <silent> [B :bfirst<CR>
-nnoremap <silent> ]B :blast<CR>
-
 "Open VIMRC in a vertical tab
 nnoremap <leader>vr <C-w><C-v><C-l>:e $MYVIMRC<cr>
 
 "FzF
-nnoremap <c-p> :Files<CR>
-nnoremap <c-b> :Buffers<CR>
+nnoremap ; :Buffers<CR>
+nmap <Leader>t :Files<CR>
+nmap <Leader>r :Tags<CR>
 
 "Split navigation
 set splitbelow                                "open new horizontal splits below
@@ -125,7 +122,6 @@ nnoremap <leader>n :Explore<CR>
 
 "TmuxTmux navigation
 let g:tmux_navigator_no_mappings = 1
-
 nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
 nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
 nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
@@ -145,7 +141,6 @@ nnoremap <silent> cl 0D
 
 "Search
 set hlsearch
-vnoremap // y/<C-R>"<CR>
 nnoremap <silent> cs :nohlsearch<cr>
 nnoremap <silent> [q :cprev<cr>
 nnoremap <silent> ]q :cnext<cr>
