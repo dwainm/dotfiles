@@ -27,6 +27,12 @@ call plug#end()
 
 filetype plugin indent on " required!
 
+" Colemak
+" easier command prompt
+nmap <Leader><Leader> :
+" Normal Mode( [t]o [n]ormal )
+imap tn <Esc>
+
 "UltiSnip Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-u>"
@@ -81,12 +87,6 @@ silent !stty -ixon
 " Restore default behaviour when leaving Vim.
 autocmd VimLeave * silent !stty ixon
 
-"Navigation
-nnoremap k gk
-nnoremap gk k
-nnoremap j gj
-nnoremap gj j
-
 " Quicker window movement
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -94,12 +94,15 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
 "Open VIMRC in a vertical tab
-nnoremap <leader>vr <C-w><C-v><C-l>:e $MYVIMRC<cr>
+nnoremap <leader>ttt <C-w><C-v><C-l>:e $MYVIMRC<cr>
+
+"Buffers
+nmap <Leader>bd :bd<CR>
 
 "FzF
-nnoremap ; :Buffers<CR>
-nmap <Leader>t :Files<CR>
-nmap <Leader>r :Tags<CR>
+nnoremap <Leader>b :Buffers<CR>
+nmap <Leader>f :Files<CR>
+nmap <Leader>t :Tags<CR>
 
 "Split navigation
 set splitbelow                                "open new horizontal splits below
@@ -111,7 +114,7 @@ vnoremap <silent> <C-s>         <C-C>:update<CR>
 inoremap <silent> <C-s>         <C-O>:update<CR>
 
 "quit quickly
-nnoremap <leader>q :q<CR>
+nnoremap <leader>q :q<CR>j
 nnoremap <leader>qn <ESC>:qa!<CR>                     "quit without saving
 
 "Easily edit files in the same directory
@@ -132,16 +135,16 @@ set laststatus=2
 let g:airline#extensions#bufferline#enabled = 0
 let g:airline_section_z = ''
 let g:airline_section_y = ''
-let g:airline_section_c = '%t | %{strftime("%H:%M")}'
+let g:airline_section_c = '%t'
 let g:airline_theme='papercolor'
 let g:airline_detect_spell=0
 
 "Clear line
-nnoremap <silent> cl 0D
+nnoremap <Leader>cl 0D
 
 "Search
 set hlsearch
-nnoremap <silent> cs :nohlsearch<cr>
+nnoremap <Leader>cs :nohlsearch<cr>
 nnoremap <silent> [q :cprev<cr>
 nnoremap <silent> ]q :cnext<cr>
 set ignorecase
@@ -167,6 +170,7 @@ set clipboard^=unnamed,unnamedplus
 let g:ale_open_list = 1
 let g:ale_php_phpcs_standard='WordPress'
 map <leader>at :ALEToggle<CR>
+
 "jump to errors
 nnoremap ]r :lnext<CR>
 nnoremap [r :lprev<CR>
@@ -181,18 +185,13 @@ set shell=/usr/local/bin/zsh
 "Remove all trailing spaes on save
 autocmd FileType c,html,css,js,php autocmd BufWritePre <buffer> %s/\s\+$//e
 
-"Grepper
-nnoremap <leader>g :Grepper<cr>
-let g:grepper = { 'next_tool': '<leader>g' }
-
 "Hard Time - Break bad habits
 let g:hardtime_allow_different_key = 1
 let g:hardtime_default_on = 1
 
-
 "Ack grepping using ag
 cnoreabbrev Ack Ack!
-nnoremap <Leader>a :Ack!<Space>
+nnoremap <Leader>g :Ack!<Space>
 if executable('ag')
 	  let g:ackprg = 'ag --vimgrep'
 endif
