@@ -149,6 +149,9 @@ nnoremap <silent> [q :cprev<cr>
 nnoremap <silent> ]q :cnext<cr>
 set ignorecase
 set smartcase
+"always center next
+nnoremap n nzz
+nnoremap N Nzz
 
 "Move UP/Down in all modes
 nnoremap [e :m .-2<CR>
