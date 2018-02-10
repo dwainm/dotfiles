@@ -25,3 +25,8 @@ chsh -s $(which zsh)
 Setup afterGlow: https://github.com/lysyi3m/osx-terminal-themes/blob/master/schemes/Afterglow.terminal ( downlaod the file and right click open )
 Set it as defaut.
 Also set path to $(which zsh) as terminal start.
+
+# Vim 
+Open vim and run :PlugInstall
+create symlink to vim wiki icloud storage: ln -s /Users/dwain/Documents/vimwiki /Users/dwain/vimwiki
+
