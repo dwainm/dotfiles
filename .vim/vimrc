@@ -98,6 +98,8 @@ nnoremap <leader>ttt <C-w><C-v><C-l>:e $MYVIMRC<cr>
 
 "Buffers
 nmap <Leader>bd :bd<CR>
+nmap [b :bprevious<CR>
+nmap ]b :bnext<CR>
 
 "FzF
 nnoremap <Leader>b :Buffers<CR>
@@ -175,8 +177,8 @@ let g:ale_php_phpcs_standard='WordPress'
 map <leader>at :ALEToggle<CR>
 
 "jump to errors
-nnoremap ]r :lnext<CR>
-nnoremap [r :lprev<CR>
+nnoremap ]r :ALENext<CR>
+nnoremap [r :ALEPrevious<CR>
 
 " Allignemnt
 xmap ga <Plug>(EasyAlign)
