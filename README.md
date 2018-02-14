@@ -5,7 +5,7 @@ install brew first
 brew install git 
 sudo mv /usr/bin/git /usr/bin/git-apple
 
-brew install zsh vim tmux reattach-to-user-namespace fzf ctags
+brew install zsh vim fzf ctags
 
 # dotfiles
 How to use
