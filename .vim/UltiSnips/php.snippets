@@ -1,5 +1,5 @@
 snippet elp "error log printr"
-error_log( print_r( $1, true ) );
+error_log( var_export( $1, true ) );
 endsnippet
 
 snippet trace "simple stack trace"
