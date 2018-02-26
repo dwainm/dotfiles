@@ -11,7 +11,6 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'Chiel92/vim-autoformat'
 Plug 'vimwiki/vimwiki'
-Plug '907th/vim-auto-save'
 Plug 'kshenoy/vim-signature'
 Plug 'w0rp/ale'
 Plug 'junegunn/vim-easy-align'
@@ -38,11 +37,6 @@ let g:UltiSnipsJumpForwardTrigger="<c-u>"
 let g:UltiSnipsJumpBackwardTrigger="<c-i>"
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips/', 'UltiSnips']
-
-" AutoSave from 907th/vim-auto-save
-let g:auto_save = 1  " enable Auto Save on Vim startup
-let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
-let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
 
 "Colors
 highlight ColorColumn ctermbg=8
