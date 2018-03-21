@@ -20,6 +20,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'takac/vim-hardtime'
 Plug 'mileszs/ack.vim'
+Plug '907th/vim-auto-save', { 'for': 'vimwiki' }
 call plug#end()
 "'''' end Vim-Plug
 
@@ -110,7 +111,7 @@ inoremap <silent> <C-s>         <C-O>:update<CR>
 
 "quit quickly
 nnoremap <leader>q :q<CR>j
-nnoremap <leader>qn <ESC>:qa!<CR>                     "quit without saving
+nnoremap <leader>qa <ESC>:qa!<CR>                     "quit without saving
 
 "Easily edit files in the same directory
 nnoremap <leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
@@ -199,3 +200,5 @@ endif
 vnoremap <leader>zpl :s/- \[X\]/\:point_left\:/g<CR>:nohls<CR>
 vnoremap <leader>zpr :s/- \[ \]/\:point_right\:/g<CR>:nohls<CR>
 
+"Netrw
+let g:netrw_men=0
