@@ -1,4 +1,9 @@
 " Vim-Plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-fugitive'
@@ -156,7 +161,7 @@ vnoremap [e :m '<-2<CR>gv
 vnoremap ]e :m '>+1<CR>gv
 
 "VIM wiki
-nnoremap <silent> <leader>sl ?==<cr>jV}k:sort!<cr>:nohls<cr>
+nnoremap <silent> <leader>sl ?==<cr>2jV}k:sort!<cr>:nohls<cr>
 nnoremap <silent> <leader>ll I-<space>[<space>]<space><esc>
 vnoremap <silent> <leader>ll <C-v>I-<space>[<space>]<space><esc>
 nnoremap <silent> <leader>li I-<space><esc>
@@ -202,3 +207,8 @@ vnoremap <leader>zpr :s/- \[ \]/\:point_right\:/g<CR>:nohls<CR>
 
 "Netrw
 let g:netrw_men=0
+
+"AutoSave plugin
+let g:auto_save = 1  " enable AutoSave on Vim startupc
+let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
+let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
