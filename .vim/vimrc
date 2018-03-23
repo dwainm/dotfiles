@@ -4,6 +4,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-fugitive'
@@ -184,8 +185,13 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 "ZSH in VIM
-set shell=/usr/local/bin/zsh
-
+function! SetShell()
+   if filereadable("/usr/local/bin/zsh")
+       echo "Vim Shell Set to ZSH"
+       set shell=/usr/local/bin/zsh
+   endif
+endfunction
+call SetShell()
 "Remove all trailing spaes on save
 autocmd FileType c,html,css,js,php autocmd BufWritePre <buffer> %s/\s\+$//e
 
