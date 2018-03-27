@@ -190,7 +190,6 @@ nmap ga <Plug>(EasyAlign)
 "ZSH in VIM
 function! SetShell()
    if filereadable("/usr/local/bin/zsh")
-       echo "Vim Shell Set to ZSH"
        set shell=/usr/local/bin/zsh
    endif
 endfunction
