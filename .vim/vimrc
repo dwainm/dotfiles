@@ -78,6 +78,7 @@ set noexpandtab  "tell vim to keep tabs instead of inserting spaces
 retab            "let vim handle your case
 autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
 autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
+nmap <leader>stt 0d^==
 " Set leader as easily accessible for both hands
 nnoremap <SPACE> <Nop>
 let mapleader=' '
