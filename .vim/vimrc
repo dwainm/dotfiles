@@ -1,7 +1,7 @@
 scriptencoding utf-8
 set encoding=utf-8
 
-" Vim-Plug
+"" VIM-PLUG
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -33,42 +33,53 @@ Plug '907th/vim-auto-save', { 'for': 'vimwiki' }
 call plug#end()
 "'''' end Vim-Plug
 
-filetype plugin indent on " required!
+"" ENABLE LOADING FILETYPE AND INDENTATION PLUGINS
+filetype plugin on
+filetype indent on
 
-" Colemak
+"" COLEMAK
 " Normal Mode( [t]o [n]ormal )
 imap tn <Esc>
 
-"UltiSnip Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+"" ULTISNIP
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-u>"
 let g:UltiSnipsJumpBackwardTrigger="<c-i>"
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips/', 'UltiSnips']
 
-"Colors
+"" COLORS
 highlight ColorColumn ctermbg=8
 syntax enable
 set background=dark
 colorscheme solarized
 highlight Normal ctermbg=black
 
-"Editor Settings
+"" EDITOR SETTINGS
 set spell spelllang=en_us
 hi clear SpellBad
 hi SpellBad cterm=undercurl
 set number
 set ruler
-set undofile "Undo history between sessions
-"column 80
+"Undo history between sessions
+if v:version >= 703
+	set undofile
+	set undodir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+endif
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+" If we backup temporary files often automated editing tools like the crontab
+" editor get confused
+set backupskip=/tmp/*,/private/tmp/*"
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+"column 100
 set colorcolumn=+1
 hi ColorColumn guibg=#2d2d2d ctermbg=246
-set cc=80                                        "Make it obvious where 80 characters is
+set cc=100                                        "Make it obvious where 100 characters is
 nnoremap <leader>ss 1z=
-
 "Tabs, Spaces  and Indentation
 set autoindent
-set noet ci pi sts=0 sw=4 ts=4
+set sts=0 sw=4 ts=4
 set list
 set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·
 set tabstop=4  "four spaces will make up for one tab
@@ -91,9 +102,6 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
-
-"Open VIMRC in a vertical tab
-nnoremap <leader>ttt <C-w><C-v><C-l>:e $MYVIMRC<cr>
 
 "Buffers
 nmap [b :bprevious<CR>
@@ -139,13 +147,14 @@ let g:airline_detect_spell=0
 "Clear line
 nnoremap <Leader>cl 0D
 
-"Search
+"" SEARCH
 set hlsearch
 nnoremap <Leader>cs :nohlsearch<cr>
 nnoremap <silent> [q :cprev<cr>
 nnoremap <silent> ]q :cnext<cr>
 set ignorecase
 set smartcase
+set incsearch
 
 "Move UP/Down in all modes
 nnoremap [e :m .-2<CR>
