@@ -83,11 +83,8 @@ let mapleader=' '
 
 set undofile
 
-" Allow us to use Ctrl-s and Ctrl-q as keybinds
-silent !stty -ixon
-
-" Restore default behaviour when leaving Vim.
-autocmd VimLeave * silent !stty ixon
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
 
 " Quicker window movement
 nnoremap <C-j> <C-w>j
@@ -99,7 +96,6 @@ nnoremap <C-l> <C-w>l
 nnoremap <leader>ttt <C-w><C-v><C-l>:e $MYVIMRC<cr>
 
 "Buffers
-nmap <Leader>bd :bd<CR>
 nmap [b :bprevious<CR>
 nmap ]b :bnext<CR>
 augroup qf
@@ -130,13 +126,6 @@ nnoremap <leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
 
 "Open Explorer
 nnoremap <leader>n :Explore<CR>
-
-"TmuxTmux navigation
-let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
 
 "Airline
 set laststatus=2
@@ -194,6 +183,7 @@ function! SetShell()
    endif
 endfunction
 call SetShell()
+
 "Remove all trailing spaes on save
 autocmd FileType c,html,css,js,php autocmd BufWritePre <buffer> %s/\s\+$//e
 
@@ -207,7 +197,6 @@ nnoremap <Leader>g :Ack!<Space>
 if executable('ag')
 	  let g:ackprg = 'ag --vimgrep'
 endif
-
 
 "Creating zap from wiki todo
 vnoremap <leader>zpl :s/- \[X\]/\:point_left\:/g<CR>:nohls<CR>
