@@ -1,1 +1,1 @@
--/Users/dwain/.zprezto/runcoms/zshrc
+/Users/dwain/.zprezto/runcoms/zshrc
