@@ -23,3 +23,6 @@ PayFast
 timestamp
 cancelled
 Zendesk
+boolean
+miscellaneous
+miscellaneous

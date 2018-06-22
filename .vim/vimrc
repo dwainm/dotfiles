@@ -173,7 +173,7 @@ let g:vimwiki_url_maxsave=0
 set clipboard^=unnamed,unnamedplus
 
 "ALE
-let g:ale_open_list = 1
+let g:ale_open_list = 0
 let g:ale_php_phpcs_standard='WordPress'
 map <leader>at :ALEToggle<CR>
 
