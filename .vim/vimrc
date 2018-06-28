@@ -62,6 +62,7 @@ hi clear SpellBad
 hi SpellBad cterm=undercurl
 set number
 set ruler
+set hidden
 "Undo history between sessions
 if v:version >= 703
 	set undofile
