@@ -63,6 +63,7 @@ hi SpellBad cterm=undercurl
 set number
 set ruler
 set hidden
+set showcmd "show character count
 "Undo history between sessions
 if v:version >= 703
 	set undofile
