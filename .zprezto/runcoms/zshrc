@@ -207,7 +207,7 @@ alias cdbook="cd /Users/dwain/vagrant/wcvagrant/www/wordpress-trunk/wp-content/p
 ###########
 # WooDeploy
 ###########
-export GOPATH="$HOME/Go/workspace"
+export GOPATH="$HOME"
 export PATH=$PATH:$HOME/Go/workspace/bin
 export WOODEPLOY_ALL_PLUGINS_DIR="$HOME/wc-all-plugins"
 export WOODEPLOY_BEANSTALK_DIR="$HOME/woocommerce-products"

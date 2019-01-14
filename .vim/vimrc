@@ -15,7 +15,6 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
-Plug 'amiel/vim-tmux-navigator'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'Chiel92/vim-autoformat'
@@ -30,6 +29,8 @@ Plug 'junegunn/fzf.vim'
 Plug 'takac/vim-hardtime'
 Plug 'mileszs/ack.vim'
 Plug '907th/vim-auto-save', { 'for': 'vimwiki' }
+Plug 'dkarter/bullets.vim'
+
 call plug#end()
 "'''' end Vim-Plug
 
@@ -78,6 +79,8 @@ set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set colorcolumn=+1
 hi ColorColumn guibg=#2d2d2d ctermbg=246
 set cc=100                                        "Make it obvious where 100 characters is
+autocmd BufWinEnter *.wiki set cc=1000 "Wiki should not be bothered with this
+
 nnoremap <leader>ss 1z=
 "Tabs, Spaces  and Indentation
 set autoindent
