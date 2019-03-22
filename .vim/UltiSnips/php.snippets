@@ -1,3 +1,9 @@
+snippet !p "! product check"
+if ( ! $product ) {
+	${1:return;}
+}
+endsnippet
+
 snippet elp "error log printr"
 error_log( var_export( $1, true ) );
 endsnippet
