@@ -62,8 +62,16 @@ source $HOME/.private
 #################################
 
 #################################
-# PROXY
+# Automattic 
 #################################
+
+function wppull () {
+  rsync -az --delete --delete-after --exclude '.svn' --exclude '.git' --exclude '.settings' --exclude 'wp-content/themes' wpcom:/home/wpcom/public_html/ ~/Projects/wpcom/ --info=progress2
+}
+
+function wppush () {
+  rsync -az --delete --delete-after --exclude '.svn' --exclude '.git' --exclude '.settings' --exclude 'wp-content/themes' ~/Projects/wpcom/ wpcom:/home/wpcom/public_html/ --info=progress2
+}
 
 function a8cproxysettingon(){
 	sudo networksetup -setautoproxystate  "Wi-Fi" on
@@ -89,7 +97,7 @@ function a8cproxy(){
 #################################
 # WP Docker
 #################################
-alias woowp='docker-compose -f /Users/dwain/projects/woo.com/docker-compose.yml exec --user www-data phpfpm wp'
+alias woowp='docker-compose -f /Users/dwain/projects/woocommerce.test/docker-compose.yml exec --user www-data phpfpm wp'
 alias wp='docker-compose exec --user www-data phpfpm wp'
 alias dcbash='docker-compose exec --user root phpfpm bash'
 alias dc='docker-compose'
@@ -97,7 +105,7 @@ alias dcup='docker-compose up -d'
 alias dockerstop='docker stop $(docker ps -a -q)'
 
 #################################
-# Editing Text
+# Unix Text Handling
 #################################
 alias vi=vim
 function vimrc(){
@@ -202,7 +210,13 @@ function cdgosrc(){
   cd /Users/dwain/Go/workspace/src/github.com
 }
 
-alias cdbook="cd /Users/dwain/vagrant/wcvagrant/www/wordpress-trunk/wp-content/plugins/woocommerce-bookings/"
+function cdwpcont(){
+	cd /Users/dwain/projects/$1/wordpress/wp-content
+}
+
+function wplog(){
+	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
+}
 
 ###########
 # WooDeploy
