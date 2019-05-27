@@ -97,9 +97,9 @@ function a8cproxy(){
 #################################
 # WP Docker
 #################################
-alias woowp='docker-compose -f /Users/dwain/projects/woocommerce.test/docker-compose.yml exec --user www-data phpfpm wp'
+alias woowp='docker-compose -f /Users/dwain/projects/woocommerce.test/docker-compose.yml exec --user www-data wp wp'
 alias wp='docker-compose exec --user www-data phpfpm wp'
-alias dcbash='docker-compose exec --user root phpfpm bash'
+alias dcbash='docker-compose exec --user root wp bash'
 alias dc='docker-compose'
 alias dcup='docker-compose up -d'
 alias dockerstop='docker stop $(docker ps -a -q)'
