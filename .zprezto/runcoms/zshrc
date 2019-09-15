@@ -98,6 +98,7 @@ function a8cproxy(){
 # WP Docker
 #################################
 alias woowp='docker-compose -f /Users/dwain/projects/woocommerce.test/docker-compose.yml exec --user www-data wp wp'
+alias hydrawp='docker-compose -f /Users/dwain/projects/hydra.test/docker-compose.yml exec --user www-data phpfpm wp'
 alias wp='docker-compose exec --user www-data phpfpm wp'
 alias dcbash='docker-compose exec --user root wp bash'
 alias dc='docker-compose'
@@ -179,6 +180,7 @@ dater(){
 }
 
 alias lsg='ls | grep'
+alias hosts='sudo vim /etc/hosts'
 #turn on word wrap in less ( see -S, which removes wrap, is not in the list )
 export LESS="-F -g -i -M -R -w -X -z-4"
 
@@ -261,3 +263,5 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 alias zshrc="vim ~/.zshrc"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="/usr/local/opt/php@7.3/bin:$PATH"
+export PATH="/usr/local/opt/php@7.3/sbin:$PATH"

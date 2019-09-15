@@ -5,7 +5,7 @@ if ( ! $product ) {
 endsnippet
 
 snippet elp "error log printr"
-error_log( var_export( $1, true ) );
+error_log( var_export( $1, true ) . PHP_EOL . __FILE__  );
 endsnippet
 
 snippet trace "simple stack trace"

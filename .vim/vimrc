@@ -30,6 +30,9 @@ Plug 'takac/vim-hardtime'
 Plug 'mileszs/ack.vim'
 Plug '907th/vim-auto-save', { 'for': 'vimwiki' }
 Plug 'dkarter/bullets.vim'
+Plug 'vim-vdebug/vdebug'
+Plug 'rust-lang/rust.vim'
+Plug 'timonv/vim-cargo'
 
 call plug#end()
 "'''' end Vim-Plug
@@ -225,3 +228,20 @@ let g:netrw_men=0
 let g:auto_save = 1  " enable AutoSave on Vim startupc
 let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
 let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
+
+"Vdebug
+    let g:vdebug_keymap = {
+    \    "run" : "<F5>",
+    \    "run_to_cursor" : "<F9>",
+    \    "step_over" : "<F2>",
+    \    "step_into" : "<F3>",
+    \    "step_out" : "<F4>",
+    \    "close" : "<F6>",
+    \    "detach" : "<F7>",
+    \    "set_breakpoint" : "<F10>",
+    \    "get_context" : "<F11>",
+    \    "eval_under_cursor" : "<F12>",
+    \    "eval_visual" : "<Leader>e",
+    \}
+"Rust
+let g:rustfmt_autosave = 1
