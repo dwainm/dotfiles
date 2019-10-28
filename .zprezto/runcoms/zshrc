@@ -94,6 +94,19 @@ function a8cproxy(){
 	fi
 }
 
+function sandbox(){
+	if [[ 'on' == $1 ]]; then
+		echo 'Enabling sandbox hosts config...';
+		sudo sed -i '' 's/^#192.0.92.115/192.0.92.115/g' /etc/hosts
+	fi
+
+	if [[ 'off' == $1 ]]; then
+		echo 'Disabling sandbox hosts config...';
+		sudo sed -i '' 's/^192.0.92.115/#192.0.92.115/g' /etc/hosts
+	fi
+
+}
+
 #################################
 # WP Docker
 #################################
@@ -219,6 +232,7 @@ function cdwpcont(){
 }
 
 alias cdwcpay="cd /Users/dwain/projects/wcpaytest/app/public/wp-content/plugins/woocommerce-payments"
+alias cdpayfast="cd /Users/dwain/projects/payfasttest/app/public/wp-content/plugins/woocommerce-gateway-payfast"
 
 function wplog(){
 	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
