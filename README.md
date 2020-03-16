@@ -19,7 +19,8 @@ Rename .git to .myconf
 Mv all from dotfiles to $HOME
 `cd ~ && mv dotfiles/.* .`
 
-Add aliases
+Add aliases:
+
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
 alias gcf='git config --list'
 
