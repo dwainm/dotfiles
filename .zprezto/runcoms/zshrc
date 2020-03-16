@@ -55,7 +55,9 @@ DISABLE_AUTO_TITLE=true
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # HIST_STAMPS="mm/dd/yyyy"
 
-source $HOME/.private
+if [[ -s "$HOME/.private" ]]; then
+	source $HOME/.private
+fi
 
 #################################
 # Aliases

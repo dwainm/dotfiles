@@ -26,7 +26,6 @@ Plug 'mhinz/vim-grepper'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'takac/vim-hardtime'
 Plug 'mileszs/ack.vim'
 Plug '907th/vim-auto-save', { 'for': 'vimwiki' }
 Plug 'dkarter/bullets.vim'
