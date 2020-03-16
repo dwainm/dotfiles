@@ -21,8 +21,7 @@ Mv all from dotfiles to $HOME
 
 Add aliases:
 
-alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
-alias gcf='git config --list'
+`alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
 
 now you can manage your dotfiles with config(git alias) command.
 
