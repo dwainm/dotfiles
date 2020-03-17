@@ -149,6 +149,7 @@ function agreplace(){
 alias gap="git add -p"
 	# Dotfiles gitifie
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+
 #delete branche
 function gbdel(){
   git branch | grep $1 | xargs git branch -D
@@ -161,6 +162,10 @@ function gbdel(){
 
 function gcob(){
     git checkout -b $1
+}
+
+function gco(){
+    git checkout $1
 }
 
 function gpoc(){
