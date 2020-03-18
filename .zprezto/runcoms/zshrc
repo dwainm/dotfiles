@@ -240,6 +240,7 @@ function cdwpcont(){
 
 alias cdwcpay="cd /Users/dwain/projects/wcpaytest/app/public/wp-content/plugins/woocommerce-payments"
 alias cdpayfast="cd /Users/dwain/projects/payfasttest/app/public/wp-content/plugins/woocommerce-gateway-payfast"
+alias cdsquare="cd /Users/dwain/projects/pantheon-test/wp-content/plugins/woocommerce-square"
 
 function wplog(){
 	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
