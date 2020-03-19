@@ -207,6 +207,10 @@ alias hosts='sudo vim /etc/hosts'
 export LESS="-F -g -i -M -R -w -X -z-4"
 alias composer="php /usr/local/bin/composer.phar"
 
+isvim() {
+	env | grep vim
+}
+
 #####
 # POTFILES
 #######
