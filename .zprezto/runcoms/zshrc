@@ -205,6 +205,7 @@ alias lsg='ls | grep'
 alias hosts='sudo vim /etc/hosts'
 #turn on word wrap in less ( see -S, which removes wrap, is not in the list )
 export LESS="-F -g -i -M -R -w -X -z-4"
+alias composer="php /usr/local/bin/composer.phar"
 
 #####
 # POTFILES
