@@ -54,6 +54,14 @@ done
 chsh -s $(which zsh)
 ```
 
+# Setup Composer
+
+`curl -sS https://getcomposer.org/installer | php`
+
+`sudo mv composer.phar /usr/local/bin/`
+
+`sudo chmod 755 /usr/local/bin/composer.phar`
+
 # Vim 
 Open vim and run `:PlugInstall`
 
