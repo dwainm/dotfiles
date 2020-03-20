@@ -54,6 +54,9 @@ done
 chsh -s $(which zsh)
 ```
 
+# Setup NPM 
+https://www.npmjs.com/get-npm
+
 # Setup Composer
 
 `curl -sS https://getcomposer.org/installer | php`
