@@ -243,8 +243,8 @@ function cdwpcont(){
 	cd /Users/dwain/projects/$1/wordpress/wp-content
 }
 
-alias cdwcpay="cd /Users/dwain/projects/wcpaytest/app/public/wp-content/plugins/woocommerce-payments"
-alias cdpayfast="cd /Users/dwain/projects/payfasttest/app/public/wp-content/plugins/woocommerce-gateway-payfast"
+alias cdwcpay="cd /Users/dwain/projects/wcpay/app/public/wp-content/plugins/woocommerce-payments"
+alias cdpayfast="cd /Users/dwain/projects/payfast/app/public/wp-content/plugins/woocommerce-gateway-payfast"
 alias cdsquare="cd /Users/dwain/projects/pantheon-test/wp-content/plugins/woocommerce-square"
 
 function wplog(){
