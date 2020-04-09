@@ -54,6 +54,14 @@ done
 chsh -s $(which zsh)
 ```
 
+Set up GNU sed:
+with `brew install gnu-sed`
+
+Set up path
+Make sure your paths are configured so that home brew ( `/usr/local/bin` ) 
+is before `/bin` and `/usr/bin/`
+
+
 # Setup NPM 
 https://www.npmjs.com/get-npm
 
