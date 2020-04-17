@@ -15,4 +15,4 @@
 	smudge = git-lfs smudge %f
 	required = true
 [merge]
-	tool = opendiff
+	tool = diffmerge
