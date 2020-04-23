@@ -83,3 +83,5 @@ Open vim and run `:PlugInstall`
 Create symlink to vim wiki icloud storage: 
 `ln -s /Users/dwain/Documents/vimwiki /Users/dwain/vimwiki`
 
+# Touchbar
+Makes it more tollerable: https://medium.com/@svinkle/how-to-make-the-touch-bar-slightly-more-tolerable-857d29041f6a
