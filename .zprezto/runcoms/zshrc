@@ -201,6 +201,15 @@ dater(){
 	 TZ=GMT date -r $1
 }
 
+addspace(){
+	for i in $(seq $1)
+	do
+		echo
+	done
+}
+
+alias space='addspace'
+
 alias lsg='ls | grep'
 alias hosts='sudo vim /etc/hosts'
 #turn on word wrap in less ( see -S, which removes wrap, is not in the list )
