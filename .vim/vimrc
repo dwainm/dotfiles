@@ -53,7 +53,6 @@ let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips/', 'UltiSnips']
 
 "" COLORS
-highlight ColorColumn ctermbg=8
 syntax enable
 set background=dark
 colorscheme solarized
@@ -79,7 +78,7 @@ set backupskip=/tmp/*,/private/tmp/*"
 set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 "column 100
 set colorcolumn=+1
-hi ColorColumn guibg=#2d2d2d ctermbg=246
+hi ColorColumn ctermbg=lightgrey guibg=lightgrey
 set cc=100                                        "Make it obvious where 100 characters is
 autocmd BufWinEnter *.wiki set cc=1000 "Wiki should not be bothered with this
 
