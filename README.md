@@ -4,6 +4,9 @@ Set capslock to be control.
 - In systems preference go to keyboard.
 - Click on the bottom right "modifier keys"
 - Change capslock to be control.
+
+Install Spectacle App.
+
 # Brew
 
 install brew first
@@ -68,6 +71,7 @@ Set up GNU sed:
 with `brew install gnu-sed`
 
 Set up path
+Check: ` echo $PATH`
 Make sure your paths are configured so that home brew ( `/usr/local/bin` ) 
 is before `/bin` and `/usr/bin/`
 
