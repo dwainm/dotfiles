@@ -46,6 +46,7 @@ Setup Zshell Presto:
 Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
 
 - `rm -rf ~/.zprezto && git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}"/.zprezto`
+- Add back alias as we removed it: `alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
 - Make suer we do not overwrite the save zshrc file with all important functions and aliases: `config checkout -- .zprezto/runcoms/zshrc`
 
 Generate your configuration files (copy/paste this as one command):
