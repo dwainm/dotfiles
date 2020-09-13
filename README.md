@@ -11,6 +11,24 @@ git config --global merge.tool diffmerge
 
 brew install zsh vim fzf ctags
 
+# dotfiles
+How to use
+
+Clone into $HOME/dotfiles and CD into it
+`git clone git@github.com:dwainm/dotfiles.git && cd dotfiles`
+
+Rename .git to .myconf
+`mv .git .myconf`
+
+Mv all from dotfiles to $HOME
+`cd ~ && mv dotfiles/.* .`
+
+Add aliases:
+
+`alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
+
+now you can manage your dotfiles with config(git alias) command.
+
 # Terminal
 
 Set brew ZSH as you shell:
@@ -46,24 +64,6 @@ with `brew install gnu-sed`
 Set up path
 Make sure your paths are configured so that home brew ( `/usr/local/bin` ) 
 is before `/bin` and `/usr/bin/`
-
-# dotfiles
-How to use
-
-Clone into $HOME/dotfiles and CD into it
-`git clone git@github.com:dwainm/dotfiles.git && cd dotfiles`
-
-Rename .git to .myconf
-`mv .git .myconf`
-
-Mv all from dotfiles to $HOME
-`cd ~ && mv dotfiles/.* .`
-
-Add aliases:
-
-`alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
-
-now you can manage your dotfiles with config(git alias) command.
 
 # Setup NPM 
 https://www.npmjs.com/get-npm
