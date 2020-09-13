@@ -1,3 +1,9 @@
+
+# Macos 
+Set capslock to be control.
+- In systems preference go to keyboard.
+- Click on the bottom right "modifier keys"
+- Change capslock to be control.
 # Brew
 
 install brew first
