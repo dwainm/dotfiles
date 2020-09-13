@@ -37,7 +37,7 @@ Set brew ZSH as you shell:
 
 
 Setup afterGlow Dark Theme:
-- Go to https://github.com/lysyi3m/osx-terminal-themes/blob/master/schemes/Afterglow.terminal 
+- Go to https://github.com/lysyi3m/macos-terminal-themes/blob/master/themes/Afterglow.terminal
 - Click on raw and save as afterglow.termianl.
 - Right click on open and Set it as defaut.
 
