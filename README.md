@@ -1,3 +1,12 @@
+
+# Macos 
+Set capslock to be control.
+- In systems preference go to keyboard.
+- Click on the bottom right "modifier keys"
+- Change capslock to be control.
+
+Install Spectacle App.
+
 # Brew
 
 install brew first
@@ -37,7 +46,7 @@ Set brew ZSH as you shell:
 
 
 Setup afterGlow Dark Theme:
-- Go to https://github.com/lysyi3m/osx-terminal-themes/blob/master/schemes/Afterglow.terminal 
+- Go to https://github.com/lysyi3m/macos-terminal-themes/blob/master/themes/Afterglow.terminal
 - Click on raw and save as afterglow.termianl.
 - Right click on open and Set it as defaut.
 
@@ -45,9 +54,9 @@ Setup Zshell Presto:
 
 Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
 
-`rm -rf ~/.zprezto`
-`git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto`
-`config checkout -- .zprezto/runcoms/zshrc`
+- `rm -rf ~/.zprezto && git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}"/.zprezto`
+- Add back alias as we removed it: `alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
+- Make suer we do not overwrite the save zshrc file with all important functions and aliases: `config checkout -- .zprezto/runcoms/zshrc`
 
 Generate your configuration files (copy/paste this as one command):
 ```
@@ -62,9 +71,9 @@ Set up GNU sed:
 with `brew install gnu-sed`
 
 Set up path
+Check: ` echo $PATH`
 Make sure your paths are configured so that home brew ( `/usr/local/bin` ) 
 is before `/bin` and `/usr/bin/`
-
 
 # Setup NPM 
 https://www.npmjs.com/get-npm
