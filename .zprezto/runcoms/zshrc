@@ -106,7 +106,15 @@ function sandbox(){
 		echo 'Disabling sandbox hosts config...';
 		sudo sed -i '' 's/^192.0.92.115/#192.0.92.115/g' /etc/hosts
 	fi
+}
 
+function wcpayurl(){
+	cd ~/projects/woocommerce-payments/
+	if [ -z "$1" ]; then
+		npm run wp option update home http://localhost:8082/
+		npm run wp option update siteurl http://localhost:8082/
+		return
+	fi
 }
 
 #################################
@@ -116,8 +124,9 @@ alias woowp='docker-compose -f /Users/dwain/projects/woocommerce.test/docker-com
 alias wcpaywp='docker-compose exec --user root wordpress php /root/wp-cli.phar --allow-root
 '
 alias hydrawp='docker-compose -f /Users/dwain/projects/hydra.test/docker-compose.yml exec --user www-data phpfpm wp'
-alias wp='docker-compose exec --user www-data phpfpm wp'
+alias wp='docker-compose exec --user www-data wordpress wp'
 alias dcbash='docker-compose exec --user root wp bash'
+alias wcpaybash='docker-compose exec --user root wordpress bash'
 alias dc='docker-compose'
 alias dcup='docker-compose up -d'
 alias dockerstop='docker stop $(docker ps -a -q)'
@@ -214,7 +223,6 @@ alias lsg='ls | grep'
 alias hosts='sudo vim /etc/hosts'
 #turn on word wrap in less ( see -S, which removes wrap, is not in the list )
 export LESS="-F -g -i -M -R -w -X -z-4"
-alias composer="php /usr/local/bin/composer.phar"
 
 isvim() {
 	env | grep vim
