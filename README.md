@@ -18,7 +18,7 @@ Install and setup diffmerge
 brew cask install diffmerge   
 git config --global merge.tool diffmerge 
 
-brew install zsh vim fzf ctags
+brew install zsh vim fzf ctags svn
 
 # dotfiles
 How to use
