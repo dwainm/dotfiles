@@ -136,8 +136,9 @@ alias dockerstop='docker stop $(docker ps -a -q)'
 #################################
 alias vi=vim
 function vimrc(){
-vi ~/.vim/vimrc
+	vi ~/.vim/vimrc ~/.vim/vimplugrc.vim
 }
+
 alias wiki='vim -c "VimwikiIndex"'
 
 function download() {
