@@ -1,6 +1,10 @@
 scriptencoding utf-8
 set encoding=utf-8
 
+" LEADER Set leader as easily accessible for both hands
+nnoremap <SPACE> <Nop>
+let mapleader=' '
+
 " Vim-Plug
 source ~/.vim/vimplugrc.vim 
 
@@ -8,8 +12,61 @@ source ~/.vim/vimplugrc.vim
 filetype plugin on
 filetype indent on
 
+"""" MAPINGS
+
 " Normal Mode( [t]o [n]ormal )
 imap tn <Esc>
+
+"jump to errors
+nnoremap ]r :ALENext<CR>
+nnoremap [r :ALEPrevious<CR>
+map <leader>at :ALEToggle<CR>
+
+" Allignemnt
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" Quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+"Move UP/Down in all modes
+nnoremap [e :m .-2<CR>
+nnoremap ]e :m .+1<CR>
+vnoremap [e :m '<-2<CR>gv
+vnoremap ]e :m '>+1<CR>gv
+
+"Buffers
+nmap [b :bprevious<CR>
+nmap ]b :bnext<CR>
+
+"FzF
+nnoremap <Leader>b :Buffers<CR>
+nmap <Leader>f :Files<CR>
+nmap <Leader>t :Tags<CR>
+
+
+"Map Ctrl + S to save in any mode
+noremap <silent> <C-s>          :update<CR>
+vnoremap <silent> <C-s>         <C-C>:update<CR>
+inoremap <silent> <C-s>         <C-O>:update<CR>
+
+"quit quickly
+nnoremap <leader>q :q<CR>j
+nnoremap <leader>qa <ESC>:qa!<CR>                     "quit without saving
+
+"Easily edit files in the same directory
+nnoremap <leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
+
+"Open Explorer
+nnoremap <leader>n :Explore<CR>
+
+"Clear line
+nnoremap <Leader>cl 0D
+
+"" END MAPPINGS
 
 "" ULTISNIP
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
@@ -33,6 +90,7 @@ set number
 set ruler
 set hidden
 set showcmd "show character count
+
 "Undo history between sessions
 if v:version >= 703
 	set undofile
@@ -47,9 +105,7 @@ set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
 set colorcolumn=+1
 hi ColorColumn ctermbg=lightgrey guibg=lightgrey
 set cc=100                                        "Make it obvious where 100 characters is
-autocmd BufWinEnter *.wiki set cc=1000 "Wiki should not be bothered with this
 
-nnoremap <leader>ss 1z=
 "Tabs, Spaces  and Indentation
 set autoindent
 set sts=0 sw=4 ts=4
@@ -60,53 +116,20 @@ set noexpandtab  "tell vim to keep tabs instead of inserting spaces
 retab            "let vim handle your case
 autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
 autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
-nmap <leader>tab 0d^==
-" Set leader as easily accessible for both hands
-nnoremap <SPACE> <Nop>
-let mapleader=' '
 
 set undofile
 
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
-" Quicker window movement
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
-"Buffers
-nmap [b :bprevious<CR>
-nmap ]b :bnext<CR>
 augroup qf
     autocmd!
     autocmd FileType qf set nobuflisted
 augroup END
 
-"FzF
-nnoremap <Leader>b :Buffers<CR>
-nmap <Leader>f :Files<CR>
-nmap <Leader>t :Tags<CR>
-
 "Split navigation
 set splitbelow                                "open new horizontal splits below
 set splitright                                "open new vertical splits rigth
-
-"Map Ctrl + S to save in any mode
-noremap <silent> <C-s>          :update<CR>
-vnoremap <silent> <C-s>         <C-C>:update<CR>
-inoremap <silent> <C-s>         <C-O>:update<CR>
-
-"quit quickly
-nnoremap <leader>q :q<CR>j
-nnoremap <leader>qa <ESC>:qa!<CR>                     "quit without saving
-
-"Easily edit files in the same directory
-nnoremap <leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
-
-"Open Explorer
-nnoremap <leader>n :Explore<CR>
 
 "Airline
 set laststatus=2
@@ -117,8 +140,6 @@ let g:airline_section_c = '%t'
 let g:airline_theme='papercolor'
 let g:airline_detect_spell=0
 
-"Clear line
-nnoremap <Leader>cl 0D
 
 "" SEARCH
 set hlsearch
@@ -129,13 +150,20 @@ set ignorecase
 set smartcase
 set incsearch
 
-"Move UP/Down in all modes
-nnoremap [e :m .-2<CR>
-nnoremap ]e :m .+1<CR>
-vnoremap [e :m '<-2<CR>gv
-vnoremap ]e :m '>+1<CR>gv
+"Ack grepping using ag
+cnoreabbrev Ack Ack!
+nnoremap <Leader>g :Ack!<Space>
+if executable('ag')
+	  let g:ackprg = 'ag --vimgrep'
+endif
+"" END SEARCH
+
+
+"Remove all trailing spaes on save
+autocmd FileType c,html,css,js,php autocmd BufWritePre <buffer> %s/\s\+$//e
 
 "VIM wiki
+autocmd BufWinEnter *.wiki set cc=1000 "Wiki should not be bothered column on the right
 nnoremap <silent> <leader>sl ?==<cr>2jV}k:sort!<cr>:nohls<cr>
 nnoremap <silent> <leader>ll I-<space>[<space>]<space><esc>
 vnoremap <silent> <leader>ll <C-v>I-<space>[<space>]<space><esc>
@@ -147,18 +175,22 @@ let g:vimwiki_list = [{'syntax': 'markdown', 'ext': '.md'}]
 "Copy/Pasting
 set clipboard^=unnamed,unnamedplus
 
+"Netrw - Vims default directory viewer
+let g:netrw_men=0
+
 "ALE
 let g:ale_open_list = 0
 let g:ale_php_phpcs_standard='WordPress'
-map <leader>at :ALEToggle<CR>
 
-"jump to errors
-nnoremap ]r :ALENext<CR>
-nnoremap [r :ALEPrevious<CR>
+"AutoSave plugin
+let g:auto_save = 1  " enable AutoSave on Vim startupc
+let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
+let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
 
-" Allignemnt
-xmap ga <Plug>(EasyAlign)
-nmap ga <Plug>(EasyAlign)
+"Rust
+let g:rustfmt_autosave = 1
+
+"""" FUNCTIONS
 
 "ZSH in VIM
 function! SetShell()
@@ -167,46 +199,3 @@ function! SetShell()
    endif
 endfunction
 call SetShell()
-
-"Remove all trailing spaes on save
-autocmd FileType c,html,css,js,php autocmd BufWritePre <buffer> %s/\s\+$//e
-
-"Hard Time - Break bad habits
-let g:hardtime_allow_different_key = 1
-let g:hardtime_default_on = 1
-
-"Ack grepping using ag
-cnoreabbrev Ack Ack!
-nnoremap <Leader>g :Ack!<Space>
-if executable('ag')
-	  let g:ackprg = 'ag --vimgrep'
-endif
-
-"Creating zap from wiki todo
-vnoremap <leader>zpl :s/- \[X\]/\:point_left\:/g<CR>:nohls<CR>
-vnoremap <leader>zpr :s/- \[ \]/\:point_right\:/g<CR>:nohls<CR>
-
-"Netrw
-let g:netrw_men=0
-
-"AutoSave plugin
-let g:auto_save = 1  " enable AutoSave on Vim startupc
-let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
-let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
-
-"Vdebug
-    let g:vdebug_keymap = {
-    \    "run" : "<F5>",
-    \    "run_to_cursor" : "<F9>",
-    \    "step_over" : "<F2>",
-    \    "step_into" : "<F3>",
-    \    "step_out" : "<F4>",
-    \    "close" : "<F6>",
-    \    "detach" : "<F7>",
-    \    "set_breakpoint" : "<F10>",
-    \    "get_context" : "<F11>",
-    \    "eval_under_cursor" : "<F12>",
-    \    "eval_visual" : "<Leader>e",
-    \}
-"Rust
-let g:rustfmt_autosave = 1
