@@ -14,6 +14,8 @@ Install Spectacle App.
 `brew install git` 
 `sudo mv /usr/bin/git /usr/bin/git-apple`
 
+Now, reload the terminal for the profile to load the correct git location and confirm by running `which git`.
+
 ### Install and setup diffmerge
 `brew cask install diffmerge`   
 `git config --global merge.tool diffmerge` 
