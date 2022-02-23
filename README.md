@@ -1,11 +1,14 @@
 
 # Macos 
-Set capslock to be control.
+### Set capslock to be control.
 - In systems preference go to keyboard.
 - Click on the bottom right "modifier keys"
 - Change capslock to be control.
 
-Install Spectacle App.
+### Install Spectacle App.
+
+### Mous changes
+Turn on tap to click on trackpad settings
 
 # Brew
 
