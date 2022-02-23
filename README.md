@@ -17,7 +17,7 @@ Install Spectacle App.
 Now, reload the terminal for the profile to load the correct git location and confirm by running `which git`.
 
 ### Install and setup diffmerge
-`brew cask install diffmerge`   
+`brew install diffmerge`   
 `git config --global merge.tool diffmerge` 
 
 `brew install zsh vim fzf ctags svn nvm`
