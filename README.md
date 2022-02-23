@@ -9,16 +9,16 @@ Install Spectacle App.
 
 # Brew
 
-install brew first
+### Install brew first
 
-brew install git 
-sudo mv /usr/bin/git /usr/bin/git-apple
+`brew install git` 
+`sudo mv /usr/bin/git /usr/bin/git-apple`
 
-Install and setup diffmerge
-brew cask install diffmerge   
-git config --global merge.tool diffmerge 
+### Install and setup diffmerge
+`brew cask install diffmerge`   
+`git config --global merge.tool diffmerge` 
 
-brew install zsh vim fzf ctags svn
+`brew install zsh vim fzf ctags svn nvm`
 
 # dotfiles
 How to use
