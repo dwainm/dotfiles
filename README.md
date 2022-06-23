@@ -1,24 +1,29 @@
 
 # Macos 
-Set capslock to be control.
+### Set capslock to be control.
 - In systems preference go to keyboard.
 - Click on the bottom right "modifier keys"
 - Change capslock to be control.
 
-Install Spectacle App.
+### Install Spectacle App.
+
+### Mous changes
+Turn on tap to click on trackpad settings
 
 # Brew
 
-install brew first
+### Install brew first
 
-brew install git 
-sudo mv /usr/bin/git /usr/bin/git-apple
+`brew install git` 
+`sudo mv /usr/bin/git /usr/bin/git-apple`
 
-Install and setup diffmerge
-brew cask install diffmerge   
-git config --global merge.tool diffmerge 
+Now, reload the terminal for the profile to load the correct git location and confirm by running `which git`.
 
-brew install zsh vim fzf ctags svn
+### Install and setup diffmerge
+`brew install diffmerge`   
+`git config --global merge.tool diffmerge` 
+
+`brew install zsh vim fzf ctags svn nvm`
 
 # dotfiles
 How to use

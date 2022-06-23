@@ -264,7 +264,7 @@ function cdplugin(){
 }
 
 function cdgosrc(){
-  cd /Users/dwain/Go/workspace/src/github.com
+  cd /Users/dwain/projects/go/src
 }
 
 function cdwpcont(){
@@ -273,6 +273,7 @@ function cdwpcont(){
 
 alias cdpayfast="cd /Users/dwain/projects/payfast/app/public/wp-content/plugins/woocommerce-gateway-payfast"
 alias cdwcpayplugins="cd /Users/dwain/projects/woocommerce-payments/docker/wordpress/wp-content/plugins"
+alias cdgo="cd /Users/dwain/projects/go"
 alias cdstripe="cd /Users/dwain/projects/wcpay/app/public/wp-content/plugins/woocommerce-gateway-stripe"
 
 function wplog(){
@@ -282,12 +283,9 @@ function wplog(){
 ###########
 # WooDeploy
 ###########
-export GOPATH="$HOME"
-export PATH=$PATH:$HOME/Go/workspace/bin
-export WOODEPLOY_ALL_PLUGINS_DIR="$HOME/wc-all-plugins"
-export WOODEPLOY_BEANSTALK_DIR="$HOME/woocommerce-products"
-alias wd="WOODEPLOY_ALL_PLUGINS_DIR=$WOODEPLOY_ALL_PLUGINS_DIR WOODEPLOY_BEANSTALK_DIR=$WOODEPLOY_BEANSTALK_DIR WOODEPLOY_SLACK_WEBHOOK_URL=$WOODEPLOY_SLACK_WEBHOOK_URL WOODEPLOY_P2_TOKEN='$WOODEPLOY_P2_TOKEN' woodeploy -v"
-
+export GOPATH="/Users/dwain/projects"
+export PATH=$PATH:$GOPATH
+export PATH=$PATH:$GOPATH/bin
 
 # export MANPATH="/usr/local/man:$MANPATH"
 

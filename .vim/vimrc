@@ -6,7 +6,7 @@ nnoremap <SPACE> <Nop>
 let mapleader=' '
 
 " Vim-Plug
-source ~/.vim/vimplugrc.vim 
+source ~/.vim/vimplugrc.vim
 
 "" ENABLE LOADING FILETYPE AND INDENTATION PLUGINS
 filetype plugin on
@@ -46,7 +46,6 @@ nmap ]b :bnext<CR>
 nnoremap <Leader>b :Buffers<CR>
 nmap <Leader>f :Files<CR>
 nmap <Leader>t :Tags<CR>
-
 
 "Map Ctrl + S to save in any mode
 noremap <silent> <C-s>          :update<CR>
