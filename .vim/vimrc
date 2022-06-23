@@ -170,7 +170,7 @@ vnoremap <silent> <leader>ll <C-v>I-<space>[<space>]<space><esc>
 nnoremap <silent> <leader>li I-<space><esc>
 let g:vimwiki_url_maxsave=0
 nnoremap <leader>rn vip:RenumberSelection<CR>
-let g:vimwiki_list = [{'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_list = [{'syntax': 'markdown', 'ext': '.md'},{'path': '~/Documents/Automattic/','syntax': 'markdown', 'ext': '.md'}]
 
 "Copy/Pasting
 set clipboard^=unnamed,unnamedplus
