@@ -108,8 +108,7 @@ function sandbox(){
 	fi
 }
 
-function wcpayurl(){
-	cd ~/projects/woocommerce-payments/
+function wpurl(){
 	if [ -z "$1" ]; then
 		npm run wp option update home http://localhost:8082/
 		npm run wp option update siteurl http://localhost:8082/
@@ -122,6 +121,17 @@ function donelastweek(){
 	todoist cl | grep "$(date -v-Sun -v-Mon  "+%y/%m/%d")\|$(date -v-Sun -v-Tue  "+%y/%m/%d")\|$(date -v-Sun -v-Wed  "+%y/%m/%d")\|$(date -v-Sun -v-Thu  "+%y/%m/%d")\|$(date -v-Sun -v-Fri  "+%y/%m/%d")" |  cut -d" "  -f 5-100 | pbcopy  
 	echo "Todo done items coppied to clip board"
 }
+
+function wcpayurl(){
+	cd ~/projects/woocommerce-payments/
+	if [ -z "$1" ]; then
+		echo 'No url supplied';
+	else
+		wp option update home $1
+		wp option update siteurl $1
+	fi
+}
+
 #################################
 # WP Docker
 #################################
@@ -130,10 +140,10 @@ alias wcpaywp='docker-compose exec --user root wordpress php /root/wp-cli.phar -
 '
 alias hydrawp='docker-compose -f /Users/dwain/projects/hydra.test/docker-compose.yml exec --user www-data phpfpm wp'
 alias wp='docker-compose exec --user www-data wordpress wp'
-alias dcbash='docker-compose exec --user root wp bash'
+alias dcbash='docker-compose exec --user root wordpress bash'
 alias wcpaybash='docker-compose exec --user root wordpress bash'
 alias dc='docker-compose'
-alias dcup='docker-compose up -d'
+alias dcup='docker compose up -d'
 alias dockerstop='docker stop $(docker ps -a -q)'
 
 #################################
@@ -145,6 +155,7 @@ function vimrc(){
 }
 
 alias wiki='vim -c "VimwikiIndex"'
+alias a8cwiki=' vim ~/Documents/Automattic/index.md'
 
 function download() {
 	if [ `which curl` ]; then
