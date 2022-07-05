@@ -28,6 +28,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'vimwiki/vimwiki'
 Plug 'w0rp/ale'
 Plug 'voldikss/vim-floaterm'
+Plug 'fatih/vim-go'
 
 call plug#end()
 

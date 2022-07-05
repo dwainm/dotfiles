@@ -117,6 +117,11 @@ function wcpayurl(){
 	fi
 }
 
+function donelastweek(){
+	# Use todoist | grep for the this past sunday and then its previous mon|tues|wed|thu|fri
+	todoist cl | grep "$(date -v-Sun -v-Mon  "+%y/%m/%d")\|$(date -v-Sun -v-Tue  "+%y/%m/%d")\|$(date -v-Sun -v-Wed  "+%y/%m/%d")\|$(date -v-Sun -v-Thu  "+%y/%m/%d")\|$(date -v-Sun -v-Fri  "+%y/%m/%d")" |  cut -d" "  -f 5-100 | pbcopy  
+	echo "Todo done items coppied to clip board"
+}
 #################################
 # WP Docker
 #################################
