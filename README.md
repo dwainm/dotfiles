@@ -99,3 +99,15 @@ Create symlink to vim wiki icloud storage:
 
 # Touchbar
 Makes it more tollerable: https://medium.com/@svinkle/how-to-make-the-touch-bar-slightly-more-tolerable-857d29041f6a
+
+# Todois
+Setup todoist by building it from your fork: https://github.com/dwainm/todoist
+
+```
+git clone git@github.com:dwainm/todoist.git
+cd todoist
+Go install
+Go build
+Go release
+mv ./todoist_darwin_amd64 /usr/local/bin/todoist 
+```
