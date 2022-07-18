@@ -118,13 +118,13 @@ function wpurl(){
 
 function donelastweek(){
 	# Use todoist | grep for the this past sunday and then its previous mon|tues|wed|thu|fri
-	todoist cl --raw | grep "$(date -v-Sun -v-Mon  "+%y/%m/%d")\|$(date -v-Sun -v-Tue  "+%y/%m/%d")\|$(date -v-Sun -v-Wed  "+%y/%m/%d")\|$(date -v-Sun -v-Thu  "+%y/%m/%d")\|$(date -v-Sun -v-Fri  "+%y/%m/%d")\|$(date -v-Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 5-100 | sed 's/^/- /' | pbcopy
+	todoist cl --raw | grep -E "^\w+\s$(date -v-Sun -v-Mon  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Tue  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Wed  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Thu  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Fri  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 5-100 | sed 's/^/- /' | pbcopy
 	echo "Last weeks Todo done items coppied to clip board"
 }
 
 function donethisweek(){
 	# Use todoist | grep for the this week. Starting from upcomming Sunay walking back to the  previous mon|tues|wed|thu|fri
-todoist cl --raw | grep "$(date -v+Sun -v-Mon  "+%y/%m/%d")\|$(date -v+Sun -v-Tue  "+%y/%m/%d")\|$(date -v+Sun -v-Wed  "+%y/%m/%d")\|$(date -v+Sun -v-Thu  "+%y/%m/%d")\|$(date -v+Sun -v-Fri  "+%y/%m/%d")\|$(date -v+Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 5-100 | sed 's/^/- /' | pbcopy
+todoist cl --raw | grep -E "$(date -v+Sun -v-Mon  "+%y/%m/%d")\|$(date -v+Sun -v-Tue  "+%y/%m/%d")\|$(date -v+Sun -v-Wed  "+%y/%m/%d")\|$(date -v+Sun -v-Thu  "+%y/%m/%d")\|$(date -v+Sun -v-Fri  "+%y/%m/%d")\|$(date -v+Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 5-100 | sed 's/^/- /' | pbcopy
 echo "This weeks Todo done items coppied to clip board"
 
 }
