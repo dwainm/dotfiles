@@ -5,7 +5,9 @@
 - Click on the bottom right "modifier keys"
 - Change capslock to be control.
 
-### Install Spectacle App.
+### Install Rectangle App .
+Install the app
+Import config in the app: .RectangleConfig
 
 ### Mous changes
 Turn on tap to click on trackpad settings
