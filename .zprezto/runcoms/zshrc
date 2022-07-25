@@ -292,6 +292,34 @@ alias cdstripe="cd /Users/dwain/projects/wcpay/app/public/wp-content/plugins/woo
 function wplog(){
 	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
 }
+function wcpay-dev(){
+	#variable
+	session="WCPay-Development"
+	firstwindow=1
+	npmwindowname="NPM"
+	clientwindowname="Client"
+	serverwindowname="Server"
+	clientpath="~/projects/wcpay/woocommerce-payments/"
+	serverpath="~/projects/wcpay/woocommerce-payments-server/"
+	tmux new-session -d -s $session
+
+	#NPM
+	tmux rename-window -t $session:$firstwindow $npmwindowname
+	tmux split-window -h -t $session:$firstwindow
+	##pane 1
+	tmux send-keys -t $session:$firstwindow.1 'cd ~/projects/wcpay/woocommerce-payments && nvm use && npm run start' C-m
+	#pane 2
+	tmux send-keys -t $session:$firstwindow.2 'cd ~/projects/wcpay/woocommerce-payments-server && nvm use && npm run start' C-m
+
+	#Client
+	tmux new-window -a -c $clientpath -n $clientwindowname -t $session
+
+	#Server
+	tmux new-window -a -c $serverpath -n $serverwindowname -t $session
+
+	#Open the sessio
+	tmux attach-session -t $session
+}
 
 ###########
 # WooDeploy
