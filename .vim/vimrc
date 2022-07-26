@@ -17,6 +17,10 @@ filetype indent on
 " Normal Mode( [t]o [n]ormal )
 imap tn <Esc>
 
+" Move up and down logical lines when text is wrapped
+nnoremap j gj
+nnoremap k gk
+
 "jump to errors
 nnoremap ]r :ALENext<CR>
 nnoremap [r :ALEPrevious<CR>
