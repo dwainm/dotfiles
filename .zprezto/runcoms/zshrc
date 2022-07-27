@@ -292,6 +292,7 @@ alias cdstripe="cd /Users/dwain/projects/wcpay/app/public/wp-content/plugins/woo
 function wplog(){
 	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
 }
+
 function wcpay-dev(){
 	#variable
 	session="WCPay-Development"
