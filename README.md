@@ -9,8 +9,11 @@
 Install the app
 Import config in the app: .RectangleConfig
 
-### Mous changes
+### Mouse changes
 Turn on tap to click on trackpad settings
+
+### Cloud 
+Change iCloud settings to use Desktop and Documents folder. So cloud documents and desktop is not seperate from device documents and desktop.
 
 # Brew
 
