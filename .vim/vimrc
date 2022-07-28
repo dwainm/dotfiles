@@ -118,9 +118,6 @@ nnoremap ]r :ALENext<CR>
 nnoremap [r :ALEPrevious<CR>
 map <leader>at :ALEToggle<CR>
 
-"Jump to definition
-nnoremap <C-k> gd
-
 " Allignemnt
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
@@ -172,10 +169,11 @@ let g:mucomplete#chains['zsh']             = ['file',  'dict',  'keyp']
 let g:mucomplete#chains['javascript']      = ['tags',  'omni',  'list', 'c-n']
 let g:mucomplete#chains['typescriptreact'] = ['tags',  'omni',  'list', 'c-n']
 let g:mucomplete#chains['typescript']      = ['tags',  'omni',  'list', 'c-n']
-let g:mucomplete#chains['php']             = ['tags',  'omni',  'list', 'c-n']
+let g:mucomplete#chains['php']             = ['ulti', 'tags',  'omni',  'list', 'c-n']
 let g:mucomplete#chains['go']              = ['list',  'omni',  'c-n']
 let g:mucomplete#chains['markdown']        = ['path',  'c-n',   'uspl',  'dict']
 
+"UltiSnip
 let g:UltiSnipsExpandTrigger = "<f5>"        " Do not use <tab> to be compatible with mu-complete
 let g:UltiSnipsJumpForwardTrigger = "<c-b>"  " Do not use <c-j>
 let g:UltiSnipsJumpBackwardTrigger="<c-i>"
@@ -188,21 +186,23 @@ imap <cr> <plug>MyCR
 
 let g:ulti_expand_or_jump_res = 0
 
-	fun! TryUltiSnips()
-	  if !pumvisible() " With the pop-up menu open, let Tab move down
+fun! TryUltiSnips()
+	if !pumvisible() " With the pop-up menu open, let Tab move down
 		call UltiSnips#ExpandSnippetOrJump()
-	  endif
-	  return ''
-	endf
+	endif
+	return ''
+endf
 
-	fun! TryMUcomplete()
-	  return g:ulti_expand_or_jump_res ? "" : "\<plug>(MUcompleteFwd)"
-	endf
+fun! TryMUcomplete()
+	return g:ulti_expand_or_jump_res ? "" : "\<plug>(MUcompleteFwd)"
+endf
 
-	inoremap <plug>(TryUlti) <c-r>=TryUltiSnips()<cr>
-	imap <expr> <silent> <plug>(TryMU) TryMUcomplete()
+inoremap <plug>(TryUlti) <c-r>=TryUltiSnips()<cr>
+imap <expr> <silent> <plug>(TryMU) TryMUcomplete()
+
 "
 "Airline
+"
 set laststatus=2
 let g:airline#extensions#bufferline#enabled = 0
 let g:airline_section_z = ''
