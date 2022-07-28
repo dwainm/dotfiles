@@ -107,7 +107,7 @@ nnoremap <leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
 nnoremap <leader>n :Explore<CR>
 
 "Clear line
-nnoremap <Leader>cl 0D
+nnoremap <Leader>dl 0D
 
 "" END MAPPINGS
 
@@ -236,9 +236,9 @@ let g:rustfmt_autosave = 1
 """" FUNCTIONS
 
 "ZSH in VIM
-function! SetShell()
+function! Setshell()
    if filereadable("/usr/local/bin/zsh")
        set shell=/usr/local/bin/zsh
    endif
 endfunction
-call SetShell()
+call Setshell()
