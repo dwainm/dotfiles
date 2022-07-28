@@ -1,11 +1,12 @@
-scriptencoding utf-8
-set encoding=utf-8
+"
+" Leader
+"
+let mapleader=' ' "Set leader as easily accessible for both hands.
+nnoremap <SPACE> <Nop> "No one les should be able to use space.
 
-" LEADER Set leader as easily accessible for both hands
-nnoremap <SPACE> <Nop>
-let mapleader=' '
-
+"
 " Vim-Plug
+"
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -13,7 +14,6 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/plugged')
-
 Plug '907th/vim-auto-save', { 'for': 'vimwiki' }
 Plug 'Chiel92/vim-autoformat'
 Plug 'SirVer/ultisnips'
@@ -23,10 +23,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'kshenoy/vim-signature'
-Plug 'mhinz/vim-grepper'
 Plug 'mileszs/ack.vim'
-Plug 'rust-lang/rust.vim'
-Plug 'timonv/vim-cargo'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -34,57 +31,99 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vimwiki/vimwiki'
 Plug 'w0rp/ale'
-Plug 'voldikss/vim-floaterm'
 Plug 'fatih/vim-go'
-
-Plug 'pangloss/vim-javascript'    " JavaScript support
-Plug 'leafgarland/typescript-vim' " TypeScript syntax
-Plug 'maxmellon/vim-jsx-pretty'   " JS and JSX syntax
-" Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'} " Code completion
-
+Plug 'lifepillar/vim-mucomplete'
+Plug 'ludovicchabant/vim-gutentags'
 call plug#end()
 
-
-
-"" ENABLE LOADING FILETYPE AND INDENTATION PLUGINS
-filetype plugin on
+"
+" Settings
+"
+set encoding=utf-8
+set spell spelllang=en_us
+set number
+set ruler
+set hidden
+set showcmd "show character count
+set background=dark
+filetype plugin on "enabled filetype plugins and indent
 filetype indent on
+syntax enable
+highlight Normal ctermbg=black
+hi clear SpellBad
+hi SpellBad cterm=undercurl
 
-"""" MAPINGS
+"Undo history between sessions
+if v:version >= 703
+	set undofile
+	set undodir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+endif
+set undofile
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+" If we backup temporary files often automated editing tools like the crontab editor get confused
+set backupskip=/tmp/*,/private/tmp/*"
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+"column 100 and make it obvious where 100 characters is.
+set colorcolumn=+1
+hi ColorColumn ctermbg=lightgrey guibg=lightgrey
+set cc=100
+"Tabs, Spaces  and Indentation
+set autoindent
+set sts=0 sw=4 ts=4
+set list
+set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·
+set tabstop=4  "four spaces will make up for one tab
+set noexpandtab  "tell vim to keep tabs instead of inserting spaces
+retab            "let vim handle your case
+autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
+autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
 
-" Normal Mode( [t]o [n]ormal )
+set backspace=indent,eol,start "insert mode backspacing over everything
+
+augroup qf
+    autocmd!
+    autocmd FileType qf set nobuflisted
+augroup END
+
+"Split navigation
+set splitbelow                                "open new horizontal splits below
+set splitright                                "open new vertical splits rigth
+
+"
+" Mappings
+"
+"Exit insert mode Normal Mode( [t]o [n]ormal )
 imap tn <Esc>
 
-" Move up and down logical lines when text is wrapped
-nnoremap j gj
+"Move up and down logical lines when text is wrapped
+nnoremap j gj 
 nnoremap k gk
+"Buffer navigation
+nmap [b :bprevious<CR>
+nmap ]b :bnext<CR>
+"Quicker window movement <C-{j|k|l|H}>
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+"Move selection/current line up or donw [in all modes]
+nnoremap [e :m .-2<CR>
+nnoremap ]e :m .+1<CR>
+vnoremap [e :m '<-2<CR>gv
+vnoremap ]e :m '>+1<CR>gv
 
 "jump to errors
 nnoremap ]r :ALENext<CR>
 nnoremap [r :ALEPrevious<CR>
 map <leader>at :ALEToggle<CR>
 
+"Jump to definition
+nnoremap <C-k> gd
+
 " Allignemnt
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-
-" Quicker window movement
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
-"Move UP/Down in all modes
-nnoremap [e :m .-2<CR>
-nnoremap ]e :m .+1<CR>
-vnoremap [e :m '<-2<CR>gv
-vnoremap ]e :m '>+1<CR>gv
-
-"Buffers
-nmap [b :bprevious<CR>
-nmap ]b :bnext<CR>
 
 "FzF
 nnoremap <Leader>b :Buffers<CR>
@@ -96,9 +135,9 @@ noremap <silent> <C-s>          :update<CR>
 vnoremap <silent> <C-s>         <C-C>:update<CR>
 inoremap <silent> <C-s>         <C-O>:update<CR>
 
-"quit quickly
+"quit quickly | without saving
 nnoremap <leader>q :q<CR>j
-nnoremap <leader>qa <ESC>:qa!<CR>                     "quit without saving
+nnoremap <leader>qa <ESC>:qa!<CR>
 
 "Easily edit files in the same directory
 nnoremap <leader>e :e <C-R>=expand('%:p:h') . '/'<CR>
@@ -111,69 +150,58 @@ nnoremap <Leader>dl 0D
 
 "" END MAPPINGS
 
-"" ULTISNIP
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-u>"
+"
+" Completion : MU Complete
+"
+set omnifunc=syntaxcomplete#Complete
+set completeopt+=menuone
+set completeopt+=noselect
+set shortmess+=c   " Shut off completion messages
+set belloff+=ctrlg " Add only if Vim beeps during completion
+let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#chains = {}
+let g:mucomplete#chains['default']   =  {
+			\              'default': ['list',  'omni',  'path',  'c-n',   'uspl'],
+			\              '.*string.*': ['uspl'],
+			\              '.*comment.*': ['uspl']
+			\            }
+let g:mucomplete#chains['html']            = ['omni',  'path',  'c-n',   'uspl']
+let g:mucomplete#chains['vim']             = ['list',  'cmd',   'path',  'keyp']
+let g:mucomplete#chains['sh']              = ['file',  'dict',  'keyp']
+let g:mucomplete#chains['zsh']             = ['file',  'dict',  'keyp']
+let g:mucomplete#chains['javascript']      = ['tags',  'omni',  'list', 'c-n']
+let g:mucomplete#chains['typescriptreact'] = ['tags',  'omni',  'list', 'c-n']
+let g:mucomplete#chains['typescript']      = ['tags',  'omni',  'list', 'c-n']
+let g:mucomplete#chains['php']             = ['tags',  'omni',  'list', 'c-n']
+let g:mucomplete#chains['go']              = ['list',  'omni',  'c-n']
+let g:mucomplete#chains['markdown']        = ['path',  'c-n',   'uspl',  'dict']
+
+let g:UltiSnipsExpandTrigger = "<f5>"        " Do not use <tab> to be compatible with mu-complete
+let g:UltiSnipsJumpForwardTrigger = "<c-b>"  " Do not use <c-j>
 let g:UltiSnipsJumpBackwardTrigger="<c-i>"
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsSnippetDirectories=['~/.vim/UltiSnips/', 'UltiSnips']
 
-"" COLORS
-syntax enable
-set background=dark
-colorscheme solarized
-highlight Normal ctermbg=black
+inoremap <silent> <expr> <plug>MyCR
+   \ mucomplete#ultisnips#expand_snippet("\<cr>")
+imap <cr> <plug>MyCR
 
-"" EDITOR SETTINGS
-set spell spelllang=en_us
-hi clear SpellBad
-hi SpellBad cterm=undercurl
-set number
-set ruler
-set hidden
-set showcmd "show character count
+let g:ulti_expand_or_jump_res = 0
 
-"Undo history between sessions
-if v:version >= 703
-	set undofile
-	set undodir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
-endif
-set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
-" If we backup temporary files often automated editing tools like the crontab
-" editor get confused
-set backupskip=/tmp/*,/private/tmp/*"
-set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
-"column 100
-set colorcolumn=+1
-hi ColorColumn ctermbg=lightgrey guibg=lightgrey
-set cc=100                                        "Make it obvious where 100 characters is
+	fun! TryUltiSnips()
+	  if !pumvisible() " With the pop-up menu open, let Tab move down
+		call UltiSnips#ExpandSnippetOrJump()
+	  endif
+	  return ''
+	endf
 
-"Tabs, Spaces  and Indentation
-set autoindent
-set sts=0 sw=4 ts=4
-set list
-set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·
-set tabstop=4  "four spaces will make up for one tab
-set noexpandtab  "tell vim to keep tabs instead of inserting spaces
-retab            "let vim handle your case
-autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
-autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
+	fun! TryMUcomplete()
+	  return g:ulti_expand_or_jump_res ? "" : "\<plug>(MUcompleteFwd)"
+	endf
 
-set undofile
-
-" allow backspacing over everything in insert mode
-set backspace=indent,eol,start
-
-augroup qf
-    autocmd!
-    autocmd FileType qf set nobuflisted
-augroup END
-
-"Split navigation
-set splitbelow                                "open new horizontal splits below
-set splitright                                "open new vertical splits rigth
-
+	inoremap <plug>(TryUlti) <c-r>=TryUltiSnips()<cr>
+	imap <expr> <silent> <plug>(TryMU) TryMUcomplete()
+"
 "Airline
 set laststatus=2
 let g:airline#extensions#bufferline#enabled = 0
@@ -196,9 +224,6 @@ set incsearch
 "Ack grepping using ag
 cnoreabbrev Ack Ack!
 nnoremap <Leader>g :Ack!<Space>
-if executable('ag')
-	  let g:ackprg = 'ag --vimgrep'
-endif
 "" END SEARCH
 
 
@@ -229,9 +254,6 @@ let g:ale_php_phpcs_standard='WordPress'
 let g:auto_save = 1  " enable AutoSave on Vim startupc
 let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
 let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
-
-"Rust
-let g:rustfmt_autosave = 1
 
 """" FUNCTIONS
 
