@@ -294,9 +294,12 @@ function wplog(){
 }
 
 function wcpay-dev(){
-	#variable
+	#tmux pane ids are auto incremented
+	#variables
 	session="WCPay-Development"
-	firstwindow=1
+	scriptsWindowId=1
+	clientWindowId=2
+	serverWindowId=3
 	npmwindowname="NPM"
 	clientwindowname="Client"
 	serverwindowname="Server"
@@ -304,22 +307,34 @@ function wcpay-dev(){
 	serverpath="~/projects/wcpay/woocommerce-payments-server/"
 	tmux new-session -d -s $session
 
-	#NPM
-	tmux rename-window -t $session:$firstwindow $npmwindowname
-	tmux split-window -h -t $session:$firstwindow
-	##pane 1
-	tmux send-keys -t $session:$firstwindow.1 'cd ~/projects/wcpay/woocommerce-payments && nvm use && npm run dev' C-m
-	#pane 2
-	tmux send-keys -t $session:$firstwindow.2 'cd ~/projects/wcpay/woocommerce-payments-server && nvm use && npm run start' C-m
+	#Backround Scripts
+	tmux rename-window -t $session:$scriptsWindowId $npmwindowname
+	tmux split-window -h -t $session:$scriptsWindowId
+	tmux split-window -v -t $session:$scriptsWindowId.2 #Extra pane for sandbox sync
+	## Backround Scripts pane 1
+	tmux send-keys -t $session:$scriptsWindowId.1 "cd $clientpath && nvm use && npm run dev" C-m
+	## Backround Scripts pane 2
+	tmux send-keys -t $session:$scriptsWindowId.2 "cd $serverpath && nvm use && npm run start" C-m
+	## Backround Scripts pane 2
+	tmux send-keys -t $session:$scriptsWindowId.3 "cd $serverpath" C-m
+	echo "Backgourd scripts done"
 
 	#Client
-	tmux new-window -a -c $clientpath -n $clientwindowname -t $session
+	tmux new-window -a -n $clientwindowname -t $session
+	tmux send-keys -t $session:$clientWindowId "cd $clientpath" C-m
+	echo "Client Setup done"
 
 	#Server
-	tmux new-window -a -c $serverpath -n $serverwindowname -t $session
+	tmux new-window -a -n $serverwindowname -t $session
+	tmux send-keys -t $session:$serverWindowId "cd $serverpath" C-m
+	echo "Server done"
+
+	## Debug
+	# tmux kill-session -t $session
 
 	#Open the sessio
 	tmux attach-session -t $session
+
 }
 
 ###########
