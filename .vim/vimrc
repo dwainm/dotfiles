@@ -1,8 +1,9 @@
 "
 " Leader
 "
-let mapleader=' ' "Set leader as easily accessible for both hands.
-nnoremap <SPACE> <Nop> "No one les should be able to use space.
+let mapleader=' '
+"No one les should be able to use space.
+nnoremap <SPACE> <Nop> 
 
 "
 " Vim-Plug

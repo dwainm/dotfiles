@@ -158,7 +158,7 @@ alias dockerstop='docker stop $(docker ps -a -q)'
 #################################
 alias vi=vim
 function vimrc(){
-	vi ~/.vim/vimrc ~/.vim/vimplugrc.vim
+	vi ~/.vim/vimrc
 }
 
 alias wiki='vim -c "VimwikiIndex"'
@@ -198,7 +198,7 @@ function gcob(){
 }
 
 function gco(){
-    git checkout $1
+	git fetch && git checkout $1
 }
 
 function gpoc(){
