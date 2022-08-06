@@ -3,7 +3,7 @@
 "
 let mapleader=' '
 "No one les should be able to use space.
-nnoremap <SPACE> <Nop> 
+nnoremap <SPACE> <nop>
 
 "
 " Vim-Plug
