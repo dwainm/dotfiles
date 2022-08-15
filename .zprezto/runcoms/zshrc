@@ -122,6 +122,10 @@ function donelastweek(){
 	echo "Last weeks Todo done items coppied to clip board"
 }
 
+function calendarlastweek(){
+	icalBuddy -nrd -nc -ic dwain.maralack@a8c.com eventsFrom:$(date -v-Sun -v-Mon  "+%Y/%m/%d") to:$(date -v-Sun -v-Sat  "+%Y/%m/%d")  | grep • |  grep -v Disengage | grep -v Family | grep -v Initialise | grep -v Lunch | grep -v Busy | tr • - | pbcopy
+}
+
 function donethisweek(){
 	# Use todoist | grep for the this week. Starting from upcomming Sunay walking back to the  previous mon|tues|wed|thu|fri
 todoist cl --raw | grep -E "$(date -v+Sun -v-Mon  "+%y/%m/%d")|$(date -v+Sun -v-Tue  "+%y/%m/%d")|$(date -v+Sun -v-Wed  "+%y/%m/%d")|$(date -v+Sun -v-Thu  "+%y/%m/%d")|$(date -v+Sun -v-Fri  "+%y/%m/%d")|$(date -v+Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 4-100 | sort | sed 's/^/- /'| pbcopy
