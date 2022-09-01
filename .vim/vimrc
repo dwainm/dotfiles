@@ -72,7 +72,7 @@ set cc=100
 set autoindent
 set sts=0 sw=4 ts=4
 set list
-set listchars=tab:→\ ,extends:›,precedes:‹,nbsp:·,trail:·
+set listchars=tab:\ \ ,extends:›,precedes:‹,nbsp:·,trail:·
 set tabstop=4  "four spaces will make up for one tab
 set noexpandtab  "tell vim to keep tabs instead of inserting spaces
 retab            "let vim handle your case
