@@ -116,6 +116,20 @@ function wpurl(){
 	fi
 }
 
+function plannerweeks(){
+	prevmonth='MON'
+	for ((j = 1 ; j < 30 ; j++)); do
+		curmonth=$(date  -v-Sun -v+${j}w -v+Mon  "+%b")
+		mon=$(date  -v-Sun -v+${j}w -v+Mon  "+%d")
+		fri=$(date  -v-Sun -v+${j}w -v+Fri  "+%d")
+		if [[ $curmonth != $prevmonth ]]; then
+			prevmonth=$curmonth;
+			echo $curmonth
+		fi
+		echo "$mon - $fri"
+	done
+}
+
 function donelastweek(){
 	# Use todoist | grep for the this past sunday and then its previous mon|tues|wed|thu|fri
 	todoist cl --raw | grep -E "^\w+\s$(date -v-Sun -v-Mon  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Tue  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Wed  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Thu  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Fri  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 4-100 | sort | sed 's/^/- /' | pbcopy
