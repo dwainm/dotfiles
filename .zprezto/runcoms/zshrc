@@ -334,7 +334,7 @@ function wcpay-dev(){
 	## Backround Scripts pane 2
 	tmux send-keys -t $session:$scriptsWindowId.2 "cd $serverpath && nvm use && npm run start" C-m
 	## Backround Scripts pane 2
-	tmux send-keys -t $session:$scriptsWindowId.3 "cd $serverpath" C-m
+	tmux send-keys -t $session:$scriptsWindowId.3 "cd $serverpath && npm run sync" C-m
 	echo "Backgourd scripts done"
 
 	#Client
