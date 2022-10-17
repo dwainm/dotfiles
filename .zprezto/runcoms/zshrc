@@ -137,7 +137,7 @@ function donelastweek(){
 }
 
 function calendarlastweek(){
-	icalBuddy -nrd -nc -ic dwain.maralack@a8c.com eventsFrom:$(date -v-Sun -v-Mon  "+%Y/%m/%d") to:$(date -v-Sun -v-Sat  "+%Y/%m/%d")  | grep • |  grep -v Disengage | grep -v Family | grep -v Initialise | grep -v Lunch | grep -iv "\d slots" | grep -v Busy | tr • - | pbcopy
+	icalBuddy -nrd -nc -ic dwain.maralack@a8c.com eventsFrom:$(date -v-Sun -v-Mon  "+%Y/%m/%d") to:$(date -v-Sun -v-Sat  "+%Y/%m/%d")  | grep • |  grep -v Disengage | grep -v Family | grep -v Initialise | grep -v Lunch | grep -v Fika | grep -iv "\d slots" | grep -v Busy | tr • - | pbcopy
 }
 
 function donethisweek(){
