@@ -93,16 +93,21 @@ set splitright                                "open new vertical splits rigth
 "
 " Mappings
 "
+
 "Exit insert mode Normal Mode( [t]o [n]ormal )
 imap tn <Esc>
 
-nnoremap <leader>so :so $MYVIMRC<CR>
 "Move up and down logical lines when text is wrapped
 nnoremap j gj
 nnoremap k gk
+
 "Buffer navigation
 nmap [b :bprevious<CR>
 nmap ]b :bnext<CR>
+
+" Yank
+
+nnoremap Y oY
 "Quicker window movement <C-{j|k|l|H}>
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -147,7 +152,9 @@ nnoremap <leader>n :Explore<CR>
 "Clear line
 nnoremap <Leader>dl 0D
 
-"" END MAPPINGS
+"
+" /END MAPPINGS
+"
 
 "
 "Airline
@@ -161,7 +168,10 @@ let g:airline_theme='papercolor'
 let g:airline_detect_spell=0
 let g:airline#extensions#tabline#formatter = 'short_path'
 
-"" SEARCH
+"
+" SEARCH
+"
+
 set hlsearch
 nnoremap <Leader>cs :nohlsearch<cr>
 nnoremap <silent> [q :cprev<cr>
@@ -204,11 +214,11 @@ let g:auto_save = 1  " enable AutoSave on Vim startupc
 let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
 let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
 
-"           "
-" FUNCTIONS "
-"           "
+"
+" FUNCTIONS
+"
 
-"ZSH in VIM
+" ZSH in VIM
 function! Setshell()
    if filereadable("/usr/local/bin/zsh")
        set shell=/usr/local/bin/zsh
