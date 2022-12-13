@@ -19,7 +19,7 @@ Change iCloud settings to use Desktop and Documents folder. So cloud documents a
 
 ### Install brew first
 
-`brew install git` 
+`[brew](brew) install git` 
 `sudo mv /usr/bin/git /usr/bin/git-apple`
 
 Now, reload the terminal for the profile to load the correct git location and confirm by running `which git`.
@@ -28,7 +28,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 `brew install diffmerge`   
 `git config --global merge.tool diffmerge` 
 
-`brew install zsh vim fzf ctags svn nvm`
+`brew install zsh vim fzf ctags svn nvm ripgrep`
 
 # dotfiles
 How to use
