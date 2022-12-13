@@ -179,6 +179,12 @@ function vimrc(){
 	vi ~/.vim/vimrc
 }
 
+alias v=nvim
+function nvrc(){
+	v ~/.config/nvim/init.vim
+}
+
+
 alias wiki='vim -c "VimwikiIndex"'
 alias a8cwiki=' vim ~/Documents/Automattic/index.md'
 
