@@ -24,3 +24,5 @@ node_modules/.*
 /Users/dwain/projects/woo.com/wordpress/wp-content/docker*
 /Users/dwain/projects/woo.com/wordpress/wp-content/Docker*
 
+*
+!.gitignore
