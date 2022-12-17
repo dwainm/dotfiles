@@ -50,10 +50,8 @@ nnoremap("<C-h>","<C-w>h")
 nnoremap("<C-l>","<C-w>l")
 
 --Move selection/current line up or donw [in all modes]
-nnoremap("[e", ":m .-2<CR>")
-nnoremap("]e", ":m .+1<CR>")
-vnoremap ("[e",":m '<-2<CR>gv")
 vnoremap ("]e",":m '>+1<CR>gv")
+vnoremap ("[e",":m '<-2<CR>gv")
 
 --jump to errors
 nnoremap("]r", ":ALENext<CR>k")
