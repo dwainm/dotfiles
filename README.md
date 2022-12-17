@@ -28,7 +28,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 `brew install diffmerge`   
 `git config --global merge.tool diffmerge` 
 
-`brew install zsh vim fzf ctags svn nvm ripgrep`
+`brew install zsh vim fzf ctags svn nvm ripgrep tree-sitter`
 
 # dotfiles
 How to use
