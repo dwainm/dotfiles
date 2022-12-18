@@ -68,6 +68,9 @@ Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
 - Add back alias as we removed it: `alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
 - Make suer we do not overwrite the save zshrc file with all important functions and aliases: `config checkout -- .zprezto/runcoms/zshrc`
 
+### Install Kitty
+brew install --cask kitty
+
 Generate your configuration files (copy/paste this as one command):
 ```
 $ setopt EXTENDED_GLOB
