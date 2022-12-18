@@ -1,37 +1,31 @@
 -- Only required if you have packer configured as `opt`
-vim.cmd [[packadd packer.nvim]]
+vim.cmd.packadd('packer.nvim')
 
 return require('packer').startup(function(use)
-	 use 'wbthomason/packer.nvim'
-	
-	 use 'Chiel92/vim-autoformat'
+	use 'wbthomason/packer.nvim'
 
-	 use 'dkarter/bullets.vim'
+	use 'rose-pine/neovim'
+	use {
+		'nvim-telescope/telescope.nvim', tag = '0.1.0',
+		requires = { {'nvim-lua/plenary.nvim'} }
+	}
 
-	 use 'honza/vim-snippets'
+	use 'junegunn/vim-easy-align'
 
-	 use {
-		 'nvim-telescope/telescope.nvim', tag = '0.1.0',
-		 requires = { {'nvim-lua/plenary.nvim'} }
-	 }
+	use 'tpope/vim-commentary'
 
-	 use 'junegunn/vim-easy-align'
+	use 'tpope/vim-surround'
 
-	 use 'tpope/vim-commentary'
+	use 'ludovicchabant/vim-gutentags'
 
-	 use 'tpope/vim-surround'
+	use 'nvim-treesitter/nvim-treesitter'
 
-	 use 'vim-airline/vim-airline'
+	use 'nvim-lua/plenary.nvim'
 
-	 use 'vim-airline/vim-airline-themes'
+	use 'theprimeagen/harpoon'
 
-	 use 'ludovicchabant/vim-gutentags'
+	use 'mbbill/undotree'
 
-	 use 'neovim/nvim-lspconfig'
+	use 'tpope/vim-fugitive'
 
-	 use {
-		 'glepnir/lspsaga.nvim', branch = 'main',
-	 }
-
-	 use 'nvim-treesitter/nvim-treesitter'
 end)

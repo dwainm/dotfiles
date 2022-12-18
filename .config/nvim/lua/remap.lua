@@ -46,18 +46,15 @@ nnoremap("Y", "0Y")
 --Quicker window movement <C-{j|k|l|H}>
 nnoremap("<C-j>","<C-w>j")
 nnoremap("<C-k>","<C-w>k")
-nnoremap("<C-h>","<C-w>h")
 nnoremap("<C-l>","<C-w>l")
 
+-- Set cursor at the beginning of line when bringing lines up.
+vim.keymap.set("n", "J", "mzJ`z")
 --Move selection/current line up or donw [in all modes]
-vnoremap ("]e",":m '>+1<CR>gv")
-vnoremap ("[e",":m '<-2<CR>gv")
+vim.keymap.set("v", "U", ":m '<-2<CR>gv=gv")
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 
---jump to errors
-nnoremap("]r", ":ALENext<CR>k")
-nnoremap("[r", ":ALEPrevious<CR>")
-map("<leader>at", ":ALEToggle<CR>")
-
+nnoremap("<C-h>","<C-w>h")
 -- Allignemnt
 xmap("ga" , "<Plug>(EasyAlign)")
 nmap("ga","<Plug>(EasyAlign)")
@@ -85,3 +82,21 @@ nnoremap("<leader>n",":Explore<CR>")
 
 --Clear line
 nnoremap("<Leader>dl","0D")
+
+--Keeup page up and page down in the middele of the page
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+
+-- ALlow you to paste without overwriting the register
+vim.keymap.set("x", "<leader>p", "\"_dP")
+
+-- Allow you to yank to the system clipboard
+vim.keymap.set("n", "<leader>y", "\"+y")
+vim.keymap.set("v", "<leader>y", "\"+y")
+vim.keymap.set("x", "<leader>Y", "\"+Y")
+
+-- Just don't use this.
+vim.keymap.set("n", "Q", "<nop>")
+
+-- Relpace the current word.
+vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
