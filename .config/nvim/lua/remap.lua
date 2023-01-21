@@ -90,6 +90,9 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 -- ALlow you to paste without overwriting the register
 vim.keymap.set("x", "<leader>p", "\"_dP")
 
+-- Paste from system clipboard
+vim.keymap.set("x", "<leader>P", "\"+p")
+
 -- Allow you to yank to the system clipboard
 vim.keymap.set("n", "<leader>y", "\"+y")
 vim.keymap.set("v", "<leader>y", "\"+y")
