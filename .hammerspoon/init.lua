@@ -2,10 +2,14 @@ local hyper       = {"cmd","alt","ctrl"}
 local shift_hyper = {"cmd","alt","ctrl","shift"}
 local ctrl_cmd    = {"cmd","ctrl"}
 
+local logger = hs.logger.new("d", "debug")
+
 -- Screens
 macbook_monitor = "Built-in Retina Display"
 main_monitor = "LG UltraFine"
 
+
+-- Logging
 
 -- Configuring layouts
 -- API works in percentages 0.333 = 33.3%
@@ -23,7 +27,7 @@ local position = {
     left66 = {x=0, y=0, w=0.66, h=1},
     left70 = hs.layout.left70,
     right30 = hs.layout.right30,
-    right333 = {x=0.6666, y=0, w=0.333, h=1},
+    right333 = {x=0.666, y=0, w=0.333, h=1},
     right34 = {x=0.66, y=0, w=0.34, h=1},
     right50 = hs.layout.right50,
     right66 = {x=0.34, y=0, w=0.66, h=1},
@@ -60,29 +64,34 @@ local comms_layout = {
 -- A layout for doing 1on1s.
 local one_on_one_layout= {
   -- {"kitty",         nil, macbook_monitor, hs.layout.left50, nil, nil},
-  {"Google Chrome", nil, main_monitor,    position.centerThirdHalfTop,    nil, nil},
+  {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
+  {"Google Chrome", "New Tab", main_monitor,    position.right333,    nil, nil},
   {"Slack",         nil, main_monitor,    position.centerThirdHalfBottom,   nil, nil},
 }
 
 hs.hotkey.bind(hyper, '3', function()
-  hs.application.kill('Google Chrome')
   hs.application.launchOrFocus('kitty')
   hs.application.launchOrFocus('Slack')
-
   hs.application.launchOrFocus('Google Chrome')
   hs.urlevent.openURL("https://meet.google.com/")
-  hs.layout.apply(one_on_one_layout)
-
   newWindow("Google Chrome")
+
+  hs.timer.doAfter(2, applyLayout)
+
   -- Todo
-  -- Move only the new window to the right position and open up google chrome doc
-  -- open up an empty chrome for any browsing on the left
   -- One one for each person ( a popup po ask who this session is for )
   -- jump directly to the persons doc and slack channel
 end)
 
+function applyLayout()
+  hs.layout.apply(one_on_one_layout, TitleComparitor)
+end
 
 function newWindow(appId) 
     local app = hs.application.find(appId)
     app:selectMenuItem({"File", "New Window"})
+end
+
+TitleComparitor = function (a,b)
+    return b==string.match(a, b)
 end
