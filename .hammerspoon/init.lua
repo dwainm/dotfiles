@@ -27,7 +27,8 @@ local position = {
     left66 = {x=0, y=0, w=0.66, h=1},
     left70 = hs.layout.left70,
     right30 = hs.layout.right30,
-    right333 = {x=0.666, y=0, w=0.333, h=1},
+    rightThird = {x=0.666, y=0, w=0.333, h=1},
+    leftThird = {x=0, y=0, w=0.333, h=1},
     right34 = {x=0.66, y=0, w=0.34, h=1},
     right50 = hs.layout.right50,
     right66 = {x=0.34, y=0, w=0.66, h=1},
@@ -45,28 +46,57 @@ local position = {
 
 -- A layout for code related tasks, like PR reviews and code modification
 local coding_layout= {
-  {"Terminal",      nil, macbook_monitor, hs.layout.maximized, nil, nil},
-  {"Google Chrome", nil, main_monitor,    hs.layout.left50,    nil, nil},
-  {"Emacs",         nil, main_monitor,    hs.layout.right50,   nil, nil},
-  {"Station",       nil, second_monitor,  hs.layout.left50,    nil, nil},
-  {"TablePlus",     nil, second_monitor,  hs.layout.right50,   nil, nil},
+  {"Terminal",      nil, macbook_monitor, position.maximized, nil, nil},
+  {"Google Chrome", nil, main_monitor,    position.left50,    nil, nil},
+  {"Emacs",         nil, main_monitor,    position.right50,   nil, nil},
+  {"Station",       nil, second_monitor,  position.left50,    nil, nil},
+  {"TablePlus",     nil, second_monitor,  position.right50,   nil, nil},
 }
 
 -- A layout for communication tasks, which includes reading
 local comms_layout = {
-  {"Terminal",      nil, macbook_monitor, hs.layout.maximized, nil, nil},
-  {"Google Chrome", nil, main_monitor,    hs.layout.left50,    nil, nil},
-  {"Emacs",         nil, main_monitor,    hs.layout.right50,   nil, nil},
-  {"Station",       nil, second_monitor,  hs.layout.left50,    nil, nil},
-  {"TablePlus",     nil, second_monitor,  hs.layout.right50,   nil, nil},
+  {"Terminal",      nil, macbook_monitor, position.maximized, nil, nil},
+  {"Google Chrome", nil, main_monitor,    position.left50,    nil, nil},
+  {"Emacs",         nil, main_monitor,    position.right50,   nil, nil},
+  {"Station",       nil, second_monitor,  position.left50,    nil, nil},
+  {"TablePlus",     nil, second_monitor,  position.right50,   nil, nil},
 }
+
+--
+-- Layout for objective planning
+--
+hs.hotkey.bind(hyper, '1', function()
+
+-- A layout for communication tasks, which includes reading
+local objectiveLayout = {
+    {"Google Chrome", "Calendar", main_monitor, position.leftThird,    nil, nil},
+    {"Google Chrome", "Objectives", main_monitor, position.centerThirdFulllength,    nil, nil},
+    {"Google Chrome", "Outcomes", main_monitor,    position.rightThird,    nil, nil},
+}
+
+  hs.application.launchOrFocus('Google Chrome')
+
+  hs.urlevent.openURL("https://www.notion.so/dd0bd03cac0b4cd2803962996024abe4?v=6221b429a53748ec9886f32644b21186")
+
+  newWindow("Google Chrome")
+  hs.urlevent.openURL("https://www.notion.so/cba3bd56b12a423cbd4de60503679f57?v=1266e77586a94b27b7450e2dfe803ff8")
+
+  newWindow("Google Chrome")
+  hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+
+
+  hs.timer.doAfter(3, function()
+      hs.layout.apply(objectiveLayout, TitleComparitor)
+  end)
+end)
+
 
 -- A layout for doing 1on1s.
 local one_on_one_layout= {
-  -- {"kitty",         nil, macbook_monitor, hs.layout.left50, nil, nil},
-  {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
-  {"Google Chrome", "New Tab", main_monitor,    position.right333,    nil, nil},
-  {"Slack",         nil, main_monitor,    position.centerThirdHalfBottom,   nil, nil},
+    -- {"kitty",         nil, macbook_monitor, hs.layout.left50, nil, nil},
+    {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
+    {"Google Chrome", "New Tab", main_monitor,    position.rightThird,    nil, nil},
+    {"Slack",         nil, main_monitor,    position.centerThirdHalfBottom,   nil, nil},
 }
 
 hs.hotkey.bind(hyper, '3', function()
@@ -93,5 +123,9 @@ function newWindow(appId)
 end
 
 TitleComparitor = function (a,b)
+    logger.i('comparing')
+    logger.i(a)
+    logger.i(b)
+    logger.i(b==string.match(a, b))
     return b==string.match(a, b)
 end
