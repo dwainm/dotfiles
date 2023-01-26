@@ -170,16 +170,19 @@ alias wcpaybash='docker-compose exec --user root wordpress bash'
 alias dc='docker-compose'
 alias dcup='docker compose up -d'
 alias dockerstop='docker stop $(docker ps -a -q)'
+alias hammerspoon="v ~/.hammerspoon/init.lua"
+
 
 #################################
 # Unix Text Handling
 #################################
-alias vi=vim
+alias vim=nvim
+alias vi=nvim
+alias v=nvim
 function vimrc(){
 	vi ~/.vim/vimrc
 }
 
-alias v=nvim
 function nvrc(){
 	v ~/.config/nvim/init.vim
 }

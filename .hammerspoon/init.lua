@@ -1,6 +1,7 @@
 local hyper       = {"cmd","alt","ctrl"}
 local shift_hyper = {"cmd","alt","ctrl","shift"}
 local ctrl_cmd    = {"cmd","ctrl"}
+local alt_cmd    = {"alt","cmd"}
 
 local logger = hs.logger.new("d", "debug")
 
@@ -17,6 +18,10 @@ local position = {
     maximized = hs.layout.maximized,
     -- Centered
     centered              = {x=0.15, y=0.15, w=0.7, h=0.7},
+    centered60Top         = {x=0.15, y=0, w=0.7, h=0.6},
+    centered55Top         = {x=0.15, y=0, w=0.7, h=0.55},
+    centered45Bottom      = {x=0.15, y=0.55, w=0.7, h=0.45},
+    centered40Bottom      = {x=0.15, y=0.6, w=0.7, h=0.4},
     centerThirdHalfTop    = {x=0.333, y=0, w=0.333, h=0.5},
     centerThirdHalfBottom = {x=0.333, y=0.5, w=0.333, h=0.5},
     centerThirdFulllength = {x=0.333, y=0, w=0.333, h=1},
@@ -32,6 +37,7 @@ local position = {
     right34 = {x=0.66, y=0, w=0.34, h=1},
     right50 = hs.layout.right50,
     right66 = {x=0.34, y=0, w=0.66, h=1},
+
     -- Up and down
     upper50 = {x=0, y=0, w=1, h=0.5},
     upper50Left50 = {x=0, y=0, w=0.5, h=0.5},
@@ -43,81 +49,144 @@ local position = {
     lower50Right50 = {x=0.5, y=0.5, w=0.5, h=0.5},
 }
 
+Init = function ()
+    -- Table to itterate over with modieier, key and function to call after it is pressed.
+    local layoutBindings = {
+        {hyper, "1" , planningLayout},
+        {hyper, "2" , SlackP2},
+        {hyper, "3" , OneOnOne},
+        {hyper, "4" , SprintManagement},
+        {hyper, "9" , closingTheday},
+    }
 
--- A layout for code related tasks, like PR reviews and code modification
-local coding_layout= {
-  {"Terminal",      nil, macbook_monitor, position.maximized, nil, nil},
-  {"Google Chrome", nil, main_monitor,    position.left50,    nil, nil},
-  {"Emacs",         nil, main_monitor,    position.right50,   nil, nil},
-  {"Station",       nil, second_monitor,  position.left50,    nil, nil},
-  {"TablePlus",     nil, second_monitor,  position.right50,   nil, nil},
-}
+    for index, layout in pairs(layoutBindings) do
+        logger.i(layout[3])
+        hs.hotkey.bind( layout[1],layout[2],layout[3])
+    end
+end
 
--- A layout for communication tasks, which includes reading
-local comms_layout = {
-  {"Terminal",      nil, macbook_monitor, position.maximized, nil, nil},
-  {"Google Chrome", nil, main_monitor,    position.left50,    nil, nil},
-  {"Emacs",         nil, main_monitor,    position.right50,   nil, nil},
-  {"Station",       nil, second_monitor,  position.left50,    nil, nil},
-  {"TablePlus",     nil, second_monitor,  position.right50,   nil, nil},
-}
+SprintManagement = function ()
+
+    local layout = {
+        {"Slack", nil, main_monitor,    position.centered60Top,    nil, nil},
+        {"Google Chrome", "Sprints", macbook_monitor, position.right50,    nil, nil},
+        {"Google Chrome", "#sprint", main_monitor, position.right50,    nil, nil},
+        {"Google Chrome", "Sigma Planner", main_monitor, position.left50,    nil, nil},
+    }
+
+    hs.application.launchOrFocus('Slack')
+    hs.application.launchOrFocus('Google Chrome')
+
+    hs.urlevent.openURL("https://docs.google.com/spreadsheets/d/1_ruX4wG0p30tzXKZcRmQ4g32SYeNMUz3hfKEg2g9M-4/edit#gid=0")
+    hs.urlevent.openURL("https://app.zenhub.com/workspaces/sigma-team-605211b24a30720013d5f43f/reports/burndown")
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://howdysigma.wordpress.com/tag/sprint/")
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://howdysigma.wordpress.com/sprints/#weekly-responsibilities")
+
+    hs.timer.doAfter(2, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
+end
+
+SlackP2 = function()
+    local layout = {
+        {"Slack", nil, main_monitor,    position.centered60Top,    nil, nil},
+        {"Google Chrome", "Reader", main_monitor,    position.centered40Bottom,    nil, nil},
+    }
+
+    hs.application.launchOrFocus('Slack')
+    hs.application.launchOrFocus('Google Chrome')
+
+    -- Open the reader
+    hs.urlevent.openURL("https://wordpress.com/read/a8c")
+
+    hs.timer.doAfter(1, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
+end
+--
+-- Layout for checking out and closing the day.
+--
+function closingTheday()
+    local layout = {
+        {"Google Chrome", "Calendar", main_monitor, position.left50,    nil, nil},
+        {"Google Chrome", "Outcomes", main_monitor,    position.right50,    nil, nil},
+        {"Slack", nil, macbook_monitor,    position.right50,    nil, nil},
+    }
+
+    hs.application.launchOrFocus('Slack')
+    hs.application.launchOrFocus('Google Chrome')
+
+    -- Ouctomes Journal Notion
+    hs.urlevent.openURL("https://www.notion.so/dd0bd03cac0b4cd2803962996024abe4?v=6221b429a53748ec9886f32644b21186")
+
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+
+
+    hs.timer.doAfter(2, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
+end
+
 
 --
 -- Layout for objective planning
 --
-hs.hotkey.bind(hyper, '1', function()
+function planningLayout()
+    local layout = {
+        {"Google Chrome", "Calendar", main_monitor, position.leftThird,    nil, nil},
+        {"Google Chrome", "Objectives", main_monitor, position.centerThirdFulllength,    nil, nil},
+        {"Google Chrome", "Outcomes", main_monitor,    position.rightThird,    nil, nil},
+        {"Todoist", nil, macbook_monitor,    position.right50,    nil, nil},
+    }
 
--- A layout for communication tasks, which includes reading
-local objectiveLayout = {
-    {"Google Chrome", "Calendar", main_monitor, position.leftThird,    nil, nil},
-    {"Google Chrome", "Objectives", main_monitor, position.centerThirdFulllength,    nil, nil},
-    {"Google Chrome", "Outcomes", main_monitor,    position.rightThird,    nil, nil},
-}
+    hs.application.launchOrFocus('Google Chrome')
+    hs.application.launchOrFocus('Todoist')
 
-  hs.application.launchOrFocus('Google Chrome')
+    -- Ouctomes Journal Notion
+    hs.urlevent.openURL("https://www.notion.so/dd0bd03cac0b4cd2803962996024abe4?v=6221b429a53748ec9886f32644b21186")
 
-  hs.urlevent.openURL("https://www.notion.so/dd0bd03cac0b4cd2803962996024abe4?v=6221b429a53748ec9886f32644b21186")
+    NewWindow("Google Chrome")
+    -- Objectives Notion
+    hs.urlevent.openURL("https://www.notion.so/cba3bd56b12a423cbd4de60503679f57?v=1266e77586a94b27b7450e2dfe803ff8")
 
-  newWindow("Google Chrome")
-  hs.urlevent.openURL("https://www.notion.so/cba3bd56b12a423cbd4de60503679f57?v=1266e77586a94b27b7450e2dfe803ff8")
-
-  newWindow("Google Chrome")
-  hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
 
 
-  hs.timer.doAfter(3, function()
-      hs.layout.apply(objectiveLayout, TitleComparitor)
-  end)
-end)
+    hs.timer.doAfter(2, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
+end
 
 
 -- A layout for doing 1on1s.
-local one_on_one_layout= {
-    -- {"kitty",         nil, macbook_monitor, hs.layout.left50, nil, nil},
-    {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
-    {"Google Chrome", "New Tab", main_monitor,    position.rightThird,    nil, nil},
-    {"Slack",         nil, main_monitor,    position.centerThirdHalfBottom,   nil, nil},
-}
+function OneOnOne()
+    local layout= {
+        -- {"kitty",         nil, macbook_monitor, hs.layout.left50, nil, nil},
+        {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
+        {"Google Chrome", "New Tab", main_monitor,    position.rightThird,    nil, nil},
+        {"Slack",         nil, main_monitor,    position.centerThirdHalfBottom,   nil, nil},
+    }
 
-hs.hotkey.bind(hyper, '3', function()
   hs.application.launchOrFocus('kitty')
   hs.application.launchOrFocus('Slack')
   hs.application.launchOrFocus('Google Chrome')
   hs.urlevent.openURL("https://meet.google.com/")
-  newWindow("Google Chrome")
+  NewWindow("Google Chrome")
 
-  hs.timer.doAfter(2, applyLayout)
+  hs.timer.doAfter(2, function()
+      hs.layout.apply(layout, TitleComparitor)
+  end)
 
   -- Todo
   -- One one for each person ( a popup po ask who this session is for )
   -- jump directly to the persons doc and slack channel
-end)
-
-function applyLayout()
-  hs.layout.apply(one_on_one_layout, TitleComparitor)
 end
 
-function newWindow(appId) 
+NewWindow = function (appId)
     local app = hs.application.find(appId)
     app:selectMenuItem({"File", "New Window"})
 end
@@ -129,3 +198,20 @@ TitleComparitor = function (a,b)
     logger.i(b==string.match(a, b))
     return b==string.match(a, b)
 end
+
+function reloadConfig(files)
+    doReload = false
+    for _,file in pairs(files) do
+        if file:sub(-4) == ".lua" then
+            doReload = true
+        end
+    end
+    if doReload then
+        hs.reload()
+    end
+end
+myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
+
+Init()
+hs.alert.show("Config loaded")
+

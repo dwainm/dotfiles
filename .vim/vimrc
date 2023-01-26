@@ -98,7 +98,7 @@ imap tn <Esc>
 
 nnoremap <leader>so :so $MYVIMRC<CR>
 "Move up and down logical lines when text is wrapped
-nnoremap j gj 
+nnoremap j gj
 nnoremap k gk
 "Buffer navigation
 nmap [b :bprevious<CR>
