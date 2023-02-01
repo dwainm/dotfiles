@@ -273,12 +273,8 @@ CloseAllWindows = function ()
     for index in pairs(allWindows) do
         local window = allWindows[index]
 
-        logger.i( window:application():name())
-        logger.i( window:application():name()~="kitty")
         --don't close kitty
         if window:application():name()~="kitty" then
-            logger.i('not kitty')
-            logger.i(window:application():name())
             message = message .. " " .. window:application():name() .. "\n"
             window:close()
         end
