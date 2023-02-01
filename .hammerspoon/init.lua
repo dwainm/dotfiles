@@ -5,6 +5,20 @@ local alt_cmd    = {"alt","cmd"}
 
 local logger = hs.logger.new("d", "debug")
 
+function reloadConfig(files)
+    doReload = false
+    for _,file in pairs(files) do
+        if file:sub(-4) == ".lua" then
+            doReload = true
+        end
+    end
+    if doReload then
+        hs.reload()
+    end
+end
+myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
+
+
 -- Screens
 macbook_monitor = "Built-in Retina Display"
 main_monitor = "LG UltraFine"
@@ -52,20 +66,24 @@ local position = {
 Init = function ()
     -- Table to itterate over with modieier, key and function to call after it is pressed.
     local layoutBindings = {
-        {hyper, "1" , planningLayout},
-        {hyper, "2" , SlackP2},
-        {hyper, "3" , OneOnOne},
-        {hyper, "4" , SprintManagement},
-        {hyper, "9" , closingTheday},
+        {"0" , CalendarSlack, "Initialize"},
+        {"1" , planningLayout, "Planning"},
+        {"2" , SlackP2, "Slack p2"},
+        {"3" , OneOnOne, "1on1"},
+        {"4" , SprintManagement, "Sprint Management"},
+        {"8" , CommsLayout, "Commms"},
+        {"9" , closingTheday, "Closing The day"},
     }
 
     for index, layout in pairs(layoutBindings) do
-        logger.i(layout[3])
-        hs.hotkey.bind( layout[1],layout[2],layout[3])
+        hs.hotkey.bind( hyper,layout[1],layout[2])
     end
+    return layoutBindings
 end
 
 SprintManagement = function ()
+
+    CloseAllWindows()
 
     local layout = {
         {"Slack", nil, main_monitor,    position.centered60Top,    nil, nil},
@@ -84,12 +102,65 @@ SprintManagement = function ()
     NewWindow("Google Chrome")
     hs.urlevent.openURL("https://howdysigma.wordpress.com/sprints/#weekly-responsibilities")
 
-    hs.timer.doAfter(2, function()
+    hs.timer.doAfter(3, function()
         hs.layout.apply(layout, TitleComparitor)
     end)
 end
 
+CalendarSlack = function ()
+    CloseAllWindows()
+
+    local layout = {
+        {"Slack", nil, main_monitor,    position.right50,    nil, nil},
+        {"Google Chrome", "Calendar", main_monitor, position.left50,    nil, nil},
+    }
+
+    hs.application.launchOrFocus('Slack')
+    hs.application.launchOrFocus('Google Chrome')
+
+    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+
+    hs.timer.doAfter(3, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
+end
+
+CommsLayout = function()
+    CloseAllWindows()
+
+    local layout = {
+        {"Slack", nil, main_monitor,    position.leftThird,    nil, nil},
+        {"Slack", nil, main_monitor,    position.leftThird,    nil, nil},
+        {"Google Chrome", "Reader", main_monitor,    position.rightThird,    nil, nil},
+        {"Google Chrome", "Search", main_monitor,    position.centerThirdFulllength,    nil, nil},
+        {"Google Chrome", "Calendar", macbook_monitor,    position.left50,    nil, nil},
+        {"Todoist", nil, macbook_monitor,    position.right50,    nil, nil},
+    }
+
+    hs.application.launchOrFocus('Slack')
+    hs.application.launchOrFocus('Google Chrome')
+    hs.application.launchOrFocus('Todoist')
+
+    -- Open the reader
+    hs.urlevent.openURL("https://wordpress.com/read/a8c")
+
+
+    -- Open mentions gmail search
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://mail.google.com/mail/u/0/#search/is%3Ainbox+AND++(+%22You+were+mentioned%22+OR+(+from%3A(donotreply%40wordpress.com)+subject%3A(mentioned+you)+)+OR+OR+cc%3Amention%40noreply.github.com+)")
+
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+
+    hs.timer.doAfter(3, function()
+        hs.layout.apply(layout, TitleComparitor)
+        hs.alert("Slack p2 layout applied")
+    end)
+end
+
 SlackP2 = function()
+    CloseAllWindows()
+
     local layout = {
         {"Slack", nil, main_monitor,    position.centered60Top,    nil, nil},
         {"Google Chrome", "Reader", main_monitor,    position.centered40Bottom,    nil, nil},
@@ -101,14 +172,17 @@ SlackP2 = function()
     -- Open the reader
     hs.urlevent.openURL("https://wordpress.com/read/a8c")
 
-    hs.timer.doAfter(1, function()
+    hs.timer.doAfter(3, function()
         hs.layout.apply(layout, TitleComparitor)
+        hs.alert("Slack p2 layout applied")
     end)
 end
 --
 -- Layout for checking out and closing the day.
 --
 function closingTheday()
+    CloseAllWindows()
+
     local layout = {
         {"Google Chrome", "Calendar", main_monitor, position.left50,    nil, nil},
         {"Google Chrome", "Outcomes", main_monitor,    position.right50,    nil, nil},
@@ -125,7 +199,7 @@ function closingTheday()
     hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
 
 
-    hs.timer.doAfter(2, function()
+    hs.timer.doAfter(3, function()
         hs.layout.apply(layout, TitleComparitor)
     end)
 end
@@ -135,6 +209,8 @@ end
 -- Layout for objective planning
 --
 function planningLayout()
+    CloseAllWindows()
+
     local layout = {
         {"Google Chrome", "Calendar", main_monitor, position.leftThird,    nil, nil},
         {"Google Chrome", "Objectives", main_monitor, position.centerThirdFulllength,    nil, nil},
@@ -156,7 +232,7 @@ function planningLayout()
     hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
 
 
-    hs.timer.doAfter(2, function()
+    hs.timer.doAfter(3, function()
         hs.layout.apply(layout, TitleComparitor)
     end)
 end
@@ -164,6 +240,8 @@ end
 
 -- A layout for doing 1on1s.
 function OneOnOne()
+    CloseAllWindows()
+
     local layout= {
         -- {"kitty",         nil, macbook_monitor, hs.layout.left50, nil, nil},
         {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
@@ -177,7 +255,10 @@ function OneOnOne()
   hs.urlevent.openURL("https://meet.google.com/")
   NewWindow("Google Chrome")
 
-  hs.timer.doAfter(2, function()
+  local slack = hs.application.find('slack')
+  slack:selectMenuItem({"View", "Hide Sidebar"})
+
+  hs.timer.doAfter(3, function()
       hs.layout.apply(layout, TitleComparitor)
   end)
 
@@ -186,32 +267,51 @@ function OneOnOne()
   -- jump directly to the persons doc and slack channel
 end
 
+CloseAllWindows = function ()
+    local allWindows = hs.window:allWindows()
+    local message = "Closed: \n"
+    for index in pairs(allWindows) do
+        local window = allWindows[index]
+
+        logger.i( window:application():name())
+        logger.i( window:application():name()~="kitty")
+        --don't close kitty
+        if window:application():name()~="kitty" then
+            logger.i('not kitty')
+            logger.i(window:application():name())
+            message = message .. " " .. window:application():name() .. "\n"
+            window:close()
+        end
+    end
+    hs.alert(message, 3)
+end
+
 NewWindow = function (appId)
     local app = hs.application.find(appId)
     app:selectMenuItem({"File", "New Window"})
 end
 
 TitleComparitor = function (a,b)
-    logger.i('comparing')
-    logger.i(a)
-    logger.i(b)
-    logger.i(b==string.match(a, b))
     return b==string.match(a, b)
 end
 
-function reloadConfig(files)
-    doReload = false
-    for _,file in pairs(files) do
-        if file:sub(-4) == ".lua" then
-            doReload = true
-        end
-    end
-    if doReload then
-        hs.reload()
-    end
-end
-myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
+LayoutBindings = Init()
 
-Init()
+local calendar = hs.application.find('calendar')
+local refreshCalendar = function()
+    hs.eventtap.keyStroke({"cmd"}, "R", 200, calendar)
+    hs.alert('Calendar Refreshed', 2)
+end
+hs.hotkey.bind( hyper,"c",refreshCalendar)
+
+hs.hotkey.bind( hyper,"l",function ()
+    local message = "Layout bindings: \n"
+    for index, layout in pairs(LayoutBindings) do
+        hs.hotkey.bind( hyper,layout[1],layout[2])
+        message = message .. layout[1]..". "..layout[3] .. "\n"
+    end
+    hs.alert(message, 3)
+end)
+
 hs.alert.show("Config loaded")
 
