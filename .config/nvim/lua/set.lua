@@ -10,6 +10,10 @@ vim.opt.expandtab = true
 
 vim.opt.smartindent = true
 
+-- Ignore case until I specify capital letters
+vim.opt.smartcase = true
+vim.opt.ignorecase = true
+
 vim.opt.wrap = false
 
 vim.opt.swapfile = false
