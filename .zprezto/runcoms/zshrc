@@ -116,6 +116,25 @@ function wpurl(){
 	fi
 }
 
+function plannerweekslonglist(){
+    months=''
+    dayranges=''
+    startweek=20
+    endweek=52
+	for ((j = startweek;  j < endweek ; j++)); do
+        # Get the current weeks start and end date.
+		mon=$(date  -v-Sun -v+${j}w -v+Mon  "+%d")
+		fri=$(date  -v-Sun -v+${j}w -v+Fri  "+%d")
+		dayranges+="$mon - $fri\t"
+        # Get the current month and append it.
+		curmonth=$(date  -v-Sun -v+${j}w -v+Mon  "+%b")
+        months+="$curmonth\t";
+	done
+
+    echo -e $months
+    echo -e $dayranges
+}
+
 function plannerweeks(){
 	prevmonth='MON'
 	for ((j = 1 ; j < 52 ; j++)); do
