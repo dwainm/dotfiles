@@ -50,6 +50,7 @@ nnoremap("<C-l>","<C-w>l")
 
 -- Set cursor at the beginning of line when bringing lines up.
 vim.keymap.set("n", "J", "mzJ`z")
+
 --Move selection/current line up or donw [in all modes]
 vim.keymap.set("v", "U", ":m '<-2<CR>gv=gv")
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")

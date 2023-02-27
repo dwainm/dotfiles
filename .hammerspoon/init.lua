@@ -20,8 +20,11 @@ myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConf
 
 
 -- Screens
-macbook_monitor = "Built-in Retina Display"
-main_monitor = "LG UltraFine"
+secondary_monitor = "Built-in Retina Display"
+main_monitor = hs.screen.primaryScreen()
+if "secondary_monitor" == main_monitor:name() then
+    secondary_monitor = nil
+end
 
 
 -- Logging
@@ -87,7 +90,7 @@ SprintManagement = function ()
 
     local layout = {
         {"Slack", nil, main_monitor,    position.centered60Top,    nil, nil},
-        {"Google Chrome", "Sprints", macbook_monitor, position.right50,    nil, nil},
+        {"Google Chrome", "Sprints", secondary_monitor, position.right50,    nil, nil},
         {"Google Chrome", "#sprint", main_monitor, position.right50,    nil, nil},
         {"Google Chrome", "Sigma Planner", main_monitor, position.left50,    nil, nil},
     }
@@ -120,6 +123,11 @@ CalendarSlack = function ()
 
     hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
 
+    -- todo sent slack commands to jump to channel
+    -- slack = hs.application.find('slack')
+    -- hs.eventtap.keyStroke({"cmd"}, "R", 200, slack)
+    -- hs.eventtap.keyStroke({"cmd"}, "R", 200, slack)
+
     hs.timer.doAfter(3, function()
         hs.layout.apply(layout, TitleComparitor)
     end)
@@ -133,8 +141,8 @@ CommsLayout = function()
         {"Slack", nil, main_monitor,    position.leftThird,    nil, nil},
         {"Google Chrome", "Reader", main_monitor,    position.rightThird,    nil, nil},
         {"Google Chrome", "Search", main_monitor,    position.centerThirdFulllength,    nil, nil},
-        {"Google Chrome", "Calendar", macbook_monitor,    position.left50,    nil, nil},
-        {"Todoist", nil, macbook_monitor,    position.right50,    nil, nil},
+        {"Google Chrome", "Calendar", secondary_monitor,    position.left50,    nil, nil},
+        {"Todoist", nil, secondary_monitor,    position.right50,    nil, nil},
     }
 
     hs.application.launchOrFocus('Slack')
@@ -186,7 +194,7 @@ function closingTheday()
     local layout = {
         {"Google Chrome", "Calendar", main_monitor, position.left50,    nil, nil},
         {"Google Chrome", "Outcomes", main_monitor,    position.right50,    nil, nil},
-        {"Slack", nil, macbook_monitor,    position.right50,    nil, nil},
+        {"Slack", nil, secondary_monitor,    position.right50,    nil, nil},
     }
 
     hs.application.launchOrFocus('Slack')
@@ -215,7 +223,7 @@ function planningLayout()
         {"Google Chrome", "Calendar", main_monitor, position.leftThird,    nil, nil},
         {"Google Chrome", "Objectives", main_monitor, position.centerThirdFulllength,    nil, nil},
         {"Google Chrome", "Outcomes", main_monitor,    position.rightThird,    nil, nil},
-        {"Todoist", nil, macbook_monitor,    position.right50,    nil, nil},
+        {"Todoist", nil, secondary_monitor,    position.right50,    nil, nil},
     }
 
     hs.application.launchOrFocus('Google Chrome')
@@ -243,7 +251,7 @@ function OneOnOne()
     CloseAllWindows()
 
     local layout= {
-        -- {"kitty",         nil, macbook_monitor, hs.layout.left50, nil, nil},
+        -- {"kitty",         nil, secondary_monitor, hs.layout.left50, nil, nil},
         {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
         {"Google Chrome", "New Tab", main_monitor,    position.rightThird,    nil, nil},
         {"Slack",         nil, main_monitor,    position.centerThirdHalfBottom,   nil, nil},
@@ -273,6 +281,9 @@ CloseAllWindows = function ()
     for index in pairs(allWindows) do
         local window = allWindows[index]
 
+        -- todo accept a list of layouts
+        -- check to see if the layouts to ignore are in the list of allWindows
+        -- and avoid closing them, this saves time.
         --don't close kitty
         if window:application():name()~="kitty" then
             message = message .. " " .. window:application():name() .. "\n"
@@ -300,6 +311,16 @@ local refreshCalendar = function()
 end
 hs.hotkey.bind( hyper,"c",refreshCalendar)
 
+-- Show layouts
+-- local ctrlCmdOpt = { 'ctrl', 'cmd', 'alt' }
+-- hs.hotkey.bind(ctrlCmdOpt, "t", function()
+--   local lastApplication = hs.application.frontmostApplication()
+--   hs.application.get("Hammerspoon"):activate()
+--   hs.dialog.textPrompt("Test prompt", "Enter something", "", "OK", "Cancel")
+--   if lastApplication then
+--     lastApplication:activate()
+--   end
+-- end)
 hs.hotkey.bind( hyper,"l",function ()
     local message = "Layout bindings: \n"
     for index, layout in pairs(LayoutBindings) do

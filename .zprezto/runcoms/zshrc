@@ -118,13 +118,15 @@ function wpurl(){
 
 function plannerweeks(){
 	prevmonth='MON'
-	for ((j = 1 ; j < 30 ; j++)); do
+	for ((j = 1 ; j < 52 ; j++)); do
 		curmonth=$(date  -v-Sun -v+${j}w -v+Mon  "+%b")
 		mon=$(date  -v-Sun -v+${j}w -v+Mon  "+%d")
 		fri=$(date  -v-Sun -v+${j}w -v+Fri  "+%d")
 		if [[ $curmonth != $prevmonth ]]; then
 			prevmonth=$curmonth;
+			echo ''
 			echo $curmonth
+			echo ''
 		fi
 		echo "$mon - $fri"
 	done
