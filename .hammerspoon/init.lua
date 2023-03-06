@@ -281,11 +281,12 @@ CloseAllWindows = function ()
     for index in pairs(allWindows) do
         local window = allWindows[index]
 
-        -- todo accept a list of layouts
         -- check to see if the layouts to ignore are in the list of allWindows
         -- and avoid closing them, this saves time.
         --don't close kitty
-        if window:application():name()~="kitty" then
+        if window:application():name()=="kitty" or window:application():name()=="Google Chrome" then
+			-- Do nothing
+		else
             message = message .. " " .. window:application():name() .. "\n"
             window:close()
         end
