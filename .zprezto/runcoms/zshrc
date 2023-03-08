@@ -205,8 +205,9 @@ function vimrc(){
 }
 
 function nvrc(){
-	v ~/.config/nvim/init.vim
+	v ~/.config/nvim/init.lua ~/.config/nvim/lua/*.lua ~/.config/nvim/after/plugin/*.lua
 }
+alias nvimrc=nvrc
 
 
 alias wiki='vim -c "VimwikiIndex"'
