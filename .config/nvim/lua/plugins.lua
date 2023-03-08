@@ -28,4 +28,22 @@ return require('packer').startup(function(use)
 
 	use 'tpope/vim-fugitive'
 
+	use {
+		'VonHeikemen/lsp-zero.nvim',
+		branch = 'v1.x',
+		requires = {
+			-- LSP Support
+			{'neovim/nvim-lspconfig'},             -- Required
+
+			-- Autocompletion
+			{'hrsh7th/nvim-cmp'},         -- Required
+			{'hrsh7th/cmp-nvim-lsp'},     -- Required
+
+			-- Snippets
+			{
+				'L3MON4D3/LuaSnip',             -- Required
+				run = "make install_jsregexp"
+			}
+		}
+	}
 end)
