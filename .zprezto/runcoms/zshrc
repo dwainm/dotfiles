@@ -343,6 +343,7 @@ function wplog(){
 }
 
 function wcpay-dev(){
+	open /Applications/Docker.app
 	#tmux pane ids are auto incremented
 	#variables
 	session="WCPay-Development"
