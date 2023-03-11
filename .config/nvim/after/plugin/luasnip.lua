@@ -5,7 +5,6 @@ ls = require("luasnip")
 -- load snippets from config path
 -- press <Tab> to expand or jump in a snippet. These can also be mapped separately
 vim.keymap.set({ "i", "s" }, "<c-k>", function()
-	print('hi tab')
 	if ls.expand_or_jumpable() then
 		ls.expand_or_jump()
 	end

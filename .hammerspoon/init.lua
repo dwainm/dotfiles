@@ -18,6 +18,9 @@ function reloadConfig(files)
 end
 myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 
+-- TODOs
+-- 1. Open a new tab in chrome function that takes a url to open.
+-- 2. A has tab function that scans chrome for a tab. 
 
 -- Screens
 secondary_monitor = "Built-in Retina Display"
@@ -98,8 +101,14 @@ SprintManagement = function ()
     hs.application.launchOrFocus('Slack')
     hs.application.launchOrFocus('Google Chrome')
 
+	-- Team Planner:
     hs.urlevent.openURL("https://docs.google.com/spreadsheets/d/1_ruX4wG0p30tzXKZcRmQ4g32SYeNMUz3hfKEg2g9M-4/edit#gid=0")
-    hs.urlevent.openURL("https://app.zenhub.com/workspaces/sigma-team-605211b24a30720013d5f43f/reports/burndown")
+	-- Sprint Board:
+    hs.urlevent.openURL("https://github.com/orgs/Automattic/projects/553/views/2")
+	-- Sprint report:
+    hs.urlevent.openURL("https://github.com/orgs/Automattic/projects/553/insights/3")
+	-- Open the sprint weekly report generator as well:
+    hs.urlevent.openURL("https://docs.google.com/spreadsheets/d/1_ruX4wG0p30tzXKZcRmQ4g32SYeNMUz3hfKEg2g9M-4/edit#gid=545550972")
     NewWindow("Google Chrome")
     hs.urlevent.openURL("https://howdysigma.wordpress.com/tag/sprint/")
     NewWindow("Google Chrome")
