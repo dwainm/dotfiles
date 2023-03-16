@@ -235,7 +235,8 @@ function CodeWrangling()
         {"kitty", "~", main_monitor, position.offCenterLeftThirdFullLength,    nil, nil},
         {"kitty", "hammerspoon", main_monitor, position.offCenterLeftThirdFullLength,    nil, nil},
         {"Google Chrome", "Google", main_monitor, position.right52,    nil, nil},
-        {"Google Chrome", "Issues", secondary_monitor, position.fullScreen,    nil, nil},
+        {"Google Chrome", "Issues", secondary_monitor, position.right50,    nil, nil},
+        {"Slack", nil, secondary_monitor, position.left50,    nil, nil},
     }
 
     hs.application.launchOrFocus('Google Chrome')
@@ -345,6 +346,7 @@ end
 chromeCloseOtherTabs = function (appId)
     local app = hs.application.find(appId)
     app:selectMenuItem({"Tab", "Close Other Tabs"})
+    app:selectMenuItem({"File", "Close Window"})
 end
 
 TitleComparitor = function (a,b)
