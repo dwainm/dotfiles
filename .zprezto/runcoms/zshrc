@@ -372,11 +372,17 @@ function wcpay-dev(){
 	#Client
 	tmux new-window -a -n $clientwindowname -t $session
 	tmux send-keys -t $session:$clientWindowId "cd $clientpath" C-m
+	tmux split-window -v -t $session:$clientwindowname 
+	tmux resize-pane -D 50 
+	tmux send-keys -t $session:$serverwindowname "cd $clientpath" C-m
 	echo "Client Setup done"
 
 	#Server
 	tmux new-window -a -n $serverwindowname -t $session
 	tmux send-keys -t $session:$serverWindowId "cd $serverpath" C-m
+	tmux split-window -v -t $session:$serverwindowname
+	tmux resize-pane -D 50
+	tmux send-keys -t $session:$serverwindowname "cd $serverpath && less +F logstash.log" C-m
 	echo "Server done"
 
 	## Debug

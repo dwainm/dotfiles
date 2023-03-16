@@ -355,9 +355,8 @@ end
 
 LayoutBindings = Init()
 
-local calendar = hs.application.find('calendar')
 local refreshCalendar = function()
-    hs.eventtap.keyStroke({"cmd"}, "R", 200, calendar)
+    hs.eventtap.keyStroke({"cmd"}, "R", 200, hs.application.find('calendar'))
     hs.alert('Calendar Refreshed', 2)
 end
 hs.hotkey.bind( hyper,"c",refreshCalendar)
