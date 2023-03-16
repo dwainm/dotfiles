@@ -37,14 +37,17 @@ end
 local position = {
     maximized = hs.layout.maximized,
     -- Centered
-    centered              = {x=0.15, y=0.15, w=0.7, h=0.7},
-    centered60Top         = {x=0.15, y=0, w=0.7, h=0.6},
-    centered55Top         = {x=0.15, y=0, w=0.7, h=0.55},
-    centered45Bottom      = {x=0.15, y=0.55, w=0.7, h=0.45},
-    centered40Bottom      = {x=0.15, y=0.6, w=0.7, h=0.4},
-    centerThirdHalfTop    = {x=0.333, y=0, w=0.333, h=0.5},
-    centerThirdHalfBottom = {x=0.333, y=0.5, w=0.333, h=0.5},
-    centerThirdFulllength = {x=0.333, y=0, w=0.333, h=1},
+    centered                 = {x=0.15, y=0.15, w=0.7, h=0.7},
+    centered60Top            = {x=0.15, y=0, w=0.7, h=0.6},
+    centered55Top            = {x=0.15, y=0, w=0.7, h=0.55},
+    centered45Bottom         = {x=0.15, y=0.55, w=0.7, h=0.45},
+    centered40Bottom         = {x=0.15, y=0.6, w=0.7, h=0.4},
+    centerThirdHalfTop       = {x=0.333, y=0, w=0.333, h=0.5},
+    centerThirdHalfBottom    = {x=0.333, y=0.5, w=0.333, h=0.5},
+    centerThirdFulllength    = {x=0.333, y=0, w=0.333, h=1},
+    offCenterLeftThirdFullLength = {x=0.15, y=0, w=0.333, h=1},
+    right52 = {x=0.48, y=0, w=0.52, h=1},
+    fullScreen = {x=0, y=0, w=1, h=1},
 
     -- Left and Right
     left34 = {x=0, y=0, w=0.34, h=1},
@@ -77,6 +80,7 @@ Init = function ()
         {"2" , SlackP2, "Slack p2"},
         {"3" , OneOnOne, "1on1"},
         {"4" , SprintManagement, "Sprint Management"},
+        {"7" , CodeWrangling, "Code Wrangling"},
         {"8" , CommsLayout, "Commms"},
         {"9" , closingTheday, "Closing The day"},
     }
@@ -221,6 +225,36 @@ function closingTheday()
     end)
 end
 
+--
+-- Layout for objective planning
+--
+function CodeWrangling()
+    -- CloseAllWindows()
+
+    local layout = {
+        {"kitty", "~", main_monitor, position.offCenterLeftThirdFullLength,    nil, nil},
+        {"kitty", "hammerspoon", main_monitor, position.offCenterLeftThirdFullLength,    nil, nil},
+        {"Google Chrome", "Google", main_monitor, position.right52,    nil, nil},
+        {"Google Chrome", "Issues", secondary_monitor, position.fullScreen,    nil, nil},
+    }
+
+    hs.application.launchOrFocus('Google Chrome')
+
+	chromeCloseOtherTabs("Google Chrome")
+
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://www.google.com")
+
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://github.com/issues/assigned")
+
+    hs.application.launchOrFocus('kitty')
+
+    hs.timer.doAfter(3, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
+end
+
 
 --
 -- Layout for objective planning
@@ -284,7 +318,7 @@ function OneOnOne()
   -- jump directly to the persons doc and slack channel
 end
 
-CloseAllWindows = function ()
+CloseAllWindows = function (forceAll)
     local allWindows = hs.window:allWindows()
     local message = "Closed: \n"
     for index in pairs(allWindows) do
@@ -293,7 +327,7 @@ CloseAllWindows = function ()
         -- check to see if the layouts to ignore are in the list of allWindows
         -- and avoid closing them, this saves time.
         --don't close kitty
-        if window:application():name()=="kitty" or window:application():name()=="Google Chrome" then
+        if not forceAll and (window:application():name()=="kitty" or window:application():name()=="Google Chrome") then
 			-- Do nothing
 		else
             message = message .. " " .. window:application():name() .. "\n"
@@ -306,6 +340,11 @@ end
 NewWindow = function (appId)
     local app = hs.application.find(appId)
     app:selectMenuItem({"File", "New Window"})
+end
+
+chromeCloseOtherTabs = function (appId)
+    local app = hs.application.find(appId)
+    app:selectMenuItem({"Tab", "Close Other Tabs"})
 end
 
 TitleComparitor = function (a,b)
