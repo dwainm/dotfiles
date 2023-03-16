@@ -25,6 +25,7 @@ lsp.on_attach(function(client, bufnr)
 		return
 	end
 
+	vim.keymap.set('n', 'td', vim.lsp.buf.definition, bufopts)
 	vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 	vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
 	vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
