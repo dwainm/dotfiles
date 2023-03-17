@@ -28,6 +28,8 @@ return require('packer').startup(function(use)
 
 	use 'tpope/vim-fugitive'
 
+	use 'tpope/vim-rhubarb'
+
 	use {
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v1.x',
