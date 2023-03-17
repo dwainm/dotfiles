@@ -93,7 +93,8 @@ end
 
 SprintManagement = function ()
 
-    CloseAllWindows()
+    closeAppWindowsButKeepAppOpen('Google Chrome')
+	-- closeAllOtherApps
 
     local layout = {
         {"Slack", nil, main_monitor,    position.centered60Top,    nil, nil},
@@ -101,6 +102,8 @@ SprintManagement = function ()
         {"Google Chrome", "#sprint", main_monitor, position.right50,    nil, nil},
         {"Google Chrome", "Sigma Planner", main_monitor, position.left50,    nil, nil},
     }
+
+	closeAppWindowsButKeepAppOpen("Google Chrome")
 
     hs.application.launchOrFocus('Slack')
     hs.application.launchOrFocus('Google Chrome')
@@ -124,12 +127,12 @@ SprintManagement = function ()
 end
 
 CalendarSlack = function ()
-    CloseAllWindows()
-
     local layout = {
         {"Slack", nil, main_monitor,    position.right50,    nil, nil},
         {"Google Chrome", "Calendar", main_monitor, position.left50,    nil, nil},
     }
+
+	closeAppWindowsButKeepAppOpen("Google Chrome")
 
     hs.application.launchOrFocus('Slack')
     hs.application.launchOrFocus('Google Chrome')
@@ -147,7 +150,7 @@ CalendarSlack = function ()
 end
 
 CommsLayout = function()
-    CloseAllWindows()
+    closeAppWindowsButKeepAppOpen('Google Chrome')
 
     local layout = {
         {"Slack", nil, main_monitor,    position.leftThird,    nil, nil},
@@ -157,6 +160,7 @@ CommsLayout = function()
         {"Google Chrome", "Calendar", secondary_monitor,    position.left50,    nil, nil},
         {"Todoist", nil, secondary_monitor,    position.right50,    nil, nil},
     }
+	closeAppWindowsButKeepAppOpen("Google Chrome")
 
     hs.application.launchOrFocus('Slack')
     hs.application.launchOrFocus('Google Chrome')
@@ -180,12 +184,11 @@ CommsLayout = function()
 end
 
 SlackP2 = function()
-    CloseAllWindows()
-
     local layout = {
         {"Slack", nil, main_monitor,    position.centered60Top,    nil, nil},
         {"Google Chrome", "Reader", main_monitor,    position.centered40Bottom,    nil, nil},
     }
+	closeAppWindowsButKeepAppOpen("Google Chrome")
 
     hs.application.launchOrFocus('Slack')
     hs.application.launchOrFocus('Google Chrome')
@@ -202,13 +205,13 @@ end
 -- Layout for checking out and closing the day.
 --
 function closingTheday()
-    CloseAllWindows()
-
     local layout = {
         {"Google Chrome", "Calendar", main_monitor, position.left50,    nil, nil},
         {"Google Chrome", "Outcomes", main_monitor,    position.right50,    nil, nil},
         {"Slack", nil, secondary_monitor,    position.right50,    nil, nil},
     }
+
+    closeAppWindowsButKeepAppOpen('Google Chrome')
 
     hs.application.launchOrFocus('Slack')
     hs.application.launchOrFocus('Google Chrome')
@@ -229,19 +232,15 @@ end
 -- Layout for objective planning
 --
 function CodeWrangling()
-    -- CloseAllWindows()
-
     local layout = {
-        {"kitty", "~", main_monitor, position.offCenterLeftThirdFullLength,    nil, nil},
-        {"kitty", "hammerspoon", main_monitor, position.offCenterLeftThirdFullLength,    nil, nil},
+        {"kitty", nil, main_monitor, position.offCenterLeftThirdFullLength,    nil, nil},
+        {"Slack", nil, secondary_monitor, position.left50,    nil, nil},
         {"Google Chrome", "Google", main_monitor, position.right52,    nil, nil},
         {"Google Chrome", "Issues", secondary_monitor, position.right50,    nil, nil},
-        {"Slack", nil, secondary_monitor, position.left50,    nil, nil},
     }
 
+	closeAppWindowsButKeepAppOpen("Google Chrome")
     hs.application.launchOrFocus('Google Chrome')
-
-	chromeCloseOtherTabs("Google Chrome")
 
     NewWindow("Google Chrome")
     hs.urlevent.openURL("https://www.google.com")
@@ -261,14 +260,14 @@ end
 -- Layout for objective planning
 --
 function planningLayout()
-    CloseAllWindows()
-
     local layout = {
         {"Google Chrome", "Calendar", main_monitor, position.leftThird,    nil, nil},
         {"Google Chrome", "Objectives", main_monitor, position.centerThirdFulllength,    nil, nil},
         {"Google Chrome", "Outcomes", main_monitor,    position.rightThird,    nil, nil},
         {"Todoist", nil, secondary_monitor,    position.right50,    nil, nil},
     }
+
+	closeAppWindowsButKeepAppOpen("Google Chrome")
 
     hs.application.launchOrFocus('Google Chrome')
     hs.application.launchOrFocus('Todoist')
@@ -292,8 +291,6 @@ end
 
 -- A layout for doing 1on1s.
 function OneOnOne()
-    CloseAllWindows()
-
     local layout= {
         -- {"kitty",         nil, secondary_monitor, hs.layout.left50, nil, nil},
         {"Google Chrome", "Google Meet", main_monitor,    position.centerThirdHalfTop,    nil, nil},
@@ -301,9 +298,13 @@ function OneOnOne()
         {"Slack",         nil, main_monitor,    position.centerThirdHalfBottom,   nil, nil},
     }
 
+  closeAppWindowsButKeepAppOpen("Google Chrome")
+
   hs.application.launchOrFocus('kitty')
   hs.application.launchOrFocus('Slack')
   hs.application.launchOrFocus('Google Chrome')
+
+
   hs.urlevent.openURL("https://meet.google.com/")
   NewWindow("Google Chrome")
 
@@ -319,7 +320,10 @@ function OneOnOne()
   -- jump directly to the persons doc and slack channel
 end
 
-CloseAllWindows = function (forceAll)
+closeAllOtherApps = function (layouts)
+	-- Todo
+	-- Loop through layouts and all windows to create a list of windows to close
+	-- only close the other windows
     local allWindows = hs.window:allWindows()
     local message = "Closed: \n"
     for index in pairs(allWindows) do
@@ -343,10 +347,13 @@ NewWindow = function (appId)
     app:selectMenuItem({"File", "New Window"})
 end
 
-chromeCloseOtherTabs = function (appId)
+closeAppWindowsButKeepAppOpen = function (appId)
     local app = hs.application.find(appId)
-    app:selectMenuItem({"Tab", "Close Other Tabs"})
-    app:selectMenuItem({"File", "Close Window"})
+	local appWindows = app:allWindows()
+    for index in pairs(appWindows) do
+        local window = appWindows[index]
+		window:application():selectMenuItem({"File", "Close Window"})
+	end
 end
 
 TitleComparitor = function (a,b)
