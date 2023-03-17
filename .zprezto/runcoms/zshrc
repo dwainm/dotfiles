@@ -355,6 +355,14 @@ function wcpay-dev(){
 	serverwindowname="Server"
 	clientpath="~/projects/wcpay/woocommerce-payments/"
 	serverpath="~/projects/wcpay/woocommerce-payments-server/"
+
+	## Check for an existing session and attach
+	tmux has-session -t $session 2>/dev/null
+	if [ $? = 0 ]; then
+		tmux attach-session -t $session
+		return 0
+	fi
+
 	tmux new-session -d -s $session
 
 	#Backround Scripts
