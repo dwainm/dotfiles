@@ -62,6 +62,7 @@ nmap("ga","<Plug>(EasyAlign)")
 
 -- Telescope
 nnoremap("<leader>ff","<cmd>Telescope find_files<cr>")
+nnoremap("<leader>fG",":Telescope grep_string<cr>")
 nnoremap("<leader>fg","<cmd>Telescope live_grep<cr>")
 nnoremap("<leader>fb","<cmd>Telescope buffers<cr>")
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
@@ -96,6 +97,7 @@ vim.keymap.set("x", "<leader>P", "\"+p")
 
 -- Allow you to yank to the system clipboard
 vim.keymap.set("n", "<leader>y", "\"+y")
+vim.keymap.set("n", "<leader>yw", "viw\"+y")
 vim.keymap.set("v", "<leader>y", "\"+y")
 vim.keymap.set("x", "<leader>Y", "\"+Y")
 
