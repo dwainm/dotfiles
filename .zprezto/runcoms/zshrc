@@ -443,3 +443,4 @@ alias zshrc="vim ~/.zshrc"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export PATH="/usr/local/opt/php@7.3/bin:$PATH"
 export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
+source $(brew --prefix php-version)/php-version.sh

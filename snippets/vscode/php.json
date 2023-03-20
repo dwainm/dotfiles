@@ -2,7 +2,7 @@
 	"snip1": {
 		"prefix": "elp",
 		"body": [
-			"error_log( print_r($1, true);"
+			"error_log( print_r($1, true));"
 		]
 	}
 }

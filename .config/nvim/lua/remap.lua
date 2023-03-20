@@ -60,6 +60,10 @@ nnoremap("<C-h>","<C-w>h")
 xmap("ga" , "<Plug>(EasyAlign)")
 nmap("ga","<Plug>(EasyAlign)")
 
+-- LSP errors
+nnoremap("]r","<cmd>lua vim.diagnostic.goto_next()<CR>")
+nnoremap("[r","<cmd>lua vim.diagnostic.goto_prev()<CR>")
+
 -- Telescope
 nnoremap("<leader>ff","<cmd>Telescope find_files<cr>")
 nnoremap("<leader>fG",":Telescope grep_string<cr>")
