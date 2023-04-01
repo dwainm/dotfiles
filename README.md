@@ -54,6 +54,8 @@ Set brew ZSH as you shell:
 `sudo sh -c "echo $(which zsh) >> /etc/shells"`
 `chsh -s $(which zsh)`
 
+#### Install Font
+brew install --cask font-jetbrains-mono-nerd-font
 
 Setup afterGlow Dark Theme:
 - Go to https://github.com/lysyi3m/macos-terminal-themes/blob/master/themes/Afterglow.terminal
