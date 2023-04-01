@@ -84,7 +84,7 @@ nnoremap("<leader>qa", "<ESC>:qa!<CR>")
 nnoremap("<leader>e",":e <C-R>=expand('%:p:h') . '/'<CR>")
 
 --Open Explorer
-nnoremap("<leader>n",":Explore<CR>")
+nnoremap("<leader>n",":NvimTreeToggle<CR>")
 
 --Clear line
 nnoremap("<Leader>dl","0D")

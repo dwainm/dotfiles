@@ -51,4 +51,13 @@ return require('packer').startup(function(use)
 	}
 
 	use { 'saadparwaiz1/cmp_luasnip' }
+
+	use { 'jose-elias-alvarez/null-ls.nvim'}
+
+	use {
+		'nvim-tree/nvim-tree.lua',
+		requires = {
+			'nvim-tree/nvim-web-devicons', -- optional
+		},
+	}
 end)
