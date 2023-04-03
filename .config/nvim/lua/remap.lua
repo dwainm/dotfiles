@@ -40,6 +40,10 @@ nnoremap("k", "gk")
 nmap ("[b",":bprevious<CR>")
 nmap ("]b",":bnext<CR>")
 
+-- Quick Fix navitation
+nnoremap("]q",":cnext<cr>")
+nnoremap("[q",":cprev<cr>")
+
 -- Yank
 nnoremap("Y", "0Y")
 
