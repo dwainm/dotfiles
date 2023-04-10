@@ -13,6 +13,12 @@
 					"php"
 				],
 				"path": "./php.json"
+			},
+			{
+				"language": [
+					"go"
+				],
+				"path": "./go.json"
 			}
 		]
 	}
