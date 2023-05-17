@@ -25,4 +25,6 @@ node_modules/.*
 /Users/dwain/projects/woo.com/wordpress/wp-content/Docker*
 
 *
+
+!~/.tmuxifier/layouts/wcpay.session.sh
 !.gitignore
