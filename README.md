@@ -114,10 +114,16 @@ brew install tmux
 ```
 
 ```
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
+
+```
 git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier
 ```
+
 Make sure tmuxinator path and eval is setup in shell rc: https://github.com/jimeh/tmuxifier#installation.
 
+<prefix> I to install plugins.
 
 # Touchbar
 Makes it more tollerable: https://medium.com/@svinkle/how-to-make-the-touch-bar-slightly-more-tolerable-857d29041f6a
