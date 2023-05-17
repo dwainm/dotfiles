@@ -350,62 +350,7 @@ export PATH="$HOME/.tmuxifier/bin:$PATH"
 eval "$(tmuxifier init -)"
 
 function wcpay-dev(){
-	open /Applications/Docker.app
-	#tmux pane ids are auto incremented
-	#variables
-	session="WCPay-Development"
-	scriptsWindowId=1
-	clientWindowId=2
-	serverWindowId=3
-	npmwindowname="NPM"
-	clientwindowname="Client"
-	serverwindowname="Server"
-	clientpath="~/projects/wcpay/woocommerce-payments/"
-	serverpath="~/projects/wcpay/woocommerce-payments-server/"
-
-	## Check for an existing session and attach
-	tmux has-session -t $session 2>/dev/null
-	if [ $? = 0 ]; then
-		tmux attach-session -t $session
-		return 0
-	fi
-
-	tmux new-session -d -s $session
-
-	#Backround Scripts
-	tmux rename-window -t $session:$scriptsWindowId $npmwindowname
-	tmux split-window -h -t $session:$scriptsWindowId
-	tmux split-window -v -t $session:$scriptsWindowId.2 #Extra pane for sandbox sync
-	## Backround Scripts pane 1
-	tmux send-keys -t $session:$scriptsWindowId.1 "cd $clientpath && nvm use && npm run dev" C-m
-	## Backround Scripts pane 2
-	tmux send-keys -t $session:$scriptsWindowId.2 "cd $serverpath && nvm use && npm run start" C-m
-	## Backround Scripts pane 2
-	tmux send-keys -t $session:$scriptsWindowId.3 "cd $serverpath && npm run sync" C-m
-	echo "Backgourd scripts done"
-
-	#Client
-	tmux new-window -a -n $clientwindowname -t $session
-	tmux send-keys -t $session:$clientWindowId "cd $clientpath" C-m
-	tmux split-window -v -t $session:$clientwindowname 
-	tmux resize-pane -D 50 
-	tmux send-keys -t $session:$serverwindowname "cd $clientpath" C-m
-	echo "Client Setup done"
-
-	#Server
-	tmux new-window -a -n $serverwindowname -t $session
-	tmux send-keys -t $session:$serverWindowId "cd $serverpath" C-m
-	tmux split-window -v -t $session:$serverwindowname
-	tmux resize-pane -D 50
-	tmux send-keys -t $session:$serverwindowname "cd $serverpath && less +F logstash.log" C-m
-	echo "Server done"
-
-	## Debug
-	# tmux kill-session -t $session
-
-	#Open the sessio
-	tmux attach-session -t $session
-
+	tmuxifier load-session wcpay
 }
 
 ###########
@@ -424,7 +369,7 @@ export PATH=$PATH:$GOPATH/bin
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
-  export EDITOR='mvim'
+  export EDITOR='nvim'
 fi
 
 # Compilation flags
