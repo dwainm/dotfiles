@@ -113,6 +113,11 @@ Create symlink to vim wiki icloud storage:
 brew install tmux
 ```
 
+```
+git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier
+```
+Make sure tmuxinator path and eval is setup in shell rc: https://github.com/jimeh/tmuxifier#installation.
+
 
 # Touchbar
 Makes it more tollerable: https://medium.com/@svinkle/how-to-make-the-touch-bar-slightly-more-tolerable-857d29041f6a
