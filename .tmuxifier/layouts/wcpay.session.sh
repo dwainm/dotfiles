@@ -30,7 +30,8 @@ if initialize_session "wcpay-dev"; then
 	run_cmd "cd $serverdir && nvim ."
 	split_v "10"
 	run_cmd "cd $serverdir && less +F logstash.log" 
-fi
+	split_h 
+	run_cmd "cd $serverdir && nvim ."
 
 # Finalize session creation and switch/attach to it.
 finalize_and_go_to_session

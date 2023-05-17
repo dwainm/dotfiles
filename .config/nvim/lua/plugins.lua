@@ -32,6 +32,8 @@ return require('packer').startup(function(use)
 
 	use 'christoomey/vim-tmux-navigator'
 
+	use 'jgdavey/tslime.vim'
+
 	use {
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v1.x',
