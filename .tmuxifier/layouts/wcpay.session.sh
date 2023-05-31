@@ -17,7 +17,7 @@ if initialize_session "wcpay-dev"; then
 	split_h 50
 	run_cmd "cd $serverdir && nvm use && npm run start"
 	split_v 50
-	run_cmd "cd $serverdir && npm run sync" 
+	run_cmd "cd $serverdir && echo Rsync-Place-Holder" 
 
 	# Client Environment Window
 	new_window "Client"
@@ -31,7 +31,8 @@ if initialize_session "wcpay-dev"; then
 	split_v "10"
 	run_cmd "cd $serverdir && less +F logstash.log" 
 	split_h 
-	run_cmd "cd $serverdir && nvim ."
+	run_cmd "cd $serverdir && echo test-runner-placeholder"
+fi
 
 # Finalize session creation and switch/attach to it.
 finalize_and_go_to_session
