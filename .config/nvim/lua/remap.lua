@@ -1,7 +1,12 @@
 vim.g.mapleader = " "
 
-local nnoremap  = function(lhs, rhs)
-	vim.api.nvim_set_keymap('n', lhs, rhs, { noremap = true, silent = true })
+local nnoremap  = function(lhs, rhs, opt )
+	if not ( type(opt) == 'table') then
+		opt = {}
+	end
+	opt['noremap'] = true
+	opt['silent'] = true
+	vim.api.nvim_set_keymap('n', lhs, rhs, opt)
 end
 
 local vnoremap  = function(lhs, rhs)
@@ -75,6 +80,9 @@ nnoremap("<leader>fg","<cmd>Telescope live_grep<cr>")
 nnoremap("<leader>fb","<cmd>Telescope buffers<cr>")
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
 
+-- Oil 
+nnoremap("-", ":Oil --float <CR>",  { desc = "Open parent directory" })
+
 --Map Ctrl + S to save in any mode
 nnoremap("<silent><C-s>",":update<CR>")
 vnoremap("<silent><C-s>","<C-C>:update<CR>")
@@ -91,7 +99,7 @@ nnoremap("<leader>e",":e <C-R>=expand('%:p:h') . '/'<CR>")
 nnoremap("<leader>n",":NvimTreeToggle<CR>")
 
 --Clear line
-nnoremap("<Leader>dl","0D")
+nnoremap("<Leader>cl","0D")
 
 --Keeup page up and page down in the middele of the page
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
@@ -112,5 +120,8 @@ vim.keymap.set("x", "<leader>Y", "\"+Y")
 -- Just don't use this.
 vim.keymap.set("n", "Q", "<nop>")
 
--- Relpace the current word.
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+-- Relpace the current word
+nnoremap("<leader>sr",[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+
+-- Source VIMRC
+nnoremap("<leader>so",[[:source $MYVIMRC <CR>:source ~/.config/nvim/lua/remap.lua<CR> :source ~/.config/nvim/lua/plugins.lua <CR> :echom "NVIMRC sourced"<CR>]])

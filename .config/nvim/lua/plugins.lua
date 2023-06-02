@@ -34,6 +34,11 @@ return require('packer').startup(function(use)
 
 	use 'jgdavey/tslime.vim'
 
+    use {
+      'stevearc/oil.nvim',
+      config = function() require('oil').setup() end
+    }
+
 	use {
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v1.x',
