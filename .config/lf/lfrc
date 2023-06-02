@@ -26,6 +26,9 @@ set cursorpreviewfmt "\033[7;2m"
 # use enter for shell commands
 map <enter> open
 
+# update toggle map to be V like in Vim
+map v :toggle; down
+
 # show the result of execution of previous commands
 map ` !true
 

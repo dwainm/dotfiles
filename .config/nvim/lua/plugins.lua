@@ -40,6 +40,13 @@ return require('packer').startup(function(use)
     }
 
 	use {
+		'ptzz/lf.vim',
+		requires = {
+			{'voldikss/vim-floaterm'},
+		}
+	}
+
+	use {
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v1.x',
 		requires = {

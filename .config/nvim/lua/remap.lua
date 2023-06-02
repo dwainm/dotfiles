@@ -108,6 +108,10 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 -- ALlow you to paste without overwriting the register
 vim.keymap.set("x", "<leader>p", "\"_dP")
 
+-- Lf file manager
+vim.g.lf_map_keys = 0
+nnoremap("<leader>fm",'<leader>f :Lf<CR>')
+
 -- Paste from system clipboard
 vim.keymap.set("x", "<leader>P", "\"+p")
 
