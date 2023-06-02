@@ -74,10 +74,10 @@ nnoremap("]r","<cmd>lua vim.diagnostic.goto_next()<CR>")
 nnoremap("[r","<cmd>lua vim.diagnostic.goto_prev()<CR>")
 
 -- Telescope
-nnoremap("<leader>ff","<cmd>Telescope find_files<cr>")
-nnoremap("<leader>fG",":Telescope grep_string<cr>")
-nnoremap("<leader>fg","<cmd>Telescope live_grep<cr>")
-nnoremap("<leader>fb","<cmd>Telescope buffers<cr>")
+nnoremap("<leader>ff","<cmd>Telescope find_files theme=dropdown<cr>")
+nnoremap("<leader>fG",":Telescope grep_string theme=dropdown<cr>")
+nnoremap("<leader>fg","<cmd>Telescope live_grep theme=dropdown<cr>")
+nnoremap("<leader>fb","<cmd>Telescope buffers theme=dropdown<cr>")
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
 
 -- Oil 
