@@ -1,7 +1,7 @@
 vim.g.mapleader = " "
 
 local nnoremap  = function(lhs, rhs, opt )
-	if not ( type(opt) == 'table') then
+	if ( type(opt) ~= 'table') then
 		opt = {}
 	end
 	opt['noremap'] = true
@@ -89,7 +89,7 @@ vnoremap("<silent><C-s>","<C-C>:update<CR>")
 inoremap("<silent><C-s>","<C-O>:update<CR>")
 
 --quit quickly | without saving
-nnoremap("<leader>q",":q<CR>j")
+nnoremap("<leader>q",":q<CR>j", {nowait=true})
 nnoremap("<leader>qa", "<ESC>:qa!<CR>")
 
 --Easily edit files in the same directory
@@ -110,7 +110,7 @@ vim.keymap.set("x", "<leader>p", "\"_dP")
 
 -- Lf file manager
 vim.g.lf_map_keys = 0
-nnoremap("<leader>fm",'<leader>f :Lf<CR>')
+nnoremap("<leader>fm",':Lf<CR>')
 
 -- Paste from system clipboard
 vim.keymap.set("x", "<leader>P", "\"+p")
