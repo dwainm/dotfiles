@@ -349,9 +349,7 @@ function wplog(){
 export PATH="$HOME/.tmuxifier/bin:$PATH"
 eval "$(tmuxifier init -)"
 
-function wcpay-dev(){
-	tmuxifier load-session wcpay
-}
+alias wcpay-dev="tmuxinator wcpay"
 
 ###########
 # WooDeploy

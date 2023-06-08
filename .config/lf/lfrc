@@ -109,3 +109,13 @@ cmd zip ${{
     zip -r $1.zip $1
     rm -rf $1
 }}
+
+cmd recol %{{
+    if [ $lf_width -le 80 ]; then
+        lf -remote "send $id set ratios 1:2"
+    elif [ $lf_width -le 160 ]; then
+        lf -remote "send $id set ratios 1:2:3"
+    else
+        lf -remote "send $id set ratios 1:2:3:5"
+    fi
+}}

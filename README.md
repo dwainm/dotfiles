@@ -120,10 +120,8 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
 ```
-git clone https://github.com/jimeh/tmuxifier.git ~/.tmuxifier
+brew install tmuxinator
 ```
-
-Make sure tmuxinator path and eval is setup in shell rc: https://github.com/jimeh/tmuxifier#installation.
 
 <prefix> I to install plugins.
 
