@@ -37,6 +37,8 @@ return require('packer').startup(function(use)
 
 	use 'jgdavey/tslime.vim'
 
+	use	'vimwiki/vimwiki'
+
     use {
       'stevearc/oil.nvim',
       config = function() require('oil').setup() end

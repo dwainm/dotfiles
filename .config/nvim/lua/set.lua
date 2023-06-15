@@ -20,6 +20,9 @@ vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
+-- Wiki
+vim.g.vimwiki_list = {{path = '~/Documents/vimwiki/', syntax = 'markdown', ext = '.md'}}
+
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
