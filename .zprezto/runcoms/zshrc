@@ -346,9 +346,6 @@ function wplog(){
 #######
 # TMUX
 #######
-export PATH="$HOME/.tmuxifier/bin:$PATH"
-eval "$(tmuxifier init -)"
-
 alias wcpay-dev="tmuxinator wcpay"
 
 ###########
