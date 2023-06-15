@@ -33,3 +33,7 @@ vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
+
+-- Spelling On 
+vim.opt.spelllang = 'en_us'
+vim.opt.spell = true
