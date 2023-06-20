@@ -99,8 +99,9 @@ function a8cproxy(){
 
 function sandbox(){
 	if [[ 'on' == $1 ]]; then
-		echo 'Enabling sandbox hosts config...';
+		echo 'Setting config and starting ssh session..';
 		sudo sed -i '' 's/^#192.0.92.115/192.0.92.115/g' /etc/hosts
+		ssh wpcomsandbox
 	fi
 
 	if [[ 'off' == $1 ]]; then

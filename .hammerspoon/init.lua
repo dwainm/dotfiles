@@ -38,6 +38,7 @@ local position = {
     maximized = hs.layout.maximized,
     -- Centered
     centered                 = {x=0.15, y=0.15, w=0.7, h=0.7},
+    centeredFullHeight       = {x=0.15, y=0, w=0.7, h=1},
     centered60Top            = {x=0.15, y=0, w=0.7, h=0.6},
     centered55Top            = {x=0.15, y=0, w=0.7, h=0.55},
     centered45Bottom         = {x=0.15, y=0.55, w=0.7, h=0.45},
@@ -80,6 +81,7 @@ Init = function ()
         {"2" , SlackP2, "Slack p2"},
         {"3" , OneOnOne, "1on1"},
         {"4" , SprintManagement, "Sprint Management"},
+        {"6" , FocusGeneral, "Focus General"},
         {"7" , CodeWrangling, "Code Wrangling"},
         {"8" , CommsLayout, "Commms"},
         {"9" , closingTheday, "Closing The day"},
@@ -229,6 +231,31 @@ function closingTheday()
 end
 
 --
+-- Layout for Focus Not Code
+--
+function FocusGeneral()
+    local layout = {
+        {"Google Chrome", "Google", main_monitor, position.centeredFullHeight,nil, nil},
+        {"Slack", nil, secondary_monitor, position.left50,    nil, nil},
+        {"Google Chrome", "Calendar", secondary_monitor, position.right50,    nil, nil},
+    }
+
+	closeAppWindowsButKeepAppOpen("Google Chrome")
+    hs.application.launchOrFocus('Google Chrome')
+
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://www.google.com")
+
+    NewWindow("Google Chrome")
+    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+
+    hs.timer.doAfter(3, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
+end
+
+
+--
 -- Layout for objective planning
 --
 function CodeWrangling()
@@ -356,8 +383,11 @@ closeAppWindowsButKeepAppOpen = function (appId)
 	end
 end
 
-TitleComparitor = function (a,b)
-    return b==string.match(a, b)
+TitleComparitor = function (title,matcher)
+	-- look for the matcher inside the title
+	local start = string.find(title,matcher)
+	return start ~= nil
+
 end
 
 LayoutBindings = Init()
