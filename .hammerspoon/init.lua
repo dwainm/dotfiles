@@ -215,14 +215,17 @@ function closingTheday()
 
     closeAppWindowsButKeepAppOpen('Google Chrome')
 
-    hs.application.launchOrFocus('Slack')
-    hs.application.launchOrFocus('Google Chrome')
+    hs.timer.doAfter(1, function()
+		hs.application.launchOrFocus('Slack')
+		hs.application.launchOrFocus('Google Chrome')
 
-    -- Ouctomes Journal Notion
-    hs.urlevent.openURL("https://www.notion.so/dd0bd03cac0b4cd2803962996024abe4?v=6221b429a53748ec9886f32644b21186")
+		-- Ouctomes Journal Notion
+		NewWindow("Google Chrome")
+		hs.urlevent.openURL("https://www.notion.so/dd0bd03cac0b4cd2803962996024abe4?v=6221b429a53748ec9886f32644b21186")
 
-    NewWindow("Google Chrome")
-    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+		NewWindow("Google Chrome")
+		hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+    end)
 
 
     hs.timer.doAfter(3, function()
