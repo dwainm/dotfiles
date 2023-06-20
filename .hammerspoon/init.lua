@@ -247,7 +247,7 @@ function FocusGeneral()
     hs.urlevent.openURL("https://www.google.com")
 
     NewWindow("Google Chrome")
-    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/day")
 
     hs.timer.doAfter(3, function()
         hs.layout.apply(layout, TitleComparitor)
