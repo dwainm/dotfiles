@@ -73,7 +73,7 @@ local position = {
     lower50Right50 = {x=0.5, y=0.5, w=0.5, h=0.5},
 }
 
-Init = function ()
+function Init ()
     -- Table to itterate over with modieier, key and function to call after it is pressed.
     local layoutBindings = {
         {"0" , CalendarSlack, "Initialize"},
@@ -128,7 +128,7 @@ SprintManagement = function ()
     end)
 end
 
-CalendarSlack = function ()
+function CalendarSlack ()
     local layout = {
         {"Slack", nil, main_monitor,    position.right50,    nil, nil},
         {"Google Chrome", "Calendar", main_monitor, position.left50,    nil, nil},
@@ -377,7 +377,7 @@ NewWindow = function (appId)
     app:selectMenuItem({"File", "New Window"})
 end
 
-closeAppWindowsButKeepAppOpen = function (appId)
+function closeAppWindowsButKeepAppOpen (appId)
     local app = hs.application.find(appId)
 	local appWindows = app:allWindows()
     for index in pairs(appWindows) do

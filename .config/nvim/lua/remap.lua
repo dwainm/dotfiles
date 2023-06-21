@@ -115,6 +115,9 @@ nnoremap("<leader>fm",':Lf<CR>')
 -- Paste from system clipboard
 vim.keymap.set("x", "<leader>P", "\"+p")
 
+-- Select recently pasted text
+nnoremap("gp","`[v`]")
+
 -- Allow you to yank to the system clipboard
 vim.keymap.set("n", "<leader>y", "\"+y")
 vim.keymap.set("n", "<leader>yw", "viw\"+y")
