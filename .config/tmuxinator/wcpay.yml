@@ -58,10 +58,9 @@ windows:
       layout: main-horizontal
       panes:
         - cd woocommerce-payments-server && nvim .
-        - cd woocommerce-payments-server && nvm use && npm run start
-        - cd woocommerce-payments-server && lnav logstash.log
-        - cd woocommerce-payments-server && echo test-runner-placeholder
-        - echo Rsync-Place-Holder
+        - cd woocommerce-payments-server && nvm use && npm run start && lnav logstash.log
+        - cd woocommerce-payments-server && figlet Test runner and Sandboxing
+        - figlet Sandbox Sync Runner
 
 
 
