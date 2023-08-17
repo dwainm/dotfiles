@@ -31,6 +31,8 @@ Now, reload the terminal for the profile to load the correct git location and co
 ### Install a few helfpul tools
 `brew install zsh vim fzf ctags svn nvm ripgrep tree-sitter`
 `brew install tree lf`
+`brew install lnav figlet`
+`brew install tmuxinator`
 
 # dotfiles
 How to use
