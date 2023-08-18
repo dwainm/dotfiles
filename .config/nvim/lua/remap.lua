@@ -1,5 +1,7 @@
 vim.g.mapleader = " "
 
+vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
+
 local nnoremap  = function(lhs, rhs, opt )
 	if ( type(opt) ~= 'table') then
 		opt = {}
@@ -9,8 +11,13 @@ local nnoremap  = function(lhs, rhs, opt )
 	vim.api.nvim_set_keymap('n', lhs, rhs, opt)
 end
 
-local vnoremap  = function(lhs, rhs)
-	vim.api.nvim_set_keymap('n', lhs, rhs, { noremap = true, silent = true })
+local vnoremap  = function(lhs, rhs, opt)
+	if ( type(opt) ~= 'table') then
+		opt = {}
+	end
+	opt['noremap'] = true
+	opt['silent'] = true
+	vim.api.nvim_set_keymap('v', lhs, rhs, opt)
 end
 
 local inoremap  = function(lhs, rhs)
@@ -76,6 +83,7 @@ nnoremap("[r","<cmd>lua vim.diagnostic.goto_prev()<CR>")
 -- Telescope
 nnoremap("<leader>ff","<cmd>Telescope find_files theme=dropdown<cr>")
 nnoremap("<leader>fG",":Telescope grep_string theme=dropdown<cr>")
+vnoremap("<leader>fG","zy<cmd>exec 'Telescope grep_string default_text=' . escape(@z, ' ')<cr>")
 nnoremap("<leader>fg","<cmd>Telescope live_grep theme=dropdown<cr>")
 nnoremap("<leader>fb","<cmd>Telescope buffers theme=dropdown<cr>")
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
@@ -90,6 +98,7 @@ inoremap("<silent><C-s>","<C-O>:update<CR>")
 
 --quit quickly | without saving
 nnoremap("<leader>q",":q<CR>j", {nowait=true})
+vnoremap("<leader>q",":q<CR>j", {nowait=true})
 nnoremap("<leader>qa", "<ESC>:qa!<CR>")
 
 --Easily edit files in the same directory
