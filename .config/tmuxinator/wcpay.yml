@@ -12,7 +12,7 @@ root: ~/projects/wcpay/
 # Project hooks
 
 # Runs on project start, always
-# on_project_start: command arguments
+on_project_start: open /Applications/OrbStack.app
 
 # Run on project start, the first time
 # on_project_first_start: command
