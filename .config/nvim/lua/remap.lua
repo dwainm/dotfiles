@@ -87,6 +87,7 @@ vnoremap("<leader>fG","zy<cmd>exec 'Telescope grep_string default_text=' . escap
 nnoremap("<leader>fg","<cmd>Telescope live_grep theme=dropdown<cr>")
 nnoremap("<leader>fb","<cmd>Telescope buffers theme=dropdown<cr>")
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
+nnoremap("<leader>fr","<cmd>Telescope resume<cr>")
 
 -- Oil 
 nnoremap("-", ":Oil --float <CR>",  { desc = "Open parent directory" })
