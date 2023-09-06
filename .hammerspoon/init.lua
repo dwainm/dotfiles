@@ -2,6 +2,7 @@ local hyper       = {"cmd","alt","ctrl"}
 local shift_hyper = {"cmd","alt","ctrl","shift"}
 local ctrl_cmd    = {"cmd","ctrl"}
 local alt_cmd    = {"alt","cmd"}
+local ctrl_space = {"ctrl","space"}
 
 local logger = hs.logger.new("d", "debug")
 
@@ -136,18 +137,22 @@ function CalendarSlack ()
 
 	closeAppWindowsButKeepAppOpen("Google Chrome")
 
-    hs.application.launchOrFocus('Slack')
-    hs.application.launchOrFocus('Google Chrome')
+	hs.timer.doAfter(1, function()
+		hs.application.launchOrFocus('Slack')
+		hs.application.launchOrFocus('Google Chrome')
+		hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+    end)
 
-    hs.urlevent.openURL("https://calendar.google.com/calendar/u/0/r/custom/5/d")
+    hs.timer.doAfter(2, function()
+        hs.layout.apply(layout, TitleComparitor)
+    end)
 
+    hs.timer.doAfter(3, function()
     -- todo sent slack commands to jump to channel
     -- slack = hs.application.find('slack')
     -- hs.eventtap.keyStroke({"cmd"}, "R", 200, slack)
     -- hs.eventtap.keyStroke({"cmd"}, "R", 200, slack)
 
-    hs.timer.doAfter(3, function()
-        hs.layout.apply(layout, TitleComparitor)
     end)
 end
 
@@ -350,7 +355,7 @@ function OneOnOne()
   -- jump directly to the persons doc and slack channel
 end
 
-closeAllOtherApps = function (layouts)
+function closeAllOtherApps(layouts)
 	-- Todo
 	-- Loop through layouts and all windows to create a list of windows to close
 	-- only close the other windows
@@ -394,6 +399,40 @@ TitleComparitor = function (title,matcher)
 end
 
 LayoutBindings = Init()
+
+-- Open a standard terminal Window
+hs.hotkey.bind( "ctrl, space", 't', function()
+	local app = hs.application.get("kitty")
+	local currentSpace = hs.spaces.focusedSpace()
+
+	if app then
+		-- There are times where main window is found and other times not 
+		-- This check ensures that we have a main window ID set in cases where 
+		-- it is found or set to -1 in cases where it is not found
+		-- this ensures that the new window call can be executed later.
+		if not app:mainWindow() then
+			mainWindowSpace = -1
+		else
+			mainWindowSpace = hs.spaces.windowSpaces( app:mainWindow():id())[1]
+		end
+
+		if mainWindowSpace ~= currentSpace then
+			app:selectMenuItem({"Shell", "New OS Window"})
+			hs.timer.doAfter(1, function()
+				app:focusedWindow():moveToUnit'[100,50,0,0]'
+			end)
+
+		elseif app:isFrontmost() then
+			app:hide()
+		else
+			app:activate()
+		end
+	else
+		hs.application.launchOrFocus("kitty")
+		app = hs.application.get("kitty")
+	end
+
+end)
 
 local refreshCalendar = function()
     hs.eventtap.keyStroke({"cmd"}, "R", 200, hs.application.find('calendar'))
