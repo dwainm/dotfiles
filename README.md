@@ -29,7 +29,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 `git config --global merge.tool diffmerge` 
 
 ### Install a few helfpul tools
-`brew install zsh vim fzf ctags svn nvm ripgrep tree-sitter`
+`brew install zsh vim fzf ctags svn fnm ripgrep tree-sitter`
 `brew install tree lf`
 `brew install orbstack`
 `brew install lnav figlet`
