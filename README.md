@@ -15,6 +15,10 @@ Turn on tap to click on trackpad settings
 ### Cloud 
 Change iCloud settings to use Desktop and Documents folder. So cloud documents and desktop is not seperate from device documents and desktop.
 
+### Menu bar and dock
+Set the menu bar and the dock to auto hide so the show up when your mouse goes over them.
+Go to System Prefs > Keyboard > Shortcuts > Keyboard and change the shortcut to CMD B for "Move focus to menu bar option".
+
 # Brew
 
 ### Install brew first
