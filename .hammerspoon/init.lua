@@ -418,12 +418,12 @@ hs.hotkey.bind( "ctrl, space", 't', function()
 
 		if mainWindowSpace ~= currentSpace then
 			app:selectMenuItem({"Shell", "New OS Window"})
-			hs.timer.doAfter(1, function()
+			hs.timer.doAfter(0.1, function()
 				app:focusedWindow():moveToUnit'[100,50,0,0]'
 			end)
 
 		elseif app:isFrontmost() then
-			app:hide()
+			app:focusedWindow():minimize()
 		else
 			app:activate()
 		end
