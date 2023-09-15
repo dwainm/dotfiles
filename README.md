@@ -15,6 +15,10 @@ Turn on tap to click on trackpad settings
 ### Cloud 
 Change iCloud settings to use Desktop and Documents folder. So cloud documents and desktop is not seperate from device documents and desktop.
 
+### Spaces and Desktop setting's
+Go to keyboard shortcuts and make sure CTR - [1-9] shortcuts are enabled for moving between spaces.
+Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
+
 ### Menu bar and dock
 Set the menu bar and the dock to auto hide so the show up when your mouse goes over them.
 Go to System Prefs > Keyboard > Shortcuts > Keyboard and change the shortcut to SHIFT+CMD B for "Move focus to menu bar option".
