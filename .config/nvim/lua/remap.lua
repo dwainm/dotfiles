@@ -88,6 +88,7 @@ nnoremap("<leader>fg","<cmd>Telescope live_grep theme=dropdown<cr>")
 nnoremap("<leader>fb","<cmd>Telescope buffers sort_lastused=true theme=dropdown ignore_current_buffer=true <cr>")
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
 nnoremap("<leader>fr","<cmd>Telescope resume<cr>")
+nnoremap("<leader>tr","<cmd>Telescope lsp_references include_declaration=false show_line=false<cr>")
 
 -- Oil 
 nnoremap("-", ":Oil --float <CR>",  { desc = "Open parent directory" })
