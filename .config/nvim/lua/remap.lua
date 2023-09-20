@@ -85,7 +85,7 @@ nnoremap("<leader>ff","<cmd>Telescope find_files theme=dropdown<cr>")
 nnoremap("<leader>fG",":Telescope grep_string theme=dropdown<cr>")
 vnoremap("<leader>fG","zy<cmd>exec 'Telescope grep_string default_text=' . escape(@z, ' ')<cr>")
 nnoremap("<leader>fg","<cmd>Telescope live_grep theme=dropdown<cr>")
-nnoremap("<leader>fb","<cmd>Telescope buffers theme=dropdown<cr>")
+nnoremap("<leader>fb","<cmd>Telescope buffers sort_lastused=true theme=dropdown ignore_current_buffer=true <cr>")
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
 nnoremap("<leader>fr","<cmd>Telescope resume<cr>")
 
