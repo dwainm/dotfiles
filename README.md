@@ -33,7 +33,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 `git config --global merge.tool diffmerge` 
 
 ### Install a few helfpul tools
-* `brew install zsh vim neovim fzf ctags svn fnm ripgrep tree-sitter ack`
+* `brew install zsh vim neovim fzf ctags svn fnm ripgrep tree-sitter ack php`
 * `brew install tree lf`
 * `brew install orbstack`
 * `brew install lnav figlet`
@@ -104,6 +104,9 @@ https://www.npmjs.com/get-npm
 
 # Setup Composer
 
+`brew install composer`
+
+--- old way below
 `curl -sS https://getcomposer.org/installer | php`
 
 `sudo mv composer.phar /usr/local/bin/`
