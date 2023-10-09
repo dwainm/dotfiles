@@ -19,10 +19,6 @@ Change iCloud settings to use Desktop and Documents folder. So cloud documents a
 Go to keyboard shortcuts and make sure CTR - [1-9] shortcuts are enabled for moving between spaces.
 Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
 
-### Menu bar and dock
-Set the menu bar and the dock to auto hide so the show up when your mouse goes over them.
-Go to System Prefs > Keyboard > Shortcuts > Keyboard and change the shortcut to SHIFT+CMD B for "Move focus to menu bar option".
-
 # Brew
 
 ### Install brew first
@@ -37,11 +33,10 @@ Now, reload the terminal for the profile to load the correct git location and co
 `git config --global merge.tool diffmerge` 
 
 ### Install a few helfpul tools
-`brew install zsh vim fzf ctags svn fnm ripgrep tree-sitter`
-`brew install tree lf`
-`brew install orbstack`
-`brew install lnav figlet`
-`brew install tmuxinator`
+* `brew install zsh vim neovim fzf ctags svn fnm ripgrep tree-sitter ack`
+* `brew install tree lf`
+* `brew install orbstack`
+* `brew install lnav figlet`
 
 # dotfiles
 How to use
@@ -116,6 +111,11 @@ https://www.npmjs.com/get-npm
 `sudo chmod 755 /usr/local/bin/composer.phar`
 
 # Vim 
+Neovim:
+- Install packer: https://github.com/wbthomason/packer.nvim
+- Run packer install inside vim: :PackerInstall
+
+OldVim
 Open vim and run `:PlugInstall`
 
 Create symlink to vim wiki icloud storage: 
@@ -136,10 +136,7 @@ brew install tmuxinator
 
 <prefix> I to install plugins.
 
-# Touchbar
-Makes it more tollerable: https://medium.com/@svinkle/how-to-make-the-touch-bar-slightly-more-tolerable-857d29041f6a
-
-# Todois
+# Todoist
 Setup todoist by building it from your fork: https://github.com/dwainm/todoist
 
 ```
