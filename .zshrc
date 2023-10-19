@@ -1,1 +1,395 @@
-/Users/dwain/.zprezto/runcoms/zshrc
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+
+# Customize to your needs...
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+#######################
+#Vim Bind keys
+#######################
+bindkey -v
+export KEYTIMEOUT=1
+
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+DISABLE_AUTO_TITLE=true
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# HIST_STAMPS="mm/dd/yyyy"
+
+if [[ -s "$HOME/.private" ]]; then
+	source $HOME/.private
+fi
+
+
+#################################
+# Aliases
+#################################
+
+#################################
+# Automattic 
+#################################
+
+function wppull () {
+  rsync -az --delete --delete-after --exclude '.svn' --exclude '.git' --exclude '.settings' --exclude 'wp-content/themes' wpcom:/home/wpcom/public_html/ ~/Projects/wpcom/ --info=progress2
+}
+
+function wppush () {
+  rsync -az --delete --delete-after --exclude '.svn' --exclude '.git' --exclude '.settings' --exclude 'wp-content/themes' ~/Projects/wpcom/ wpcom:/home/wpcom/public_html/ --info=progress2
+}
+
+function a8cproxysettingon(){
+	sudo networksetup -setautoproxystate  "Wi-Fi" on
+	sudo networksetup -setautoproxyurl "Wi-Fi" "https://pac.a8c.com"
+}
+
+function a8cproxysettingoff(){
+	sudo networksetup -setautoproxystate  "Wi-Fi" off
+}
+
+function a8cproxy(){
+	if [[ 'on' == $1 ]]; then
+		echo 'Turning Setting On';
+		a8cproxysettingon
+	fi
+
+	if [[ 'off' == $1 ]]; then
+		 echo 'Turning Setting Off';
+		 a8cproxysettingoff
+	fi
+}
+
+function sandbox(){
+	if [[ 'on' == $1 ]]; then
+		echo 'Setting config and starting ssh session..';
+		sudo sed -i '' 's/^#192.0.92.115/192.0.92.115/g' /etc/hosts
+		ssh wpcomsandbox
+	fi
+
+	if [[ 'off' == $1 ]]; then
+		echo 'Disabling sandbox hosts config...';
+		sudo sed -i '' 's/^192.0.92.115/#192.0.92.115/g' /etc/hosts
+	fi
+}
+
+function wpurl(){
+	if [ -z "$1" ]; then
+		npm run wp option update home http://localhost:8082/
+		npm run wp option update siteurl http://localhost:8082/
+		return
+	fi
+}
+
+function plannerweekslonglist(){
+    months=''
+    dayranges=''
+    startweek=20
+    endweek=52
+	for ((j = startweek;  j < endweek ; j++)); do
+        # Get the current weeks start and end date.
+		mon=$(date  -v-Sun -v+${j}w -v+Mon  "+%d")
+		fri=$(date  -v-Sun -v+${j}w -v+Fri  "+%d")
+		dayranges+="$mon - $fri\t"
+        # Get the current month and append it.
+		curmonth=$(date  -v-Sun -v+${j}w -v+Mon  "+%b")
+        months+="$curmonth\t";
+	done
+
+    echo -e $months
+    echo -e $dayranges
+}
+
+function plannerweeks(){
+	prevmonth='MON'
+	for ((j = 1 ; j < 52 ; j++)); do
+		curmonth=$(date  -v-Sun -v+${j}w -v+Mon  "+%b")
+		mon=$(date  -v-Sun -v+${j}w -v+Mon  "+%d")
+		fri=$(date  -v-Sun -v+${j}w -v+Fri  "+%d")
+		if [[ $curmonth != $prevmonth ]]; then
+			prevmonth=$curmonth;
+			echo ''
+			echo $curmonth
+			echo ''
+		fi
+		echo "$mon - $fri"
+	done
+}
+
+function donelastweek(){
+	# Use todoist | grep for the this past sunday and then its previous mon|tues|wed|thu|fri
+	todoist cl --raw | grep -E "^\w+\s$(date -v-Sun -v-Mon  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Tue  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Wed  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Thu  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Fri  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 4-100 | sort | sed 's/^/- /' | pbcopy
+	echo "Last weeks Todo done items coppied to clip board"
+}
+
+function calendarlastweek(){
+	icalBuddy -nrd -nc -ic dwain.maralack@a8c.com eventsFrom:$(date -v-Sun -v-Mon  "+%Y/%m/%d") to:$(date -v-Sun -v-Sat  "+%Y/%m/%d")  | grep • |  grep -v Disengage | grep -v Family | grep -v Initialise | grep -v Lunch | grep -v Fika | grep -iv "\d slots" | grep -v Busy | tr • - | pbcopy
+}
+
+function donethisweek(){
+	# Use todoist | grep for the this week. Starting from upcomming Sunay walking back to the  previous mon|tues|wed|thu|fri
+todoist cl --raw | grep -E "$(date -v+Sun -v-Mon  "+%y/%m/%d")|$(date -v+Sun -v-Tue  "+%y/%m/%d")|$(date -v+Sun -v-Wed  "+%y/%m/%d")|$(date -v+Sun -v-Thu  "+%y/%m/%d")|$(date -v+Sun -v-Fri  "+%y/%m/%d")|$(date -v+Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 4-100 | sort | sed 's/^/- /'| pbcopy
+echo "This weeks Todo done items coppied to clip board"
+
+}
+
+function wcpayurl(){
+	cd ~/projects/woocommerce-payments/
+	if [ -z "$1" ]; then
+		echo 'No url supplied';
+	else
+		wp option update home $1
+		wp option update siteurl $1
+	fi
+}
+
+#################################
+# WP Docker
+#################################
+alias woowp='docker-compose -f /Users/dwain/projects/woocommerce.test/docker-compose.yml exec --user www-data wp wp'
+alias wcpaywp='docker-compose exec --user root wordpress php /root/wp-cli.phar --allow-root
+'
+alias hydrawp='docker-compose -f /Users/dwain/projects/hydra.test/docker-compose.yml exec --user www-data phpfpm wp'
+alias wp='docker-compose exec --user www-data wordpress wp'
+alias dcbash='docker-compose exec --user root wordpress bash'
+alias wcpaybash='docker-compose exec --user root wordpress bash'
+alias dc='docker-compose'
+alias dcup='docker compose up -d'
+alias dockerstop='docker stop $(docker ps -a -q)'
+alias hammerspoon="v ~/.hammerspoon/init.lua"
+
+
+#################################
+# Unix Text Handling
+#################################
+alias vim=nvim
+alias vi=nvim
+alias v=nvim
+function vimrc(){
+	vi ~/.vim/vimrc
+}
+
+function nvrc(){
+	v ~/.config/nvim/init.lua ~/.config/nvim/lua/*.lua ~/.config/nvim/after/plugin/*.lua
+}
+alias nvimrc=nvrc
+
+
+alias wiki='vim -c "VimwikiIndex"'
+alias a8cwiki=' vim ~/Documents/Automattic/index.md'
+
+function download() {
+	if [ `which curl` ]; then
+		curl -s "$1" > "$2";
+	elif [ `which wget` ]; then
+		wget -nv -O "$2" "$1"
+	fi
+}
+
+function agreplace(){
+	ag $s1 --files-with-matches | xargs -I {} sed -i '.back' -e "s/$s1/$2/g" {};
+}
+
+###
+# Git
+##
+alias gap="git add -p"
+	# Dotfiles gitifie
+alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+
+#delete branche
+function gbdel(){
+  git branch | grep $1 | xargs git branch -D
+}
+
+  function gcol(){
+      #git checkout like %branch%
+       git branch | grep $1 | xargs git checkout
+  }
+
+function gcob(){
+    git checkout -b $1
+}
+
+function gco(){
+	git fetch && git checkout $1
+}
+
+function gpoc(){
+  git rev-parse --abbrev-ref HEAD | xargs git push --set-upstream origin
+}
+function gpof(){
+  git rev-parse --abbrev-ref HEAD | xargs git push -fu origin
+}
+
+function gcd() {
+	REPONAME=$(node -e "console.log(process.argv[1].match(/.*?\/([a-zA-Z0-9\-]+).git/)[1]);" $1)
+	git clone $1 && cd "${REPONAME}"
+}
+
+#################################
+# CLI
+#################################
+cpdir() {
+  echo "${PWD##*/}" | pbcopy
+  echo "${PWD##*/} copied"
+}
+
+cpwd() {
+  echo "${PWD}" | pbcopy
+  echo "path copied"
+}
+
+cdlike(){
+  ls -a | grep $1 | xargs cd
+}
+
+dater(){
+	 TZ=GMT date -r $1
+}
+
+addspace(){
+	for i in $(seq $1)
+	do
+		echo
+	done
+}
+
+alias space='addspace'
+
+alias lsg='ls | grep'
+alias hosts='sudo vim /etc/hosts'
+#turn on word wrap in less ( see -S, which removes wrap, is not in the list )
+export LESS="-F -g -i -M -R -w -X -z-4"
+
+## Legacy function to check if we're in a VIM shell
+isvim() {
+	env | grep vim
+}
+
+#####
+# POTFILES
+#######
+export WP_I18N_LIB="~/lib/wpi18n"
+
+##########
+# Node
+#########
+# this is the root folder where all globally installed node packages will  go
+export NPM_PACKAGES="/usr/local/npm_packages"
+export NODE_PATH="$NPM_PACKAGES/lib/node_modules:$NODE_PATH"
+# add to PATH
+export PATH="$NPM_PACKAGES/bin:$PATH"
+#Node Version Manager
+alias nvm='fnm'
+eval "$(fnm env --use-on-cd)"
+
+#Zoxide for better CD memory's
+eval "$(zoxide init zsh)" 
+
+#Starship Prompt
+eval "$(starship init zsh)"
+
+#############
+#navigation
+############
+function cdplugin(){
+	cd /Users/dwain/projects/$1/wordpress/wp-content/plugins/$2
+}
+
+function cdgosrc(){
+  cd /Users/dwain/projects/go/src
+}
+
+function cdwpcont(){
+	cd /Users/dwain/projects/$1/wordpress/wp-content
+}
+
+alias cdpayfast="cd /Users/dwain/projects/payfast/app/public/wp-content/plugins/woocommerce-gateway-payfast"
+alias cdwcpayplugins="cd /Users/dwain/projects/woocommerce-payments/docker/wordpress/wp-content/plugins"
+alias cdgo="cd /Users/dwain/projects/go"
+alias cdstripe="cd /Users/dwain/projects/wcpay/app/public/wp-content/plugins/woocommerce-gateway-stripe"
+
+function wplog(){
+	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
+}
+
+#######
+# TMUX
+#######
+alias wcpay-dev="tmuxinator wcpay"
+
+###########
+# WooDeploy
+###########
+export GOPATH="/Users/dwain/projects"
+export PATH=$PATH:$GOPATH
+export PATH=$PATH:$GOPATH/bin
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+###########
+# Ruby
+###########
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+
+# ssh
+# export SSH_KEY_PATH="~/.ssh/rsa_id"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+alias zshrc="vim ~/.zshrc"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="/usr/local/opt/php@7.3/bin:$PATH"
+export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
