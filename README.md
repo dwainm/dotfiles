@@ -5,6 +5,9 @@
 - Click on the bottom right "modifier keys"
 - Change capslock to be control.
 
+### Turn off shortcuts to change input sources
+Keyboard > Shortctus > Input Sources
+
 ### Install Rectangle App .
 Install the app
 Import config in the app: .RectangleConfig
@@ -18,10 +21,6 @@ Change iCloud settings to use Desktop and Documents folder. So cloud documents a
 ### Spaces and Desktop setting's
 Go to keyboard shortcuts and make sure CTR - [1-9] shortcuts are enabled for moving between spaces.
 Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
-
-### Menu bar and dock
-Set the menu bar and the dock to auto hide so the show up when your mouse goes over them.
-Go to System Prefs > Keyboard > Shortcuts > Keyboard and change the shortcut to SHIFT+CMD B for "Move focus to menu bar option".
 
 # Brew
 
@@ -37,11 +36,10 @@ Now, reload the terminal for the profile to load the correct git location and co
 `git config --global merge.tool diffmerge` 
 
 ### Install a few helfpul tools
-`brew install zsh vim fzf ctags svn fnm ripgrep tree-sitter`
-`brew install tree lf`
-`brew install orbstack`
-`brew install lnav figlet`
-`brew install tmuxinator`
+* `brew install zsh vim neovim fzf ctags svn fnm ripgrep tree-sitter ack php`
+* `brew install tree lf`
+* `brew install orbstack`
+* `brew install lnav figlet`
 
 # dotfiles
 How to use
@@ -68,12 +66,9 @@ Set brew ZSH as you shell:
 `chsh -s $(which zsh)`
 
 #### Install Font
-brew install --cask font-jetbrains-mono-nerd-font
+`brew tap homebrew/cask-fonts`
 
-Setup afterGlow Dark Theme:
-- Go to https://github.com/lysyi3m/macos-terminal-themes/blob/master/themes/Afterglow.terminal
-- Click on raw and save as afterglow.termianl.
-- Right click on open and Set it as defaut.
+`brew install --cask font-jetbrains-mono-nerd-font`
 
 Setup Zshell Presto:
 
@@ -81,7 +76,7 @@ Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
 
 - `rm -rf ~/.zprezto && git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}"/.zprezto`
 - Add back alias as we removed it: `alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
-- Make suer we do not overwrite the save zshrc file with all important functions and aliases: `config checkout -- .zprezto/runcoms/zshrc`
+- Make sure we do not overwrite the save zshrc file with all important functions and aliases: `config checkout -- .zprezto/runcoms/zshrc`
 
 ### Install Brew tools
 brew install --cask kitty
@@ -105,10 +100,14 @@ Make sure your paths are configured so that home brew ( `/usr/local/bin` )
 is before `/bin` and `/usr/bin/`
 
 # Setup NPM 
+We already have FNM so if needed we can just use that.
 https://www.npmjs.com/get-npm
 
 # Setup Composer
 
+`brew install composer`
+
+--- old way below
 `curl -sS https://getcomposer.org/installer | php`
 
 `sudo mv composer.phar /usr/local/bin/`
@@ -116,6 +115,11 @@ https://www.npmjs.com/get-npm
 `sudo chmod 755 /usr/local/bin/composer.phar`
 
 # Vim 
+Neovim:
+- Install packer: https://github.com/wbthomason/packer.nvim
+- Run packer install inside vim: :PackerInstall
+
+OldVim
 Open vim and run `:PlugInstall`
 
 Create symlink to vim wiki icloud storage: 
@@ -136,10 +140,7 @@ brew install tmuxinator
 
 <prefix> I to install plugins.
 
-# Touchbar
-Makes it more tollerable: https://medium.com/@svinkle/how-to-make-the-touch-bar-slightly-more-tolerable-857d29041f6a
-
-# Todois
+# Todoist
 Setup todoist by building it from your fork: https://github.com/dwainm/todoist
 
 ```
