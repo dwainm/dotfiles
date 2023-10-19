@@ -320,6 +320,12 @@ export PATH="$NPM_PACKAGES/bin:$PATH"
 alias nvm='fnm'
 eval "$(fnm env --use-on-cd)"
 
+#Zoxide for better CD memory's
+eval "$(zoxide init zsh)" 
+
+#Starship Prompt
+eval "$(starship init zsh)"
+
 #############
 #navigation
 ############
