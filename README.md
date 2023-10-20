@@ -37,9 +37,14 @@ Now, reload the terminal for the profile to load the correct git location and co
 
 ### Install a few helfpul tools
 * `brew install zsh vim neovim starship zoxide fzf ctags svn fnm ripgrep tree-sitter ack php`
-* `brew install tree bat lf`
+* `brew install tree bat lf lsd`
 * `brew install orbstack`
-* `brew install lnav figlet`
+* `brew install lnav figlet xh`
+
+## Apps
+1. Install the app Import config in the app: .RectangleConfig
+1. Setup apple calender accounts
+1. Instal or raycast : `brew install --cask raycast`
 
 # dotfiles
 How to use
@@ -64,6 +69,8 @@ now you can manage your dotfiles with config(git alias) command.
 Set brew ZSH as you shell:
 `sudo sh -c "echo $(which zsh) >> /etc/shells"`
 `chsh -s $(which zsh)`
+
+Makes sur zpresto is loaded below. The plugins should all work.
 
 #### Install Font
 `brew tap homebrew/cask-fonts`
