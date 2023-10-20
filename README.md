@@ -39,7 +39,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install zsh vim neovim starship zoxide fzf ctags svn fnm ripgrep tree-sitter ack php`
 * `brew install tree lf lsd bat`
 * `brew install orbstack`
-* `brew install lnav figlet`
+* `brew install lnav figlet xh`
 
 ## Apps
 1. Install the app Import config in the app: .RectangleConfig
