@@ -86,7 +86,7 @@ Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
 - Make sure we do not overwrite the save zshrc file with all important functions and aliases: `config checkout -- .zprezto/runcoms/zshrc`
 
 ### Install Brew tools
-brew install --cask alacritty
+brew install --cask kitty
 brew install hammerspoon --cask
 
 Generate your configuration files (copy/paste this as one command):
