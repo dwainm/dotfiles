@@ -377,7 +377,8 @@ fi
 # Ruby
 ###########
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
+export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.1.0/bin:$PATH"
+export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.2.0/bin:$PATH"
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
