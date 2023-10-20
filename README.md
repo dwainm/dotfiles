@@ -41,6 +41,11 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install orbstack`
 * `brew install lnav figlet`
 
+## Apps
+1. Install the app Import config in the app: .RectangleConfig
+1. Setup apple calender accounts
+1. Instal or raycast : `brew install --cask raycast`
+
 # dotfiles
 How to use
 
@@ -64,6 +69,8 @@ now you can manage your dotfiles with config(git alias) command.
 Set brew ZSH as you shell:
 `sudo sh -c "echo $(which zsh) >> /etc/shells"`
 `chsh -s $(which zsh)`
+
+Makes sur zpresto is loaded below. The plugins should all work.
 
 #### Install Font
 `brew tap homebrew/cask-fonts`
