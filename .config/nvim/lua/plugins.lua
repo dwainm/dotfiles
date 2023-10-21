@@ -39,11 +39,6 @@ return require('packer').startup(function(use)
 
 	use	'vimwiki/vimwiki'
 
-    use {
-      'stevearc/oil.nvim',
-      config = function() require('oil').setup() end
-    }
-
 	use {
 		'ptzz/lf.vim',
 		requires = {

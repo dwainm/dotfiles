@@ -90,9 +90,6 @@ nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
 nnoremap("<leader>fr","<cmd>Telescope resume<cr>")
 nnoremap("<leader>tr","<cmd>Telescope lsp_references include_declaration=false show_line=false<cr>")
 
--- Oil 
-nnoremap("-", ":Oil --float <CR>",  { desc = "Open parent directory" })
-
 --Map Ctrl + S to save in any mode
 nnoremap("<silent><C-s>",":update<CR>")
 vnoremap("<silent><C-s>","<C-C>:update<CR>")
