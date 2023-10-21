@@ -326,6 +326,9 @@ eval "$(zoxide init zsh)"
 #Starship Prompt
 eval "$(starship init zsh)"
 
+## Ruby
+eval "$(frum init)"
+
 #############
 #navigation
 ############
