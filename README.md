@@ -41,6 +41,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install tree bat lf lsd`
 * `brew install orbstack`
 * `brew install lnav figlet xh`
+* `brew install zsh-history-substring-search`
 
 ## Apps
 1. Install the app Import config in the app: .RectangleConfig
