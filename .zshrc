@@ -234,8 +234,13 @@ function agreplace(){
 # Git
 ##
 alias gap="git add -p"
-	# Dotfiles gitifie
+
+# Dotfiles gitifie
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+alias cap='config add -p'
+alias coz='config add ~/.zshrc'
+alias cst='config status'
+alias coc='config commit'
 
 #delete branche
 function gbdel(){
