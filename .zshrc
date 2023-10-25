@@ -241,6 +241,8 @@ alias cap='config add -p'
 alias coz='config add ~/.zshrc'
 alias cst='config status'
 alias coc='config commit'
+alias copus='config push'
+alias copul='config pull'
 
 #delete branche
 function gbdel(){
