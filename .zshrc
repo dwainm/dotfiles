@@ -18,6 +18,12 @@
 bindkey -v
 export KEYTIMEOUT=1
 
+### Completion
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
 # Up and Down arrow keys now shows related history based on what is entered on the current prompt
 source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey '^[[A' history-substring-search-up
@@ -44,9 +50,6 @@ DISABLE_AUTO_TITLE=true
 
 # Uncomment the following line to enable command auto-correction.
 # ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
