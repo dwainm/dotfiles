@@ -37,7 +37,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 
 ### Install a few helfpul tools
 * `brew install zsh vim neovim starship zoxide fzf ctags svn fnm ripgrep tree-sitter ack php`
-* `brew install frum`
+* `brew install frum openssl`
 * `brew install tree bat lf lsd`
 * `brew install orbstack`
 * `brew install lnav figlet xh`
