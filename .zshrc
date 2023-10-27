@@ -277,6 +277,9 @@ function gcd() {
 	git clone $1 && cd "${REPONAME}"
 }
 
+### Home brew
+PATH="/usr/local/bin:$PATH"
+
 #################################
 # CLI
 #################################
@@ -339,9 +342,6 @@ eval "$(zoxide init zsh)"
 
 #Starship Prompt
 eval "$(starship init zsh)"
-
-## Ruby
-eval "$(frum init)"
 
 #############
 #navigation
@@ -415,3 +415,4 @@ alias zshrc="vim ~/.zshrc"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export PATH="/usr/local/opt/php@7.3/bin:$PATH"
 export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
+export PATH="/usr/local/sbin:$PATH"

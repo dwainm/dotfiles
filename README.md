@@ -37,11 +37,14 @@ Now, reload the terminal for the profile to load the correct git location and co
 
 ### Install a few helfpul tools
 * `brew install zsh vim neovim starship zoxide fzf ctags svn fnm ripgrep tree-sitter ack php`
-* `brew install frum openssl`
 * `brew install tree bat lf lsd`
 * `brew install orbstack`
 * `brew install lnav figlet xh`
 * `brew install zsh-history-substring-search`
+#### Ruby related
+brew install gnupg
+Follow instruction for installing RVM: https://github.com/rvm/rvm/issues/5261#issuecomment-1704547846
+If above doesn't work go to RVM
 
 ## Apps
 1. Install the app Import config in the app: .RectangleConfig
