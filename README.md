@@ -39,6 +39,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install zsh vim neovim starship zoxide fzf ctags svn fnm ripgrep tree-sitter ack php`
 * `brew install tree bat lf lsd`
 * `brew install orbstack`
+* `brew install --cask db-browser-for-sqlite`
 * `brew install lnav figlet xh`
 * `brew install zsh-history-substring-search`
 #### Ruby related
