@@ -151,6 +151,7 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 brew install tmuxinator
 ```
 
+Open tmux and then:
 <prefix> I to install plugins.
 
 # Todoist
