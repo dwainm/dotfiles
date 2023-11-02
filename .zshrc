@@ -1,16 +1,4 @@
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
-# Customize to your needs...
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+# Authors: Sorin Ionescu <sorin.ionescu@gmail.com>
 
 #######################
 #Vim Bind keys
@@ -32,18 +20,8 @@ bindkey '^[[B' history-substring-search-down
 # History sharing between sessions.
 setopt share_history
 
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
+# Cd directory without typing CD
+setopt autocd
 
 # Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE=true
@@ -61,6 +39,7 @@ DISABLE_AUTO_TITLE=true
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # HIST_STAMPS="mm/dd/yyyy"
 
+# Keep Secrets
 if [[ -s "$HOME/.private" ]]; then
 	source $HOME/.private
 fi
