@@ -42,6 +42,9 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install --cask db-browser-for-sqlite`
 * `brew install lnav figlet xh`
 * `brew install zsh-history-substring-search`
+#### Meeting Bar
+On your work device, setup meeting bar to help you move through the day knowing what's current and what's next.
+
 #### Ruby related
 brew install gnupg
 Follow instruction for installing RVM: https://github.com/rvm/rvm/issues/5261#issuecomment-1704547846
