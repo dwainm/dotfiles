@@ -13,7 +13,15 @@ autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
 # Up and Down arrow keys now shows related history based on what is entered on the current prompt
-source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+
+if [[ -s "/opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
+	source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+fi
+
+if [[ -s "/usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
+	source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+fi
+
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
