@@ -19,8 +19,9 @@ Turn on tap to click on trackpad settings
 Change iCloud settings to use Desktop and Documents folder. So cloud documents and desktop is not seperate from device documents and desktop.
 
 ### Spaces and Desktop setting's
-Go to keyboard shortcuts and make sure CTR - [1-9] shortcuts are enabled for moving between spaces.
-Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
+1. Go to keyboard shortcuts and make sure CTR - [1-9] shortcuts are enabled for moving between spaces.
+1. Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
+1. Go to accesability > display and turn off reduce motion (this will remove the slideshow effect when switching spaces).
 
 # Brew
 
