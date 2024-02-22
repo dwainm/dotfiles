@@ -8,9 +8,10 @@
 ### Turn off shortcuts to change input sources
 Keyboard > Shortctus > Input Sources
 
-### Install Rectangle App .
-Install the app
-Import config in the app: .RectangleConfig
+### Mac Apps
+
+- Install Rectangle App: Import config in the app: .RectangleConfig
+- Install PasteNow
 
 ### Mouse changes
 Turn on tap to click on trackpad settings
@@ -20,8 +21,10 @@ Change iCloud settings to use Desktop and Documents folder. So cloud documents a
 
 ### Spaces and Desktop setting's
 1. Go to keyboard shortcuts and make sure CTR - [1-9] shortcuts are enabled for moving between spaces.
-1. Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
-1. Go to accesability > display and turn off reduce motion (this will remove the slideshow effect when switching spaces).
+2. Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
+3. Go to accesability > display and turn off reduce motion (this will remove the slideshow effect when switching spaces).
+
+
 
 # Brew
 
