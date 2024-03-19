@@ -24,8 +24,6 @@ Change iCloud settings to use Desktop and Documents folder. So cloud documents a
 2. Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
 3. Go to accesability > display and turn off reduce motion (this will remove the slideshow effect when switching spaces).
 
-
-
 # Brew
 
 ### Install brew first
@@ -46,6 +44,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install --cask db-browser-for-sqlite`
 * `brew install lnav figlet xh`
 * `brew install zsh-history-substring-search`
+* `brew install --cask michaelvillar-timer`
 #### Meeting Bar
 On your work device, setup meeting bar to help you move through the day knowing what's current and what's next.
 
