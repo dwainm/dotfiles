@@ -45,6 +45,7 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install lnav figlet xh`
 * `brew install zsh-history-substring-search`
 * `brew install gh`
+* `brew install --cask michaelvillar-timer`
 
 #### Meeting Bar
 On your work device, setup meeting bar to help you move through the day knowing what's current and what's next.
