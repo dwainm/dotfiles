@@ -24,8 +24,6 @@ Change iCloud settings to use Desktop and Documents folder. So cloud documents a
 2. Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
 3. Go to accesability > display and turn off reduce motion (this will remove the slideshow effect when switching spaces).
 
-
-
 # Brew
 
 ### Install brew first
