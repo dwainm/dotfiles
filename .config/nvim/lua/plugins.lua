@@ -7,7 +7,7 @@ return require('packer').startup(function(use)
 	use 'rose-pine/neovim'
 
 	use {
-		'nvim-telescope/telescope.nvim', tag = '0.1.0',
+		'nvim-telescope/telescope.nvim', tag = '*',
 		requires = { {'nvim-lua/plenary.nvim'} }
 	}
 
