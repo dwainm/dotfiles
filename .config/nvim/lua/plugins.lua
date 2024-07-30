@@ -15,7 +15,10 @@ return require('packer').startup(function(use)
 
 	use 'ludovicchabant/vim-gutentags'
 
-	use 'nvim-treesitter/nvim-treesitter'
+	use({
+        "nvim-treesitter/nvim-treesitter",
+        run = ":TSUpdate",
+    })
 
 	use 'nvim-lua/plenary.nvim'
 
