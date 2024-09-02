@@ -1,11 +1,42 @@
+#!/usr/bin/env sh
+
 #Changing Window Focus's
 ctrl - j : yabai -m window --focus south
 ctrl - h : yabai -m window --focus west
 ctrl - l : yabai -m window --focus east
 ctrl - k : yabai -m window --focus north
 
+#Swopping windows
+ctrl + shift - h : yabai -m window --swap west || $(yabai -m window --display west; yabai -m display --focus west)
+ctrl + shift - j : yabai -m window --swap south || $(yabai -m window --display south; yabai -m display --focus south)
+ctrl + shift - k : yabai -m window --swap north || $(yabai -m window --display north; yabai -m display --focus north)
+ctrl + shift - l : yabai -m window --swap east || $(yabai -m window --display east; yabai -m display --focus east)
+
 # make current application fullscreen
 ctrl - f : yabai -m window --toggle zoom-fullscreen
 
 # rebalance a space
 cmd - i : yabai -m space --balance
+
+# dropdown terminal (aka "quade mode")
+# see additional config in ~/.config/yabai/yabairc
+ctrl - m : open /Applications/kitty.app -n --args --single-instance --title="ddterm" 
+
+
+## Figure this out next time: 
+# WINDOW_TITLE="ddterm"
+#              WINDOW_ID=$(yabai -m query --windows | jq -e ".[] | select(.title==\"$WINDOW_TITLE\") | .id") || true
+# 			if [[ -z "$WINDOW_ID" ]]; then
+# 				pgrep -x kitty >/dev/null &&
+# 					open -na /Applications/Kitty.app --args --title "$WINDOW_TITLE"
+# 			else
+# 				WINDOW_QUERY=$(yabai -m query --windows --window "$WINDOW_ID")
+# 				IS_HIDDEN=$(echo "$WINDOW_QUERY" | jq '."is-hidden"')
+# 				HAS_FOCUS=$(echo "$WINDOW_QUERY" | jq '."has-focus"')
+# 				if [[ "${HAS_FOCUS}" != "true" ]]; then
+# 					yabai -m window "$WINDOW_ID" --space mouse --move abs:0:0 --grid "10:1:0:0:1:4" --layer above --focus
+# 				fi
+# 				if [[ "${IS_HIDDEN}" != "true" ]]; then
+# 					skhd -k "cmd - h"
+# 				fi
+# 			fi

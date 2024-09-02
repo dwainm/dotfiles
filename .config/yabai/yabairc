@@ -22,4 +22,4 @@ yabai -m config auto_balance on
 yabai -m rule --add app="^System Settings$" sticky=on sub-layer=above manage=off
 yabai -m rule --add app="^Digital Color Meter$" sticky=on sub-layer=above manage=off
 yabai -m rule --add app="^Calculator$" sticky=on sub-layer=above manage=off
-
+yabai -m rule --add title="ddterm" sticky=on sub-layer=above grid="10:1:0:0:1:4" manage=off
