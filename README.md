@@ -9,8 +9,6 @@
 Keyboard > Shortctus > Input Sources
 
 ### Mac Apps
-
-- Install Rectangle App: Import config in the app: .RectangleConfig
 - Install PasteNow
 
 ### Mouse changes

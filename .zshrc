@@ -103,6 +103,18 @@ function sandbox(){
 	fi
 }
 
+function rotationCalendarWeeks(){
+	for ((j = 1 ; j < 52 ; j++)); do
+		mondayMonth=$(date  -v-Sun -v+${j}w -v+Mon  "+%b")
+		mon=$(date  -v-Sun -v+${j}w -v+Mon  "+%d")
+
+		fridayMonth=$(date  -v-Sun -v+${j}w -v+Fri  "+%b")
+		fri=$(date  -v-Sun -v+${j}w -v+Fri  "+%d")
+		echo "$mondayMonth $mon - $fridayMonth $fri"
+	done
+}
+
+
 function wpurl(){
 	if [ -z "$1" ]; then
 		npm run wp option update home http://localhost:8082/
@@ -130,6 +142,22 @@ function plannerweekslonglist(){
     echo -e $dayranges
 }
 
+
+function weeklyupdateweeks(){
+	prevmonth='MON'
+	for ((j = 1 ; j < 52 ; j++)); do
+		curmonth=$(date  -v-Sun -v+${j}w -v+Mon  "+%B")
+		mon=$(date  -v-Sun -v+${j}w -v+Mon  "+%d")
+		fri=$(date  -v-Sun -v+${j}w -v+Fri  "+%d")
+		if [[ $curmonth != $prevmonth ]]; then
+			prevmonth=$curmonth;
+			echo ''
+			# echo $curmonth
+			echo ''
+		fi
+		echo "Weekly Update $curmonth $mon - $fri"
+	done
+}
 function plannerweeks(){
 	prevmonth='MON'
 	for ((j = 1 ; j < 52 ; j++)); do
