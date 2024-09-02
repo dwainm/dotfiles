@@ -174,21 +174,13 @@ function plannerweeks(){
 	done
 }
 
-function donelastweek(){
-	# Use todoist | grep for the this past sunday and then its previous mon|tues|wed|thu|fri
-	todoist cl --raw | grep -E "^\w+\s$(date -v-Sun -v-Mon  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Tue  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Wed  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Thu  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Fri  "+%y/%m/%d")|^\w+\s$(date -v-Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 4-100 | sort | sed 's/^/- /' | pbcopy
-	echo "Last weeks Todo done items coppied to clip board"
+function calThisWeek(){
+	icalBuddy -nrd -nc -eep notes -ic dwain.maralack@a8c.com eventsToday+5 | grep • |  grep -v Disengage | grep -v Family | grep -v Initialise | grep -v Lunch | grep -v 'weekly updates' | grep -v 'Week Planning' | grep -v 'Team and Group Updates' | grep -v Comms | tr • - | pbcopy
+	echo "Events coppied to clipboard"
 }
 
 function calendarlastweek(){
 	icalBuddy -nrd -nc -ic dwain.maralack@a8c.com eventsFrom:$(date -v-Sun -v-Mon  "+%Y/%m/%d") to:$(date -v-Sun -v-Sat  "+%Y/%m/%d")  | grep • |  grep -v Disengage | grep -v Family | grep -v Initialise | grep -v Lunch | grep -v Fika | grep -iv "\d slots" | grep -v Busy | tr • - | pbcopy
-}
-
-function donethisweek(){
-	# Use todoist | grep for the this week. Starting from upcomming Sunay walking back to the  previous mon|tues|wed|thu|fri
-todoist cl --raw | grep -E "$(date -v+Sun -v-Mon  "+%y/%m/%d")|$(date -v+Sun -v-Tue  "+%y/%m/%d")|$(date -v+Sun -v-Wed  "+%y/%m/%d")|$(date -v+Sun -v-Thu  "+%y/%m/%d")|$(date -v+Sun -v-Fri  "+%y/%m/%d")|$(date -v+Sun -v-Sat  "+%y/%m/%d")" |  cut -d" "  -f 4-100 | sort | sed 's/^/- /'| pbcopy
-echo "This weeks Todo done items coppied to clip board"
-
 }
 
 function wcpayurl(){
