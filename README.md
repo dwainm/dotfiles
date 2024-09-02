@@ -40,9 +40,14 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install tree bat lsd`
 * `brew install orbstack`
 * `brew install --cask db-browser-for-sqlite`
-* `brew install nnn figlet xh`
+* `brew install figlet xh`
 * `brew install zsh-history-substring-search`
 * `brew install gh`
+
+### Install NNN
+Compile NNN from source with nerd font enabled and move it an executable path.
+Install NNN plugins: https://github.com/jarun/nnn/tree/master/plugins#configuration
+
 ### Install Yabai, SKHD and Sketchy bar
 brew install --cask font-hack-nerd-font
 brew install font-sf-pro

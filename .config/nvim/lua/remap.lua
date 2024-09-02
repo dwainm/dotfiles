@@ -117,8 +117,7 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("x", "<leader>p", "\"_dP")
 
 -- Lf file manager
-vim.g.lf_map_keys = 0
-nnoremap("<leader>fm",':Lf<CR>')
+nnoremap("<leader>fm",'<cmd>lua require("minimal-nnn").start()<CR>')
 
 -- Paste from system clipboard
 vim.keymap.set("x", "<leader>P", "\"+p")

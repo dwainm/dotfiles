@@ -40,12 +40,7 @@ return require('packer').startup(function(use)
 
 	use	'vimwiki/vimwiki'
 
-	use {
-		'ptzz/lf.vim',
-		requires = {
-			{'voldikss/vim-floaterm'},
-		}
-	}
+	use({"bobrown101/minimal-nnn.nvim"})
 
 	use {
 		'VonHeikemen/lsp-zero.nvim',
