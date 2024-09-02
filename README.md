@@ -44,6 +44,9 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install zsh-history-substring-search`
 * `brew install gh`
 ### Install Yabai, SKHD and Sketchy bar
+brew install --cask font-hack-nerd-font
+brew install font-sf-pro
+brew install --cask sf-symbols
 *`brew tap FelixKratz/formulae`
 *`brew install yabai skhd sketchybar`
 
