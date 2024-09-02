@@ -1,0 +1,11 @@
+#Changing Window Focus's
+ctrl - j : yabai -m window --focus south
+ctrl - h : yabai -m window --focus west
+ctrl - l : yabai -m window --focus east
+ctrl - k : yabai -m window --focus north
+
+# make current application fullscreen
+ctrl - f : yabai -m window --toggle zoom-fullscreen
+
+# rebalance a space
+cmd - i : yabai -m space --balance
