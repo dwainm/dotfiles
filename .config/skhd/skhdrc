@@ -21,8 +21,6 @@ cmd - i : yabai -m space --balance
 # dropdown terminal (aka "quade mode")
 # see additional config in ~/.config/yabai/yabairc
 ctrl - m : open /Applications/kitty.app -n --args --single-instance --title="ddterm" 
-
-
 ## Figure this out next time: 
 # WINDOW_TITLE="ddterm"
 #              WINDOW_ID=$(yabai -m query --windows | jq -e ".[] | select(.title==\"$WINDOW_TITLE\") | .id") || true
