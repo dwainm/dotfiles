@@ -16,25 +16,23 @@ ctrl + shift - l : yabai -m window --swap east || $(yabai -m window --display ea
 ctrl - f : yabai -m window --toggle zoom-fullscreen
 
 # rebalance a space
-cmd - i : yabai -m space --balance
+ctrl + cmd - i : yabai -m space --balance
 
 # dropdown terminal (aka "quade mode")
 # see additional config in ~/.config/yabai/yabairc
 ctrl - m : open /Applications/kitty.app -n --args --single-instance --title="ddterm" 
-## Figure this out next time: 
-# WINDOW_TITLE="ddterm"
-#              WINDOW_ID=$(yabai -m query --windows | jq -e ".[] | select(.title==\"$WINDOW_TITLE\") | .id") || true
-# 			if [[ -z "$WINDOW_ID" ]]; then
-# 				pgrep -x kitty >/dev/null &&
-# 					open -na /Applications/Kitty.app --args --title "$WINDOW_TITLE"
-# 			else
-# 				WINDOW_QUERY=$(yabai -m query --windows --window "$WINDOW_ID")
-# 				IS_HIDDEN=$(echo "$WINDOW_QUERY" | jq '."is-hidden"')
-# 				HAS_FOCUS=$(echo "$WINDOW_QUERY" | jq '."has-focus"')
-# 				if [[ "${HAS_FOCUS}" != "true" ]]; then
-# 					yabai -m window "$WINDOW_ID" --space mouse --move abs:0:0 --grid "10:1:0:0:1:4" --layer above --focus
-# 				fi
-# 				if [[ "${IS_HIDDEN}" != "true" ]]; then
-# 					skhd -k "cmd - h"
-# 				fi
-# 			fi
+# ctrl - m: WINDOW_TITLE="ddterm" \
+# WINDOW_ID=$(yabai -m query --windows | jq -e ".[] | select(.title==\"$WINDOW_TITLE\") | .id") || true \
+# if [[ -z \"$WINDOW_ID\" ]]; then \
+#     pgrep -x kitty >/dev/null && open -na /Applications/Kitty.app --args --title "$WINDOW_TITLE"  \
+# else \
+# 	WINDOW_QUERY=$(yabai -m query --windows --window "$WINDOW_ID") \
+# 	IS_HIDDEN=$(echo "$WINDOW_QUERY" | jq '."is-hidden"') \
+# 	HAS_FOCUS=$(echo "$WINDOW_QUERY" | jq '."has-focus"') \
+# 	if [[ "${HAS_FOCUS}" != "true" ]]; then \
+# 		yabai -m window "$WINDOW_ID" --space mouse --move abs:0:0 --grid "10:1:0:0:1:4" --layer above --focus \
+# 	fi \
+# 	if [[ "${IS_HIDDEN}" != "true" ]]; then \
+# 		skhd -k "cmd - h" \
+# 	fi \
+# fi

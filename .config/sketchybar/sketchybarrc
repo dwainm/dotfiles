@@ -82,7 +82,7 @@ sketchybar --add item chevron left \
 
 sketchybar --add item clock right \
            --set clock update_freq=10 icon=  script="$PLUGIN_DIR/clock.sh" \
-           --add item calendar center \
+           --add item calendar left \
            --set calendar update_freq=20 icon=󰸘  script="$PLUGIN_DIR/icalBuddy.sh" \
            --add item volume right \
            --set volume script="$PLUGIN_DIR/volume.sh" \
