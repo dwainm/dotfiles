@@ -83,7 +83,7 @@ sketchybar --add item chevron left \
 sketchybar --add item clock right \
            --set clock update_freq=10 icon=  script="$PLUGIN_DIR/clock.sh" \
            --add item calendar left \
-           --set calendar update_freq=20 icon=󰸘  script="$PLUGIN_DIR/icalBuddy.sh" \
+           --set calendar update_freq=20 width=300 scroll_texts=true icon=󰸘  script="$PLUGIN_DIR/gcalcli.sh" \
            --add item volume right \
            --set volume script="$PLUGIN_DIR/volume.sh" \
            --subscribe volume volume_change \
@@ -92,7 +92,7 @@ sketchybar --add item clock right \
            --subscribe battery system_woke power_source_change
 
 ##### Flow Plugin #####
-sketchybar --add item flow center \
+sketchybar --add item flow right \
            --set flow update_freq=1 \
         	      script="$PLUGIN_DIR/flow.sh" \
 	              click_script="sketchybar -m --set flow popup.drawing=toggle" \

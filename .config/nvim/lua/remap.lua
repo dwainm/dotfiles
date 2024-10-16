@@ -42,7 +42,7 @@ end
 
 
 --Exit insert mode Normal Mode( [t]o [n]ormal )
-imap("tn","<Esc>")
+-- Ctr - c is already map by default
 
 --Move up and down logical lines when text is wrapped
 nnoremap("j", "gj")
