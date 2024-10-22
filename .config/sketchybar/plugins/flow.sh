@@ -2,7 +2,15 @@
 
 TIME=$(osascript -e 'tell application "Flow" to getTime')
 PHASE=$(osascript -e 'tell application "Flow" to getPhase') 
-TASK=$(osascript -e 'tell application "Flow" to getTitle') 
+TASK=$(icalBuddy -ic dwain.maralack@a8c.com eventsNow | gsed 's/(.*)//' | gsed -e 's/•//' | head -1 )
+
+osascript -  "$TASK"  <<EOF
+on run argv -- argv is a list of strings
+    tell application "Flow"
+        setTitle to argv 
+    end tell
+end run
+EOF
 
 SHOW=$PHASE
 if [ $PHASE = "Flow" ]; then
