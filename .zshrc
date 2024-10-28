@@ -53,6 +53,13 @@ if [[ -s "$HOME/.private" ]]; then
 fi
 
 
+#######
+# TMUX
+#######
+if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+  tmux attach-session -t default || tmux new-session -s default
+fi
+
 #################################
 # Aliases
 #################################
@@ -374,10 +381,6 @@ function wplog(){
 	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
 }
 
-#######
-# TMUX
-#######
-alias wcpay-dev="tmuxinator wcpay"
 
 ###########
 # WooDeploy

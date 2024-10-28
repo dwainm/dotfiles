@@ -89,7 +89,7 @@ sketchybar --add item clock right \
            --set volume script="$PLUGIN_DIR/volume.sh" \
            --subscribe volume volume_change \
            --add item calendar right \
-           --set calendar update_freq=20 scroll_texts=true icon=󰸘  script="$PLUGIN_DIR/gcalcli.sh"
+           --set calendar update_freq=20 scroll_texts=true icon=⏭️  script="$PLUGIN_DIR/gcalcli.sh"
 
 ##### Flow Plugin #####
 sketchybar --add item flow left \
