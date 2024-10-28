@@ -138,4 +138,4 @@ vim.keymap.set("n", "Q", "<nop>")
 nnoremap("<leader>sr",[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 -- Source VIMRC
-nnoremap("<leader>so",[[:source $MYVIMRC <CR>:source ~/.config/nvim/lua/remap.lua<CR> :source ~/.config/nvim/lua/plugins.lua <CR> :echom "NVIMRC sourced"<CR>]])
+nnoremap("<leader>so",[[:source $MYVIMRC <CR>:source ~/.config/nvim/lua/remap.lua<CR> :echom "NVIMRC sourced"<CR>]])
