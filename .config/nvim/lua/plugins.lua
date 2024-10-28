@@ -20,6 +20,10 @@ return require('packer').startup(function(use)
         run = ":TSUpdate",
     })
 
+	use 'psliwka/vim-smoothie'
+
+	use 'preservim/vimux'
+
 	use 'nvim-lua/plenary.nvim'
 
 	use 'mbbill/undotree'
@@ -152,4 +156,5 @@ return require('packer').startup(function(use)
 		end
 	}
 
+	use 'm4xshen/autoclose.nvim'
 end)

@@ -1,16 +1,16 @@
 #!/usr/bin/env sh
 
 #Changing Window Focus's
-ctrl - j : yabai -m window --focus south
-ctrl - h : yabai -m window --focus west
-ctrl - l : yabai -m window --focus east
-ctrl - k : yabai -m window --focus north
+ctrl + cmd - j : yabai -m window --focus south
+ctrl + cmd - h : yabai -m window --focus west
+ctrl + cmd - l : yabai -m window --focus east
+ctrl + cmd - k : yabai -m window --focus north
 
 #Swopping windows
-ctrl + shift - h : yabai -m window --swap west || $(yabai -m window --display west; yabai -m display --focus west)
-ctrl + shift - j : yabai -m window --swap south || $(yabai -m window --display south; yabai -m display --focus south)
-ctrl + shift - k : yabai -m window --swap north || $(yabai -m window --display north; yabai -m display --focus north)
-ctrl + shift - l : yabai -m window --swap east || $(yabai -m window --display east; yabai -m display --focus east)
+ctrl + cmd + shift - h : yabai -m window --swap west || $(yabai -m window --display west; yabai -m display --focus west)
+ctrl + cmd + shift - j : yabai -m window --swap south || $(yabai -m window --display south; yabai -m display --focus south)
+ctrl + cmd + shift - k : yabai -m window --swap north || $(yabai -m window --display north; yabai -m display --focus north)
+ctrl + cmd + shift - l : yabai -m window --swap east || $(yabai -m window --display east; yabai -m display --focus east)
 
 # make current application fullscreen
 ctrl - f : yabai -m window --toggle zoom-fullscreen
