@@ -1,4 +1,4 @@
-require("plugins")
-require("remap")
 require("set")
-require("autoclose").setup()
+require("remap")
+require("config.lazy")
+vim.cmd('colorscheme rose-pine')

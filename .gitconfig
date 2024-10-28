@@ -3,7 +3,7 @@
 	email = dwain.maralack@gmail.com
 [core]
 	excludesfile = /Users/dwain/.gitignore_global
-	editor = /opt/homebrew/bin/nvim
+	editor = /usr/local/bin/nvim
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
