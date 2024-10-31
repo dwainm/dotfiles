@@ -18,8 +18,13 @@ ctrl - f : yabai -m window --toggle zoom-fullscreen
 # rebalance a space
 ctrl + cmd - i : yabai -m space --balance
 
+### Termninal Commands
+# New kitty full instance
+ctrl + cmd - m : open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
+
 # dropdown terminal (aka "quade mode")
 # see additional config in ~/.config/yabai/yabairc
+
 ctrl - m : open /Applications/kitty.app -n --args --single-instance --title="ddterm" 
 # ctrl - m: WINDOW_TITLE="ddterm" \
 # WINDOW_ID=$(yabai -m query --windows | jq -e ".[] | select(.title==\"$WINDOW_TITLE\") | .id") || true \
