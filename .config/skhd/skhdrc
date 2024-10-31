@@ -18,11 +18,12 @@ ctrl - f : yabai -m window --toggle zoom-fullscreen
 # rebalance a space
 ctrl + cmd - i : yabai -m space --balance
 
-### Termninal Commands
-# New kitty full instance
-ctrl + cmd - m : open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
-
 # dropdown terminal (aka "quade mode")
 # see additional config in ~/.config/yabai/yabairc
 # the skhd_ddterm function can be found here: https://gist.github.com/dwainm/632844ef6e2b66d4ee6ca1fc2304f959
 ctrl - m: source ~/.zshrc && skhd_ddterm
+
+### Termninal Commands
+# New kitty full instance
+ctrl + cmd - m : open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
+

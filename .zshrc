@@ -70,9 +70,13 @@ fi
 
 function skhd_ddterm () {
 	WINDOW_TITLE="ddterm"
-	WINDOW_ID=$(yabai -m query --windows | jq -e ".[] | select(.title==\"$WINDOW_TITLE\") | .id") || true
+	WINDOW_ID=$(yabai -m query --windows | jq -e ".[] | select(.title==\"$WINDOW_TITLE\") | .id")
 
-	if [[ -z \"$WINDOW_ID\" ]]; then 
+	case $WINDOW_ID in
+		''|*[!0-9]*) unset $WINDO_ID ;;
+	esac
+
+	if ! [[ $WINDOW_ID ]]; then 
 		open -na /Applications/Kitty.app --args --title "$WINDOW_TITLE"  
 	else 
 		WINDOW_QUERY=$(yabai -m query --windows --window "$WINDOW_ID") 
