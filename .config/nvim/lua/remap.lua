@@ -59,12 +59,23 @@ nnoremap("[q",":cprev<cr>")
 -- Yank
 nnoremap("Y", "0Y")
 
---Quicker window movement <C-{j|k|l|H}>
-nnoremap("<C-j>","<C-w>j")
-nnoremap("<C-k>","<C-w>k")
-nnoremap("<C-l>","<C-w>l")
+-- navigation
+vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left)
+vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down)
+vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up)
+vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right)
+-- resizing
+vim.keymap.set('n', '<A-h>', require('smart-splits').resize_left)
+vim.keymap.set('n', '<A-j>', require('smart-splits').resize_down)
+vim.keymap.set('n', '<A-k>', require('smart-splits').resize_up)
+vim.keymap.set('n', '<A-l>', require('smart-splits').resize_right)
+-- swapping
+vim.keymap.set('n', '<A-H>', require('smart-splits').swap_buf_left)
+vim.keymap.set('n', '<A-J>', require('smart-splits').swap_buf_down)
+vim.keymap.set('n', '<A-K>', require('smart-splits').swap_buf_up)
+vim.keymap.set('n', '<A-L>', require('smart-splits').swap_buf_right)
 
--- Set cursor at the beginning of line when bringing lines up.
+--Window/Pane-- Set cursor at the beginning of line when bringing lines up.
 vim.keymap.set("n", "J", "mzJ`z")
 
 --Move selection/current line up or donw [in all modes]

@@ -1,10 +1,25 @@
 #!/usr/bin/env sh
 
-#Changing Window Focus's
-ctrl + cmd - j : yabai -m window --focus south
-ctrl + cmd - h : yabai -m window --focus west
-ctrl + cmd - l : yabai -m window --focus east
-ctrl + cmd - k : yabai -m window --focus north
+#Changing Window Focus with Ctrl-Vim keys
+ctrl - h [
+  *           : yabai -m window --focus west || yabai -m display --focus west
+  "Kitty"     ~
+]
+
+ctrl - j [
+  *           : yabai -m window --focus south
+  "Kitty"     ~
+]
+
+ctrl - k [
+  *           : yabai -m window --focus north
+  "Kitty"     ~
+]
+
+ctrl - l [
+  *           : yabai -m window --focus east || yabai -m display --focus east
+  "Kitty"     ~
+]
 
 #Swopping windows
 ctrl + cmd + shift - h : yabai -m window --swap west || $(yabai -m window --display west; yabai -m display --focus west)
