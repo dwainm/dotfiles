@@ -1,4 +1,4 @@
 require("set")
-require("remap")
 require("config.lazy")
+require("remap")
 vim.cmd('colorscheme rose-pine')
