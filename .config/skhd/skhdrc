@@ -42,3 +42,5 @@ ctrl - m: source ~/.zshrc && skhd_ddterm
 # New kitty full instance
 ctrl + cmd - m : open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
 
+### Email Coms - Open up all important email views with one shortcut
+ctrl + alt + cmd - m : source ~/.zshrc && open_all_mail_filter_links

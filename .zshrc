@@ -254,7 +254,7 @@ function vimrc(){
 }
 
 function nvrc(){
-	v ~/.config/nvim/init.lua ~/.config/nvim/lua/*.lua ~/.config/nvim/after/plugin/*.lua
+	v ~/.config/nvim/
 }
 alias nvimrc=nvrc
 
