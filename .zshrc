@@ -319,7 +319,12 @@ function gcd() {
 }
 
 ### Home brew
-PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/bin:$PATH"
+
+######
+# Custom Scripts
+######
+export PATH="$HOME/bin:$PATH"
 
 #################################
 # CLI
