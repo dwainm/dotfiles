@@ -33,6 +33,9 @@ ctrl - f : yabai -m window --toggle zoom-fullscreen
 # rebalance a space
 ctrl + cmd - i : yabai -m space --balance
 
+#open chrome
+ctrl + cmd - c : open -a "Google Chrome"
+
 # dropdown terminal (aka "quade mode")
 # see additional config in ~/.config/yabai/yabairc
 # the skhd_ddterm function can be found here: https://gist.github.com/dwainm/632844ef6e2b66d4ee6ca1fc2304f959
