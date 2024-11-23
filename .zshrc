@@ -230,17 +230,9 @@ function wcpayurl(){
 #################################
 # WP Docker
 #################################
-alias woowp='docker-compose -f /Users/dwain/projects/woocommerce.test/docker-compose.yml exec --user www-data wp wp'
-alias wcpaywp='docker-compose exec --user root wordpress php /root/wp-cli.phar --allow-root
-'
-alias hydrawp='docker-compose -f /Users/dwain/projects/hydra.test/docker-compose.yml exec --user www-data phpfpm wp'
-alias wp='docker-compose exec --user www-data wordpress wp'
-alias dcbash='docker-compose exec --user root wordpress bash'
-alias wcpaybash='docker-compose exec --user root wordpress bash'
 alias dc='docker-compose'
 alias dcup='docker compose up -d'
 alias dockerstop='docker stop $(docker ps -a -q)'
-alias hammerspoon="v ~/.hammerspoon/init.lua"
 
 
 #################################
