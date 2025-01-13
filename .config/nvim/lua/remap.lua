@@ -56,6 +56,9 @@ nmap ("]b",":bnext<CR>")
 nnoremap("]q",":cnext<cr>")
 nnoremap("[q",":cprev<cr>")
 
+-- Vimux Command runner
+nnoremap("rl",':VimuxRunCommand("!!")<cr>')
+
 -- Yank
 nnoremap("Y", "0Y")
 
