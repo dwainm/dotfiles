@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'uri'
+
+mail_links = { 
+	"Calendar" => "https://mail.google.com/mail/u/0/#search/%22From+Google+Calendar%22+and+is%3Ainbox",
+	"Mentions" => 	"https://mail.google.com/mail/u/0/#search/is%3Ainbox+AND+%28+%22mentioned+you+in%22+OR+%22You+were+mentioned%22+OR+%28+from%3A%28donotreply%40wordpress.com%29+subject%3A%28mentioned+you%29+%29+OR+OR+cc%3Amention%40noreply.github.com+%29",
+	"Likes" => 	"https://mail.google.com/mail/u/0/#search/is%3Ainbox+AND+from%3A%28donotreply%40wordpress.com%29+subject%3A%28liked+your+comment%29",
+	"Github" => "https://mail.google.com/mail/u/0/#search/is%3Ainbox+AND+%28+from%3Anoreply%40github.com+OR+from%3Anotifications%40github.com+%29",
+	"Team P2" => "https://mail.google.com/mail/u/0/#search/is%3Ainbox+AND+from%3A%22Team+Sigma%22++-%22liked+your%22++-subject%3A+%22AFK+for%22",
+}
+
+mail_links.each_value { |link| `open -a "Google Chrome" #{link}` }
