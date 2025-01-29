@@ -431,10 +431,7 @@ fi
 ###########
 # Ruby
 ###########
-export GEM_HOME="$HOME/.gem"
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.1.0/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.2.0/bin:$PATH"
+# export GEM_HOME="$HOME/.gem"
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
@@ -451,3 +448,4 @@ alias zshrc="vim ~/.zshrc"
 export PATH="/usr/local/opt/php@7.3/bin:$PATH"
 export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
+eval "$(~/.local/bin/mise activate)"
