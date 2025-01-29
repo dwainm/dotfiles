@@ -1,5 +1,18 @@
 #!/usr/bin/env sh
 
+############
+# Layer - Most used actions 
+# Keys: ctrl / ctr + shift
+# ---------------------------
+# 1. Jumping between windows (Mac, Tmux, Vim)
+# 2. Swopping windows
+# 2. Opening up a drop down terminal
+# 3. Opening up a full terminal window
+# 4. Making a window fullscreen 
+# 5. Rebalancing the windows in yabai
+#
+###########
+
 #Changing Window Focus with Ctrl-Vim keys
 ctrl - h [
   *           : yabai -m window --focus west || yabai -m display --focus west
@@ -21,26 +34,37 @@ ctrl - l [
   "Kitty"     ~
 ]
 
-#Swopping windows
-ctrl + cmd + shift - h : yabai -m window --swap west || $(yabai -m window --display west; yabai -m display --focus west)
-ctrl + cmd + shift - j : yabai -m window --swap south || $(yabai -m window --display south; yabai -m display --focus south)
-ctrl + cmd + shift - k : yabai -m window --swap north || $(yabai -m window --display north; yabai -m display --focus north)
-ctrl + cmd + shift - l : yabai -m window --swap east || $(yabai -m window --display east; yabai -m display --focus east)
-
-# make current application fullscreen
-ctrl - f : yabai -m window --toggle zoom-fullscreen
-
-# rebalance a space
-ctrl + cmd - i : yabai -m space --balance
-
 # dropdown terminal (aka "quade mode")
 # see additional config in ~/.config/yabai/yabairc
 # the skhd_ddterm function can be found here: https://gist.github.com/dwainm/632844ef6e2b66d4ee6ca1fc2304f959
 ctrl - m: source ~/.zshrc && skhd_ddterm
 
-### Termninal Commands
-# New kitty full instance
-ctrl + cmd - m : open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
+#Swopping windows
+ctrl + shift - h : yabai -m window --swap west || $(yabai -m window --display west; yabai -m display --focus west)
+ctrl + shift - j : yabai -m window --swap south || $(yabai -m window --display south; yabai -m display --focus south)
+ctrl + shift - k : yabai -m window --swap north || $(yabai -m window --display north; yabai -m display --focus north)
+ctrl + shift - l : yabai -m window --swap east || $(yabai -m window --display east; yabai -m display --focus east)
+
+# make current application fullscreen
+ctrl - f : yabai -m window --toggle zoom-fullscreen
+
+# rebalance a space
+ctrl - i : yabai -m space --balance
+
+############################################
+### Layer - remap keys
+### Mod: shift+option
+### Kitty
+############################################
+# shift + alt - n: k
+############################################
+### Layer - Run Custom Scripts Layer
+### Mod: ctrl + cmd / ctrl + cmd + shift
+############################################
+
+### Kitty
+# Kitty full instance
+ctrl + cmd - k : open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
 
 ### Email Coms - Open up all important email views with one shortcut
-ctrl + alt + cmd - m : source ~/.zshrc && open_all_mail_filter_links
+ctrl + cmd - e : source ~/.zshrc && open_all_mail_filter_links
