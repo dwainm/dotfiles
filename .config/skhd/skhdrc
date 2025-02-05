@@ -41,7 +41,10 @@ ctrl - f : yabai -m window --toggle zoom-fullscreen
 ctrl + cmd - i : yabai -m space --balance
 
 #open chrome
-ctrl + cmd - c : open -a "Google Chrome"
+ctrl + cmd - c : open -na "Google Chrome" --args --new-window
+
+
+
 
 # dropdown terminal (aka "quade mode")
 # see additional config in ~/.config/yabai/yabairc
