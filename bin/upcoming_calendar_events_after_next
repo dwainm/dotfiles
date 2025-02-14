@@ -3,29 +3,65 @@
 require 'date'
 require 'time'
 
+def clean_string(str)
+  str.gsub(/\e\[[0-9;]*m/, '').strip
+end
+
 def get_events
   # Get raw events from gcalcli
-  raw_events = `gcalcli agenda --nocolor --tsv now "tomorrow 23:59"`
+  raw_events = `gcalcli agenda --nocolor --tsv --details url now "tomorrow 23:59"`.chomp
   
   # Parse TSV and skip header
   events = raw_events.split("\n")[1..-1].map do |line|
     next if line.empty?
-    start_date, start_time, _, _, title = line.split("\t")
-    # Skip if this is an all-day event (no start_time)
+    fields = line.split("\t")
+    next if fields.length < 7
+    start_date, start_time, _, _, url, _, title = fields
     next if start_time.nil? || start_time.empty?
-    [start_date, start_time, title.strip]
+    [start_date, start_time, clean_string(title), clean_string(url)]
   end.compact
-  
-  # Skip the first two timed events (current and next)
-  events = events[2..-1] || []
-  
-  # Format remaining events
-  events.map do |date, time, title|
+
+  # First, format all events without markers to find the longest length
+  formatted_events = events.map do |date, time, title, url|
     event_time = Time.parse("#{date} #{time}")
-    formatted_time = event_time.strftime("%-l:%M %p")  # %-l removes leading zero
-    formatted_time + " " + title
+    formatted_time = event_time.strftime("%-l:%M %p")
+    ["#{formatted_time} #{title}", url]
+  end
+
+  # Find the longest event text length
+  max_length = formatted_events.map { |text, _| text.length }.max
+
+  # Now format with markers, padding each line to align markers
+  formatted_events.each_with_index.map do |(event_text, url), index|
+    marker = case index
+            when 0 then "[current]"
+            when 1 then "[next]"
+            else ""
+            end
+    
+    if !marker.empty?
+      # Pad with spaces to align markers
+      padding = " " * (max_length - event_text.length)
+      [event_text + padding + " " + marker, url]
+    else
+      [event_text, url]
+    end
   end
 end
 
-events = get_events
-puts events.empty? ? ["No upcoming events", "No more events"] : events
+begin
+  events = get_events
+  if events.empty?
+    puts "No upcoming events"
+    puts ""
+  else
+    events.each do |event_text, url|
+      puts event_text
+      puts url
+    end
+  end
+rescue => e
+  puts "Error: #{e.message}"
+  puts "No upcoming events"
+  puts ""
+end

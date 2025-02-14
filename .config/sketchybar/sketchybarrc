@@ -127,38 +127,14 @@ sketchybar --add item calendar right \
                          icon=⏭️ \
                          script="$PLUGIN_DIR/gcalcli.sh" \
                          click_script="sketchybar -m --set calendar popup.drawing=toggle" \
+                         popup.drawing=off \
                          popup.background.border_width=3 \
                          popup.background.corner_radius=4 \
                          popup.background.border_color=0xFFFFFFFF \
                          popup.background.color=0xFF737994 \
+                         popup.height=30 \
                          popup.horizontal=off \
-                         popup.align=right \
-                         popup.height=20 \
-                         popup.y_offset=0 \
-                         \
-           --add item calendar.header popup.calendar \
-           --set calendar.header label="Rest of the day:" \
-                                label.padding_left=15 \
-                                label.padding_right=15 \
-                                label.color=0xFFFFFFFF \
-                                background.padding_left=15 \
-                                background.padding_right=15 \
-                                \
-           --add item calendar.event1 popup.calendar \
-           --set calendar.event1 label="Loading..." \
-                                label.padding_left=15 \
-                                label.padding_right=15 \
-                                label.color=0xFFFFFFFF \
-                                background.padding_left=15 \
-                                background.padding_right=15 \
-                                \
-           --add item calendar.event2 popup.calendar \
-           --set calendar.event2 label="Loading..." \
-                                label.padding_left=15 \
-                                label.padding_right=15 \
-                                label.color=0xFFFFFFFF \
-                                background.padding_left=15 \
-                                background.padding_right=15
+                         popup.align=right
 
 ##### Force all scripts to run the first time (never do this in a script) #####
 sketchybar --update
