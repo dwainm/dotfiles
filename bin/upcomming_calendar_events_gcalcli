@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+require 'date'
+
+class CalendarEntry
+  attr_reader :datetime, :title
+
+  def initialize(datetime, title)
+    @datetime = datetime
+    @title = title
+  end
+end
+
+def parse_calendar_entry(entry_string)
+  cleaned_string = entry_string
+    .gsub(/\e\[[0-9;]*m/, '')
+    .chomp
+  
+  pattern = /(\w{3})\s+(\w{3})\s+(\d{1,2})\s+(\d{2}:\d{2})\s+(.+)/
+  match = cleaned_string.match(pattern)
+  
+  if match
+    day_name, month_name, day, time_str, title = match.captures
+    current_year = Time.now.year
+    hour, minute = time_str.split(':').map(&:to_i)
+    
+    # Use ABBR_MONTHNAMES for three-letter month abbreviations
+    month_number = Date::ABBR_MONTHNAMES.index(month_name.capitalize)
+    
+    datetime = DateTime.new(
+      current_year,
+      month_number,
+      day.to_i,
+      hour,
+      minute
+    )
+    
+    CalendarEntry.new(datetime, title.strip)
+  else
+    raise "Invalid calendar entry format"
+  end
+end
+
+def time_until_event(calendar_entry)
+  now = DateTime.now
+  minutes_until = ((calendar_entry.datetime - now) * 24 * 60).to_i
+  
+  return "now" if minutes_until <= 1
+  
+  case minutes_until
+  when 2..59
+    "in #{minutes_until}m"
+  when 60..1439  # up to 23 hours, 59 minutes
+    hours = minutes_until / 60
+    mins = minutes_until % 60
+    if mins == 0
+      "in #{hours}h"
+    else
+      "in #{hours}h#{mins}m"  # Removed space here
+    end
+  else
+    days = minutes_until / (24 * 60)
+    "in #{days}d"
+  end
+end
+
+# Example usage
+nextEvent = `gcalcli agenda --nocolor --nostarted --details title | head -2  | tail -1`
+event = parse_calendar_entry(nextEvent)
+
+# Test the parsed object
+puts "#{event.title} #{time_until_event(event)}"
