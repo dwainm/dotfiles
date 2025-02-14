@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require 'date'
+require 'time'
+
+def get_events
+  # Get raw events from gcalcli
+  raw_events = `gcalcli agenda --nocolor --tsv now "tomorrow 23:59"`
+  
+  # Parse TSV and skip header
+  events = raw_events.split("\n")[1..-1].map do |line|
+    next if line.empty?
+    start_date, start_time, _, _, title = line.split("\t")
+    # Skip if this is an all-day event (no start_time)
+    next if start_time.nil? || start_time.empty?
+    [start_date, start_time, title.strip]
+  end.compact
+  
+  # Skip the first two timed events (current and next)
+  events = events[2..-1] || []
+  
+  # Format remaining events
+  events.map do |date, time, title|
+    event_time = Time.parse("#{date} #{time}")
+    formatted_time = event_time.strftime("%-l:%M %p")  # %-l removes leading zero
+    formatted_time + " " + title
+  end
+end
+
+events = get_events
+puts events.empty? ? ["No upcoming events", "No more events"] : events
