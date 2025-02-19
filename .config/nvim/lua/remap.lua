@@ -104,6 +104,38 @@ nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
 nnoremap("<leader>fr","<cmd>Telescope resume<cr>")
 nnoremap("<leader>tr","<cmd>Telescope lsp_references include_declaration=false show_line=false<cr>")
 
+-- Create the command that takes a file type argument
+vim.api.nvim_create_user_command('TelescopeFindByType', function(opts)
+    local file_type = opts.args
+    require('telescope.builtin').live_grep({
+        glob_pattern = "*." .. file_type,
+        prompt_title = "Find in " .. file_type .. " files"
+    })
+end, {
+    nargs = 1,
+    complete = function()
+        -- Add common file types for autocomplete
+        return {
+            "php",
+            "js", "jsx", "ts", "tsx",
+            "css", "scss", "sass",
+            "md", "markdown",
+            "lua", "py", "rb",
+            "html", "htm",
+            "json", "yaml", "yml"
+        }
+    end
+})
+
+-- Create the keymap that opens command with a prompt
+vim.keymap.set('n', '<leader>fbt', function()
+    local file_type = vim.fn.input("TelescopeFindByType: ")
+    if file_type ~= "" then
+        vim.cmd('TelescopeFindByType ' .. file_type)
+    end
+end, { desc = 'Find by file type' })
+
+
 --Map Ctrl + S to save in any mode
 nnoremap("<silent><C-s>",":update<CR>")
 vnoremap("<silent><C-s>","<C-C>:update<CR>")
