@@ -5,5 +5,6 @@ return {
 		-- setup all mini plugins here
 		require('mini.ai').setup()
 		require('mini.pairs').setup()
+		require('mini.splitjoin').setup()
 	end,
 }
