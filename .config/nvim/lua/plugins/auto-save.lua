@@ -18,7 +18,7 @@ return {
 				})
 			end
 		})
-	end
+	end,
 	opts = {
 	-- your config goes here
 	-- or just leave it empty :)
