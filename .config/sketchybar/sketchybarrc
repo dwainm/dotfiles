@@ -35,6 +35,14 @@ default=(
 )
 sketchybar --default "${default[@]}"
 
+### Yabai layout visualizer
+sketchybar --add item yabai_layout left \
+           --set yabai_layout \
+		   update_freq=2 \
+               script="$HOME/.config/sketchybar/plugins/yabai.sh" \
+           --update
+yabai -m subscribe event space_changed "$HOME/.config/sketchybar/plugins/yabai.sh"
+
 ##### Adding Mission Control Space Indicators #####
 # Let's add some mission control spaces:
 # https://felixkratz.github.io/SketchyBar/config/components#space----associate-mission-control-spaces-with-an-item
