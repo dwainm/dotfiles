@@ -4,6 +4,7 @@
 # Layer - Most used actions 
 # Keys: ctrl / ctr + shift
 # ---------------------------
+# 0. Toggle between Yabai layouts
 # 1. Jumping between windows (Mac, Tmux, Vim)
 # 2. Swopping windows
 # 2. Opening up a drop down terminal
@@ -13,22 +14,23 @@
 #
 ###########
 
+# Toggle between bsp and stack layout
+ctrl + cmd - t : yabai -m space --layout $(yabai -m query --spaces --space | jq -r 'if .type == "bsp" then "stack" else "bsp" end')
+
 #Changing Window Focus with Ctrl-Vim keys
 ctrl - h [
   *           : yabai -m window --focus west || yabai -m display --focus west
   "Kitty"     ~
 ]
-
 ctrl - j [
-  *           : yabai -m window --focus south
+  *           : yabai -m window --focus stack.prev || yabai -m window --focus stack.last || yabai -m window --focus south
   "Kitty"     ~
 ]
 
 ctrl - k [
-  *           : yabai -m window --focus north
+  *           : yabai -m window --focus stack.next || yabai -m window --focus stack.first || yabai -m window --focus north
   "Kitty"     ~
 ]
-
 ctrl - l [
   *           : yabai -m window --focus east || yabai -m display --focus east
   "Kitty"     ~
