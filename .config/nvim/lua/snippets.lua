@@ -110,7 +110,7 @@ end
 ls.add_snippets(nil, {
     php = {
         snip("elp", {
-            text "error_log( print( ",
+            text "error_log( print_r( ",
             insert(1, "$data"),
             text { ", true ) );", "\t" },
             insert(0),
