@@ -29,7 +29,6 @@ return {
                     "ts_ls",
                     "solargraph",
                     "html",
-                    "cssmodules_ls",
                     "ruby_lsp",
                     "phpactor"
                 }
