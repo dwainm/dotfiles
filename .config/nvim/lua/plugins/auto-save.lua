@@ -1,31 +1,37 @@
 return {
-	'okuuva/auto-save.nvim',
-	version = '^1.0.0',                    -- see https://devhints.io/semver, alternatively use '*' to use the latest tagged release
-	cmd = "ASToggle",                      -- optional for lazy loading on command
-	event = { "InsertLeave", "TextChanged" }, -- optional for lazy loading on trigger events
-	keys = {
-		{ "<leader>ts", ":ASToggle<CR>",       desc = "Toggle auto-save" },
-		{ "<leader>fs", ":ASWrite<CR>",        desc = "Force save buffer" },
-		{ "<leader>bs", ":ASToggleBuffer<CR>", desc = "Toggle auto-save for buffer" },
-	},
-	config = function()
+    'okuuva/auto-save.nvim',
+    version = '^1.0.0',
+    cmd = "ASToggle",
+    event = { "InsertLeave", "TextChanged" },
+    keys = {
+        { "<leader>ts", ":ASToggle<CR>", desc = "Toggle auto-save" },
+        { "<leader>fs", ":ASWrite<CR>", desc = "Force save buffer" },
+        { "<leader>bs", ":ASToggleBuffer<CR>", desc = "Toggle auto-save for buffer" },
+    },
+    opts = {
+        enabled = true,
+        -- Add basic conditions for when to save
+        condition = function(buf)
+            if not vim.bo[buf].modifiable or vim.bo[buf].readonly then
+                return false
+            end
+            return true
+        end,
+        events = { "InsertLeave", "TextChanged" },
+        debounce_delay = 1000,
+    },
+	config = function ()
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("lsp", { clear = true }),
 			callback = function(args)
-				-- 2
 				vim.api.nvim_create_autocmd("BufWritePre", {
-					-- 3
 					buffer = args.buf,
 					callback = function()
-						-- 4 + 5
 						vim.lsp.buf.format { async = false, id = args.data.client_id }
 					end,
 				})
 			end
 		})
-	end,
-	opts = {
-		-- your config goes here
-		-- or just leave it empty :)
-	},
+	end
+
 }
