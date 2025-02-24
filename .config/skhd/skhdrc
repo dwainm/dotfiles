@@ -87,3 +87,4 @@ ctrl + cmd - l : osascript -e 'tell application "Flow" to start'
 ctrl + cmd - u : osascript -e 'tell application "Flow" to stop'
 #skip
 ctrl + cmd - y : osascript -e 'tell application "Flow" to skip'
+#esc will hide the dialog
