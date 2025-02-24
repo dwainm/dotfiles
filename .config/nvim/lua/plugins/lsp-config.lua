@@ -86,8 +86,8 @@ return {
 
             -- LSP Keymaps
             vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-            vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
-            vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
+            vim.keymap.set("n", "<leader>td", vim.lsp.buf.definition, {})
+			-- Telescope references is: "<leader>tr". It bring up refenrences in a betterway
             vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
             vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
         end,
