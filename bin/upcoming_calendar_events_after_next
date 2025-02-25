@@ -1,43 +1,87 @@
 #!/usr/bin/env ruby
-
-require 'date'
 require 'time'
 
 def clean_string(str)
-  str.gsub(/\e\[[0-9;]*m/, '').strip
+  return "" if str.nil?
+  str.gsub(/\s+/, ' ').strip
 end
 
 def get_events
   # Get raw events from gcalcli
+  # Using 'now' as the start time since that's what works reliably
   raw_events = `gcalcli agenda --nocolor --tsv --details url now "tomorrow 23:59"`.chomp
   
   # Parse TSV and skip header
-  events = raw_events.split("\n")[1..-1].map do |line|
-    next if line.empty?
-    fields = line.split("\t")
-    next if fields.length < 7
-    start_date, start_time, _, _, url, _, title = fields
-    next if start_time.nil? || start_time.empty?
-    [start_date, start_time, clean_string(title), clean_string(url)]
-  end.compact
-
-  # First, format all events without markers to find the longest length
-  formatted_events = events.map do |date, time, title, url|
-    event_time = Time.parse("#{date} #{time}")
-    formatted_time = event_time.strftime("%-l:%M %p")
-    ["#{formatted_time} #{title}", url]
+  events = []
+  lines = raw_events.split("\n")
+  
+  # Check if we have any events (at least the header row)
+  if !lines.empty?
+    events = lines[1..-1].map do |line|
+      next if line.empty?
+      fields = line.split("\t")
+      next if fields.length < 7
+      
+      start_date, start_time, end_date, end_time, url, _, title = fields
+      next if start_time.nil? || start_time.empty?
+      
+      # Parse start and end times to Time objects
+      start_time_obj = Time.parse("#{start_date} #{start_time}")
+      end_time_obj = Time.parse("#{end_date} #{end_time}")
+      
+      [start_date, start_time, end_time_obj, title, url, start_time_obj]
+    end.compact
   end
 
-  # Find the longest event text length
-  max_length = formatted_events.map { |text, _| text.length }.max
+  # If no events found, return empty array
+  return [] if events.empty?
 
-  # Now format with markers, padding each line to align markers
-  formatted_events.each_with_index.map do |(event_text, url), index|
-    marker = case index
-            when 0 then "[current]"
-            when 1 then "[next]"
-            else ""
-            end
+  # Sort events by start time
+  events.sort_by! { |_, _, _, _, _, start_time_obj| start_time_obj }
+  
+  # Get current time
+  now = Time.now
+  
+  # Check if there's an event happening right now (even if it started earlier)
+  # that gcalcli might not have included because it started in the past
+  
+  # First, determine current and next events based on what gcalcli returned
+  current_event = nil
+  next_event = nil
+  
+  events.each do |date, time, end_time_obj, title, url, start_time_obj|
+    if start_time_obj <= now && end_time_obj >= now
+      # Event is happening now
+      current_event = [date, time, end_time_obj, title, url, start_time_obj]
+    elsif start_time_obj > now && next_event.nil?
+      # This is the next upcoming event
+      next_event = [date, time, end_time_obj, title, url, start_time_obj]
+    end
+  end
+  
+  # If no current event was found and we have events, the first one is next
+  if current_event.nil? && !events.empty?
+    next_event = events.first
+  end
+
+  # Format all events
+  formatted_events = events.map do |date, time, _, title, url, start_time_obj|
+    formatted_time = start_time_obj.strftime("%-l:%M %p")
+    ["#{formatted_time} #{title}", url, start_time_obj]
+  end
+  
+  # Find the longest event text length
+  max_length = formatted_events.map { |text, _, _| text.length }.max || 0
+  
+  # Now format with markers based on actual current/next status
+  formatted_events.map do |(event_text, url, event_time)|
+    marker = if current_event && event_time == current_event[5]
+               "[current]"
+             elsif next_event && event_time == next_event[5]
+               "[next]"
+             else
+               ""
+             end
     
     if !marker.empty?
       # Pad with spaces to align markers
@@ -57,7 +101,7 @@ begin
   else
     events.each do |event_text, url|
       puts event_text
-      puts url
+      puts url unless url.nil? || url.empty?
     end
   end
 rescue => e
@@ -65,3 +109,4 @@ rescue => e
   puts "No upcoming events"
   puts ""
 end
+
