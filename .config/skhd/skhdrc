@@ -37,7 +37,7 @@ ctrl - l [
 ]
 
 # make current application fullscreen
-ctrl - f : yabai -m window --toggle zoom-fullscreen
+ctrl - z : yabai -m window --toggle zoom-fullscreen
 
 # rebalance a space
 ctrl + cmd - i : yabai -m space --balance
