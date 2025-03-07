@@ -2,9 +2,6 @@ prSections:
 - title: My Pull Requests
   filters: is:open author:@me
   type: null
-- title: Sigma Review
-  filters: is:open team-review-requested:Automattic/Sigma
-  type: null
 - title: Needs My Review
   filters: is:open review-requested:@me
   type: null
@@ -61,7 +58,8 @@ keybindings:
   prs: []
   branches: []
 repoPaths: {
-  Automattic/*: ~/projects/Automattic/*
+  Automattic/*: ~/projects/Automattic/*,
+  woocommerce/woocommerce: ~/projects/woocommerce
 }
 theme:
   ui:
