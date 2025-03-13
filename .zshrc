@@ -266,6 +266,13 @@ function agreplace(){
 	ag $s1 --files-with-matches | xargs -I {} sed -i '.back' -e "s/$s1/$2/g" {};
 }
 
+####
+# ACK is better than grep.
+###
+alias a='ack --ignore-dir tests --ignore-dir tmp '
+alias aphp='ack --php --ignore-dir tests --ignore-dir tmp '
+alias ajs='ack --js --ignore-dir tests --ignore-dir tmp '
+
 ###
 # Git
 ##

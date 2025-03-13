@@ -1,5 +1,5 @@
 return {
-	'echasnovski/mini.nvim', 
+	'echasnovski/mini.nvim',
 	version = '*',
 	config = function()
 		-- setup all mini plugins here
@@ -7,5 +7,6 @@ return {
 		require('mini.pairs').setup()
 		require('mini.surround').setup()
 		require('mini.splitjoin').setup()
+		require('mini.align').setup()
 	end,
 }
