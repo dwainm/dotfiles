@@ -26,13 +26,18 @@ def parse_calendar_entry(entry_string)
     
     # Use ABBR_MONTHNAMES for three-letter month abbreviations
     month_number = Date::ABBR_MONTHNAMES.index(month_name.capitalize)
+
+    # Get the system's timezone offset
+    system_offset = Time.now.strftime('%:z')
     
     datetime = DateTime.new(
       current_year,
       month_number,
       day.to_i,
       hour,
-      minute
+      minute,
+      0,
+      system_offset
     )
     
     CalendarEntry.new(datetime, title.strip)
