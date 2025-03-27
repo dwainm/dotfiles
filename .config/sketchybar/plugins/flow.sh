@@ -20,5 +20,4 @@ elif [ $PHASE = "Break" ] || [ $PHASE = "Long Break" ]; then
 	COLOR=0xFFE78284
 fi
 
-
 sketchybar --set $NAME label="$TIME $SHOW" icon="󰄉" icon.color=$COLOR

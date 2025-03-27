@@ -388,6 +388,9 @@ eval "$(zoxide init zsh)"
 #Starship Prompt
 eval "$(starship init zsh)"
 
+# Silince deprecated notices when using WP-CLI
+alias wp="PHP_INI_SCAN_DIR='' php -d error_reporting='E_ALL & ~E_DEPRECATED & ~E_STRICT' /usr/local/bin/wp"
+
 #############
 #navigation
 ############
