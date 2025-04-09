@@ -44,9 +44,8 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install zsh-history-substring-search`
 * `brew install gh`
 
-### Install NNN
-Compile NNN from source with nerd font enabled and move it an executable path.
-Install NNN plugins: https://github.com/jarun/nnn/tree/master/plugins#configuration
+### Install YAZI fille manager
+brew install yazi ffmpeg sevenzip jq poppler fd ripgrep fzf zoxide resvg imagemagick font-symbols-only-nerd-font
 
 ### Install Yabai, SKHD and Sketchy bar
 brew install --cask font-hack-nerd-font
