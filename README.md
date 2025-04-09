@@ -43,14 +43,14 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew install gh`
 
 ### Install YAZI fille manager
-brew install yazi ffmpeg sevenzip jq poppler fd ripgrep fzf zoxide resvg imagemagick font-symbols-only-nerd-font
+* `brew install yazi ffmpeg sevenzip jq poppler fd ripgrep fzf zoxide resvg imagemagick font-symbols-only-nerd-font`
 
 ### Install Yabai, SKHD and Sketchy bar
-brew install --cask font-hack-nerd-font
-brew install font-sf-pro
-brew install --cask sf-symbols
-*`brew tap FelixKratz/formulae`
-*`brew install yabai skhd sketchybar`
+* `brew install --cask font-hack-nerd-font`
+* `brew install font-sf-pro`
+* `brew install --cask sf-symbols`
+* `brew tap FelixKratz/formulae`
+* `brew install yabai skhd sketchybar`
 
 #### Meeting Bar
 On your work device, setup meeting bar to help you move through the day knowing what's current and what's next.
