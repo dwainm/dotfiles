@@ -52,7 +52,6 @@ if [[ -s "$HOME/.private" ]]; then
 	source $HOME/.private
 fi
 
-
 #######
 # TMUX
 #######
@@ -148,7 +147,6 @@ function rotationCalendarWeeks(){
 	done
 }
 
-
 function wpurl(){
 	if [ -z "$1" ]; then
 		npm run wp option update home http://localhost:8082/
@@ -175,7 +173,6 @@ function plannerweekslonglist(){
     echo -e $months
     echo -e $dayranges
 }
-
 
 function weeklyupdateweeks(){
 	prevmonth='MON'
@@ -234,7 +231,6 @@ alias dc='docker-compose'
 alias dcup='docker compose up -d'
 alias dockerstop='docker stop $(docker ps -a -q)'
 
-
 #################################
 # Unix Text Handling
 #################################
@@ -249,7 +245,6 @@ function nvrc(){
 	v ~/.config/nvim/
 }
 alias nvimrc=nvrc
-
 
 alias wiki='vim -c "VimwikiIndex"'
 alias a8cwiki=' vim ~/Documents/Automattic/index.md'
@@ -415,7 +410,6 @@ function wplog(){
 	less +F /Users/dwain/projects/$1/wordpress/wp-content/debug.log
 }
 
-
 ###########
 # WooDeploy
 ###########
@@ -459,3 +453,8 @@ export PATH="/usr/local/opt/php@7.3/bin:$PATH"
 export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 [ -f ~/.local/bin/mise ] && eval "$(~/.local/bin/mise activate)"
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+eval "$(~/.local/bin/mise activate)"
