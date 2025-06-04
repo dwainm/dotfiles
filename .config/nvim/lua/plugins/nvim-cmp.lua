@@ -99,14 +99,14 @@ M.config = function()
 			}),
 		},
 
-        sources = cmp.config.sources({
-            { name = "nvim_lsp" },
-            { name = "nvim_lua" },
-            { name = "luasnip" },
-        }, {
-            { name = "buffer", keyword_length = 4 },
-            { name = "path" },
-        }),
+		sources = cmp.config.sources({
+			{ name = "nvim_lsp", priority = 1000 },
+			{ name = "luasnip", priority = 750 },
+			{ name = "nvim_lua", priority = 500 },
+		}, {
+			{ name = "buffer", keyword_length = 4, priority = 250 },
+			{ name = "path", priority = 250 },
+		}),
 
         -- Formatting of completion items
         formatting = {
@@ -129,16 +129,6 @@ M.config = function()
             ghost_text = true
         }
     })
-
-    -- Command-line completion setup
-    -- cmp.setup.cmdline(":", {
-    --     mapping = cmp.mapping.preset.cmdline(),
-    --     sources = cmp.config.sources({
-    --         { name = "path" },
-    --     }, {
-    --         { name = "cmdline" },
-    --     }),
-    -- })
 
     -- Configure signature help (for function argument hints)
     vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(

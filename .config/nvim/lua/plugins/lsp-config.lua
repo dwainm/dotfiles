@@ -30,6 +30,7 @@ return {
 					"solargraph",
 					"html",
 					"ruby_lsp",
+					"rubocop",
 					"phpactor",
 					"tailwindcss"
 				}
@@ -48,6 +49,10 @@ return {
 			local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 			local lspconfig = require("lspconfig")
+
+			lspconfig.tailwindcss.setup({
+				capabilities = capabilities
+			})
 
 			lspconfig.ts_ls.setup({
 				capabilities = capabilities
@@ -93,6 +98,7 @@ return {
 			-- Telescope references is: "<leader>tr". It bring up refenrences in a betterway
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
+			vim.keymap.set("n", "<leader>fo", vim.lsp.buf.format, {})
 		end,
 	},
 }
