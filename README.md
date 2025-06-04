@@ -52,18 +52,12 @@ Now, reload the terminal for the profile to load the correct git location and co
 * `brew tap FelixKratz/formulae`
 * `brew install yabai skhd sketchybar`
 
-#### Meeting Bar
-On your work device, setup meeting bar to help you move through the day knowing what's current and what's next.
-
 #### Ruby related
 brew install gnupg
-Follow instruction for installing RVM: https://github.com/rvm/rvm/issues/5261#issuecomment-1704547846
-If above doesn't work go to RVM
+Rvm install -  https://rvm.io/rvm/install
 
 ## Apps
-1. Install the app Import config in the app: .RectangleConfig
 1. Setup apple calender accounts
-1. Instal or raycast : `brew install --cask raycast`
 
 # dotfiles
 How to use
@@ -106,7 +100,6 @@ Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
 
 ### Install Brew tools
 brew install --cask kitty
-brew install hammerspoon --cask
 
 Generate your configuration files (copy/paste this as one command):
 ```
@@ -140,17 +133,6 @@ https://www.npmjs.com/get-npm
 
 `sudo chmod 755 /usr/local/bin/composer.phar`
 
-# Vim 
-Neovim:
-- Install packer: https://github.com/wbthomason/packer.nvim
-- Run packer install inside vim: :PackerInstall
-
-OldVim
-Open vim and run `:PlugInstall`
-
-Create symlink to vim wiki icloud storage: 
-`ln -s /Users/dwain/Documents/vimwiki /Users/dwain/vimwiki`
-
 #tmux
 ```
 brew install tmux
@@ -167,14 +149,3 @@ brew install tmuxinator
 Open tmux and then:
 <prefix> I to install plugins.
 
-# Todoist
-Setup todoist by building it from your fork: https://github.com/dwainm/todoist
-
-```
-git clone git@github.com:dwainm/todoist.git
-cd todoist
-Go install
-Go build
-Go release
-mv ./todoist_darwin_amd64 /usr/local/bin/todoist 
-```
