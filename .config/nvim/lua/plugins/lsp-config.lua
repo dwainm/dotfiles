@@ -30,7 +30,8 @@ return {
 					"solargraph",
 					"html",
 					"ruby_lsp",
-					"phpactor"
+					"phpactor",
+					"tailwindcss"
 				}
 			})
 		end
