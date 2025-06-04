@@ -103,6 +103,8 @@ nnoremap("<leader>fb","<cmd>Telescope buffers sort_lastused=true theme=dropdown 
 nnoremap("<leader>fh","<cmd>Telescope help_tags<cr>")
 nnoremap("<leader>fr","<cmd>Telescope resume<cr>")
 nnoremap("<leader>tr","<cmd>Telescope lsp_references include_declaration=false show_line=false<cr>")
+local builtin = require("telescope.builtin" )
+vim.keymap.set("n", "<leader><leader>", builtin.oldfiles,{})
 
 -- Create the command that takes a file type argument
 vim.api.nvim_create_user_command('TelescopeFindByType', function(opts)
