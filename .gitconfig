@@ -16,3 +16,5 @@
 	required = true
 [merge]
 	tool = diffmerge
+[pull]
+	rebase = false
