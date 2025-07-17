@@ -140,6 +140,14 @@ run = 'layout floating'
 if.app-id = 'com.apple.Safari'
 run = 'move-node-to-workspace T'
 
+[[on-window-detected]]
+if.app-name-regex-substring = 'Basecamp'
+run = 'move-node-to-workspace R'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Music'
+run = 'move-node-to-workspace M'
+
 ## Example of conditional floating:
 # [[on-window-detected]]
 # if.app-id = 'com.brave.Browser'
