@@ -1,0 +1,162 @@
+# Aerospace -- Config for managing my window management/KB shortcuts
+# There are also links to sketchybar for the custom mac os status bar.
+# Kudos to 
+# - https://github.com/linkarzu/dotfiles-latest/
+# - https://github.com/filipcujanovic/dotfiles
+
+# Available commands: https://nikitabobko.github.io/AeroSpace/commands
+after-login-command = []
+
+# Available commands : https://nikitabobko.github.io/AeroSpace/commands
+after-startup-command = ['exec-and-forget sketchybar']
+
+# Notify Sketchybar about workspace change
+exec-on-workspace-change = ['/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE; aerospace list-windows --all | grep "Picture in Picture" | cut -d"|" -f1 | xargs aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE; aerospace list-windows --all | grep "zsh" | cut -d"|" -f1 | xargs aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE;',
+]
+
+start-at-login = true
+
+# Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# See: https://nikitabobko.github.io/AeroSpace/guide#layouts
+accordion-padding = 1
+
+# Possible values: tiles|accordion
+default-root-container-layout = 'tiles'
+
+default-root-container-orientation = 'auto'
+
+# See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
+key-mapping.preset = 'colemak'
+
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focus-changed = ['move-mouse window-lazy-center']
+
+# See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
+gaps.inner.horizontal = 10
+gaps.inner.vertical = 10
+gaps.outer.left = 5
+gaps.outer.right = 5
+gaps.outer.bottom = 5
+gaps.outer.top = [
+    { monitor."built-in" = 10 },
+    { monitor.main = 47  }, # sketchybar height is 37 + 10 padding
+    { monitor.secondary = 10 },
+    20,
+]
+
+# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
+[mode.main.binding]
+
+# You can uncomment this line to open up terminal with alt + enter shortcut
+# See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
+# alt-enter = 'exec-and-forget open -n /System/Applications/Utilities/Terminal.app'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#layout
+alt-slash = 'layout tiles horizontal vertical'
+alt-comma = 'layout accordion horizontal vertical'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#focus
+cmd-shift-h = 'focus left'
+cmd-shift-j = 'focus down'
+cmd-shift-k = 'focus up'
+cmd-shift-l = 'focus right'
+
+ctrl-f = 'fullscreen'
+
+alt-o = 'focus-back-and-forth'
+
+#cmd-shift-m = 'focus-monitor main'
+#cmd-shift-s = 'focus-monitor secondary'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#move
+ctrl-shift-h = 'move left'
+ctrl-shift-j = 'move down'
+ctrl-shift-k = 'move up'
+ctrl-shift-l = 'move right'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#resize
+alt-shift-minus = 'resize smart -50'
+alt-shift-equal = 'resize smart +50'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+alt-a = 'workspace A' # AI                                              
+alt-r = 'workspace R' # Reference: BeeKeeper | Project Management
+alt-c = 'workspace C' # Reference: Communications: Email, Slack, Chat, Twitter
+alt-t = 'workspace T' # Terminal / Coding / Task / Browser
+alt-m = 'workspace M' # Music / Miscellaneous 
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+alt-shift-a = 'move-node-to-workspace A' # AI
+alt-shift-r = 'move-node-to-workspace R' # Reference: BeeKeeper | Project Management
+alt-shift-c = 'move-node-to-workspace C' # Reference: Communications: Email, Slack, Chat, Twitter
+alt-shift-t = 'move-node-to-workspace T' # Terminal / Coding / Task / Browser
+alt-shift-m = 'move-node-to-workspace M' # Music / Miscellaneous 
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
+alt-enter = 'workspace-back-and-forth'
+# See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
+# alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#mode
+alt-shift-semicolon = 'mode service'
+
+# 'service' binding mode declaration.
+# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
+[mode.service.binding]
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main'] # reset layout
+#s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
+f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+backspace = ['close-all-windows-but-current', 'mode main']
+
+alt-shift-h = ['join-with left', 'mode main']
+alt-shift-j = ['join-with down', 'mode main']
+alt-shift-k = ['join-with up', 'mode main']
+alt-shift-l = ['join-with right', 'mode main']
+
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-id = 'net.whatsapp.WhatsApp'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-id = '*Alacritty*'
+run = 'move-node-to-workspace T'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run = 'move-node-to-workspace T'
+
+## Example of conditional floating:
+# [[on-window-detected]]
+# if.app-id = 'com.brave.Browser'
+# if.window-title-regex-substring = 'Bitwarden'
+# run = 'layout floating'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'WhatsApp Web'
+run = 'move-node-to-workspace C'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.iCal'
+run = 'layout floating'
+
+[workspace-to-monitor-force-assignment]
+    'P' = 'main'
+    'C' = 'main'
+    'M' = 'main'
+    'T' = 'main'
+    'W' = 'main'
