@@ -458,3 +458,4 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 eval "$(~/.local/bin/mise activate)"
+

@@ -8,12 +8,13 @@
 ### Turn off shortcuts to change input sources
 Keyboard > Shortctus > Input Sources
 
+
+
 ### Mac Apps
 - Install PasteNow
 
 ### Mouse changes
 Turn on tap to click on trackpad settings
-
 ### Cloud 
 Change iCloud settings to use Desktop and Documents folder. So cloud documents and desktop is not seperate from device documents and desktop.
 

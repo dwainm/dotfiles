@@ -1,0 +1,41 @@
+;; Kanata config for Colemak home row mods
+;; Only remap home row keys, leave everything else as-is
+
+(defcfg
+  process-unmapped-keys yes
+  danger-enable-cmd yes
+)
+
+(defsrc
+  caps
+  a s d f
+  j k l ;
+)
+
+(defvar
+  tap-time 250
+  hold-time 250
+)
+
+(defalias
+  ;; Physical key positions (QWERTY home row)
+  a (tap-hold $tap-time $hold-time a lmet)  ;; A -> Cmd
+  s (tap-hold $tap-time $hold-time s lalt)  ;; S -> Alt  
+  d (tap-hold $tap-time $hold-time d lsft)  ;; D -> Shift
+  f (tap-hold $tap-time $hold-time f lctl)  ;; F -> Ctrl
+  
+  ;; CapsLock as tap-hold
+  caps (tap-hold $tap-time $hold-time esc lctl)  ;; CapsLock -> tap Esc, hold Ctrl
+  
+  ;; Right hand physical positions
+  j (tap-hold $tap-time $hold-time j rctl)  ;; J -> Ctrl
+  k (tap-hold $tap-time $hold-time k rsft)  ;; K -> Shift
+  l (tap-hold $tap-time $hold-time l ralt)  ;; L -> Alt
+  ; (tap-hold $tap-time $hold-time ; rmet)  ;; ; -> Cmd
+)
+
+(deflayer base
+  @caps
+  @a @s @d @f
+  @j @k @l @;
+)
