@@ -24,7 +24,7 @@ enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
-accordion-padding = 50
+accordion-padding = 80
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'tiles'
@@ -85,16 +85,16 @@ alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-alt-q = 'workspace 1'
-alt-w = 'workspace 2'
-alt-f = ['workspace 3', 'layout accordion']
-alt-p = 'workspace 4'
+alt-q = 'workspace q'
+alt-w = 'workspace w'
+alt-f = ['workspace f', 'layout accordion']
+alt-p = ['workspace p', 'layout accordion']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-q = 'move-node-to-workspace 1'
-alt-shift-w = 'move-node-to-workspace 2'
-alt-shift-f = 'move-node-to-workspace 3'
-alt-shift-p = 'move-node-to-workspace 4'
+alt-shift-q = 'move-node-to-workspace q'
+alt-shift-w = 'move-node-to-workspace w'
+alt-shift-f = 'move-node-to-workspace f'
+alt-shift-p = 'move-node-to-workspace p'
 
 # App shortcuts with cmd+ctrl prefix
 cmd-ctrl-a = 'exec-and-forget open -a "Alacritty"'        # a for alacritty
@@ -107,7 +107,11 @@ cmd-ctrl-d = 'exec-and-forget open -a "System Settings"'  # d for system setting
 
 # Sequential workspace switching (using home row mods: A=cmd, T=ctrl)
 cmd-ctrl-leftSquareBracket = 'workspace --wrap-around prev'
-cmd-ctrl-rightSquareBracket = 'workspace --wrap-around next' 
+cmd-ctrl-rightSquareBracket = 'workspace --wrap-around next'
+
+# Cycle through apps in current workspace (stack-like behavior)
+cmd-alt-leftSquareBracket = 'focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-prev'
+cmd-alt-rightSquareBracket = 'focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-next' 
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-enter = 'workspace-back-and-forth'
@@ -133,39 +137,39 @@ alt-shift-l = ['join-with right', 'mode main']
 
 [[on-window-detected]]
 if.app-id = 'net.kovidgoyal.kitty'
-run = 'move-node-to-workspace 1'
+run = 'move-node-to-workspace q'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
-run = 'move-node-to-workspace 1'
+run = 'move-node-to-workspace q'
 
 [[on-window-detected]]
 if.app-id = 'org.alacritty'
-run = 'move-node-to-workspace 2'
+run = 'move-node-to-workspace w'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari.WebApp.12622DC8-8986-473F-85D0-3A7635F76AA5'
-run = 'move-node-to-workspace 3'
+run = 'move-node-to-workspace f'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'OrbStack'
-run = 'move-node-to-workspace 3'
+run = 'move-node-to-workspace f'
 
 [[on-window-detected]]
 if.app-id = 'md.obsidian'
-run = 'move-node-to-workspace 3'
+run = 'move-node-to-workspace f'
 
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace p'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Music'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace p'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.MobileSMS'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace p'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
@@ -176,7 +180,7 @@ if.app-id = 'com.apple.iCal'
 run = 'layout floating'
 
 [workspace-to-monitor-force-assignment]
-    '1' = 'main'
-    '2' = 'main'
-    '3' = 'main'
-    '4' = 'main'
+    'q' = 'main'
+    'w' = 'main'
+    'f' = 'main'
+    'p' = 'main'
