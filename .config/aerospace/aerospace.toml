@@ -96,6 +96,15 @@ alt-shift-w = 'move-node-to-workspace 2'
 alt-shift-f = 'move-node-to-workspace 3'
 alt-shift-p = 'move-node-to-workspace 4'
 
+# App shortcuts with cmd+ctrl prefix
+cmd-ctrl-a = 'exec-and-forget open -a "Alacritty"'        # a for alacritty
+cmd-ctrl-p = 'exec-and-forget open -a "Basecamp"'         # p for basecamp
+cmd-ctrl-o = 'exec-and-forget open -a "Obsidian"'         # o for obsidian
+cmd-ctrl-t = 'exec-and-forget open -a "kitty"'            # t for terminal
+cmd-ctrl-b = 'exec-and-forget open -a "Safari"'           # b for browser
+cmd-ctrl-m = 'exec-and-forget open -a "Music"'            # m for music
+cmd-ctrl-d = 'exec-and-forget open -a "System Settings"'  # d for system settings
+
 # Sequential workspace switching (using home row mods: A=cmd, T=ctrl)
 cmd-ctrl-leftSquareBracket = 'workspace --wrap-around prev'
 cmd-ctrl-rightSquareBracket = 'workspace --wrap-around next' 
