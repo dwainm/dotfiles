@@ -85,18 +85,16 @@ alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-alt-q = 'workspace A' # AI (Q for AI)                                              
-alt-w = 'workspace R' # Reference: BeeKeeper | Project Management (W for Work)
-alt-f = 'workspace C' # Reference: Communications: Email, Slack, Chat, Twitter (F for Friends/Chat)
-alt-p = 'workspace T' # Terminal / Coding / Task / Browser (P for Programming)
-alt-g = 'workspace M' # Music / Miscellaneous (G for Groove/Music)
+alt-q = 'workspace 1'
+alt-w = 'workspace 2'
+alt-f = 'workspace 3'
+alt-p = 'workspace 4'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-q = 'move-node-to-workspace A' # AI
-alt-shift-w = 'move-node-to-workspace R' # Reference: BeeKeeper | Project Management
-alt-shift-f = 'move-node-to-workspace C' # Reference: Communications: Email, Slack, Chat, Twitter
-alt-shift-p = 'move-node-to-workspace T' # Terminal / Coding / Task / Browser
-alt-shift-g = 'move-node-to-workspace M' # Music / Miscellaneous
+alt-shift-q = 'move-node-to-workspace 1'
+alt-shift-w = 'move-node-to-workspace 2'
+alt-shift-f = 'move-node-to-workspace 3'
+alt-shift-p = 'move-node-to-workspace 4'
 
 # Sequential workspace switching (using home row mods: A=cmd, T=ctrl)
 cmd-ctrl-leftSquareBracket = 'workspace --wrap-around prev'
@@ -125,50 +123,47 @@ alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
 [[on-window-detected]]
-if.app-id = 'com.apple.MobileSMS'
-run = 'move-node-to-workspace C'
+if.app-id = 'net.kovidgoyal.kitty'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-id = 'org.alacritty'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Safari.WebApp.12622DC8-8986-473F-85D0-3A7635F76AA5'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'OrbStack'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'net.whatsapp.WhatsApp'
-run = 'move-node-to-workspace C'
+run = 'move-node-to-workspace 4'
 
 [[on-window-detected]]
-if.app-id = '*Alacritty*'
-run = 'move-node-to-workspace T'
+if.app-name-regex-substring = 'Music'
+run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = 'move-node-to-workspace 4'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
 run = 'layout floating'
 
 [[on-window-detected]]
-if.app-id = 'com.apple.Safari'
-run = 'move-node-to-workspace T'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Basecamp'
-run = 'move-node-to-workspace R'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Music'
-run = 'move-node-to-workspace M'
-
-## Example of conditional floating:
-# [[on-window-detected]]
-# if.app-id = 'com.brave.Browser'
-# if.window-title-regex-substring = 'Bitwarden'
-# run = 'layout floating'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'WhatsApp Web'
-run = 'move-node-to-workspace C'
-
-[[on-window-detected]]
 if.app-id = 'com.apple.iCal'
 run = 'layout floating'
 
 [workspace-to-monitor-force-assignment]
-    'P' = 'main'
-    'C' = 'main'
-    'M' = 'main'
-    'T' = 'main'
-    'W' = 'main'
+    '1' = 'main'
+    '2' = 'main'
+    '3' = 'main'
+    '4' = 'main'
