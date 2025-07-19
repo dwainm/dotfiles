@@ -2,72 +2,125 @@
 
 ############
 # Layer - Most used actions 
-# Keys: ctrl / ctr + shift
+# Keys: ctrl / ctrl + shift
 # ---------------------------
-# 0. Toggle between Yabai layouts
+# Updated for AeroSpace instead of yabai
 # 1. Jumping between windows (Mac, Tmux, Vim)
-# 2. Swopping windows
-# 2. Opening up a drop down terminal
-# 3. Opening up a full terminal window
+# 2. Swapping windows
+# 3. Opening up applications
 # 4. Making a window fullscreen 
-# 5. Rebalancing the windows in yabai
+# 5. Layout management
 #
 ###########
 
-# Toggle between bsp and stack layout
-ctrl + cmd - t : yabai -m space --layout $(yabai -m query --spaces --space | jq -r 'if .type == "bsp" then "stack" else "bsp" end')
+# Toggle between layouts (simplified for AeroSpace)
+ctrl + cmd - t : aerospace layout tiles
 
-#Changing Window Focus with Ctrl-Vim keys
+# Changing Window Focus with Ctrl+hjkl - Smart navigation for terminals
 ctrl - h [
-  *           : yabai -m window --focus west || yabai -m display --focus west
-  "Kitty"     ~
+  *                 : aerospace focus left
+  "kitty"           ~
+  "Alacritty"       ~
 ]
 ctrl - j [
-  *           : yabai -m window --focus stack.prev || yabai -m window --focus stack.last || yabai -m window --focus south
-  "Kitty"     ~
+  *                 : aerospace focus down
+  "kitty"           ~
+  "Alacritty"       ~
 ]
-
 ctrl - k [
-  *           : yabai -m window --focus stack.next || yabai -m window --focus stack.first || yabai -m window --focus north
-  "Kitty"     ~
+  *                 : aerospace focus up
+  "kitty"           ~
+  "Alacritty"       ~
 ]
 ctrl - l [
-  *           : yabai -m window --focus east || yabai -m display --focus east
-  "Kitty"     ~
+  *                 : aerospace focus right
+  "kitty"           ~
+  "Alacritty"       ~
 ]
 
-# make current application fullscreen
-ctrl - z : yabai -m window --toggle zoom-fullscreen
+# Fullscreen toggle
+ctrl - f : aerospace fullscreen
 
-# rebalance a space
-ctrl + cmd - i : yabai -m space --balance
+# Balance/rebalance (not directly applicable to AeroSpace, but keep for consistency)
+ctrl - i : echo "Balance not applicable to AeroSpace"
 
-#open chrome
+# Open Chrome
 ctrl + cmd - c : open -na "Google Chrome" --args --new-window
 
-# dropdown terminal (aka "quade mode")
-# see additional config in ~/.config/yabai/yabairc
-# the skhd_ddterm function can be found here: https://gist.github.com/dwainm/632844ef6e2b66d4ee6ca1fc2304f959
+# Dropdown terminal (keep your existing script)
 ctrl - m: source ~/.zshrc && skhd_ddterm
 
-#Swopping windows
-ctrl + shift - h : yabai -m window --swap west || $(yabai -m window --display west; yabai -m display --focus west)
-ctrl + shift - j : yabai -m window --swap south || $(yabai -m window --display south; yabai -m display --focus south)
-ctrl + shift - k : yabai -m window --swap north || $(yabai -m window --display north; yabai -m display --focus north)
-ctrl + shift - l : yabai -m window --swap east || $(yabai -m window --display east; yabai -m display --focus east)
+# Swapping/Moving windows
+ctrl + shift - h : aerospace move left
+ctrl + shift - j : aerospace move down
+ctrl + shift - k : aerospace move up
+ctrl + shift - l : aerospace move right
 
+# Layout management
+alt - 0x2C : aerospace layout tiles horizontal vertical  # comma (,)
+alt - 0x2B : aerospace layout accordion horizontal vertical  # period (.)
 
-# rebalance a space
-ctrl - i : yabai -m space --balance
+# Focus back and forth
+alt - o : aerospace focus-back-and-forth
+
+# Resize windows
+alt + shift - 0x1B : aerospace resize smart -50  # minus key (-)
+alt + shift - 0x18 : aerospace resize smart +50  # equal key (=)
+
+# Workspaces
+alt - q : aerospace workspace q
+alt - w : aerospace workspace w
+alt - f : aerospace workspace f
+alt - p : aerospace workspace p
+alt - g : aerospace workspace g
+
+# Move windows to workspaces
+cmd + alt - q : aerospace move-node-to-workspace q
+cmd + alt - w : aerospace move-node-to-workspace w
+cmd + alt - f : aerospace move-node-to-workspace f
+cmd + alt - p : aerospace move-node-to-workspace p
+cmd + alt - g : aerospace move-node-to-workspace g
+
+# App shortcuts (from your AeroSpace config)
+cmd + ctrl - a : open -a "Alacritty"
+cmd + ctrl - p : open -a "Basecamp"
+cmd + ctrl - o : open -a "Obsidian"
+cmd + ctrl - t : open -a "kitty"
+cmd + ctrl - b : open -a "Safari"
+cmd + ctrl - m : open -a "Music"
+cmd + ctrl - d : open -a "System Settings"
+
+# Workspace switching
+cmd + ctrl - 0x21 : aerospace workspace --wrap-around prev  # left bracket ([)
+cmd + ctrl - 0x1E : aerospace workspace --wrap-around next  # right bracket (])
+
+# Window cycling in workspace
+cmd + alt - 0x21 : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-prev  # left bracket ([)
+cmd + alt - 0x1E : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-next  # right bracket (])
+
+# Back and forth workspace
+alt - return : aerospace workspace-back-and-forth
+
+# Service mode shortcuts (equivalent to AeroSpace service mode)
+alt + shift - 0x29 : echo "Service mode - use individual shortcuts instead"  # semicolon (;)
+# These replace the service mode bindings:
+# Reload config (was service mode + esc)
+cmd + shift - r : aerospace reload-config
+# Flatten workspace tree (was service mode + r)  
+cmd + shift - f : aerospace flatten-workspace-tree
+# Toggle floating/tiling (was service mode + f)
+cmd + shift - t : aerospace layout floating tiling
+# Close all but current (was service mode + backspace)
+cmd + shift - backspace : aerospace close-all-windows-but-current
+
+# Join with adjacent windows (use alt + shift instead)
+alt + shift - h : aerospace join-with left
+alt + shift - j : aerospace join-with down
+alt + shift - k : aerospace join-with up
+alt + shift - l : aerospace join-with right
 
 ############################################
-### Layer - remap keys
-### Mod: shift+option
-### Kitty
-############################################
-# shift + alt - n: k
-############################################
-### Layer - Run Custom Scripts Layer
+### Layer - Run Custom Scripts Layer (preserved from original)
 ### Mod: ctrl + cmd / ctrl + cmd + shift
 ############################################
 
@@ -85,4 +138,3 @@ ctrl + cmd - l : osascript -e 'tell application "Flow" to start'
 ctrl + cmd - u : osascript -e 'tell application "Flow" to stop'
 #skip
 ctrl + cmd - y : osascript -e 'tell application "Flow" to skip'
-#esc will hide the dialog

@@ -57,71 +57,7 @@ gaps.outer.top = [
 # See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
 # alt-enter = 'exec-and-forget open -n /System/Applications/Utilities/Terminal.app'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#layout
-alt-slash = 'layout tiles horizontal vertical'
-alt-comma = 'layout accordion horizontal vertical'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#focus
-cmd-shift-h = 'focus left'
-cmd-shift-j = 'focus down'
-cmd-shift-k = 'focus up'
-cmd-shift-l = 'focus right'
-
-ctrl-f = 'fullscreen'
-
-alt-o = 'focus-back-and-forth'
-
-#cmd-shift-m = 'focus-monitor main'
-#cmd-shift-s = 'focus-monitor secondary'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#move
-ctrl-shift-h = 'move left'
-ctrl-shift-j = 'move down'
-ctrl-shift-k = 'move up'
-ctrl-shift-l = 'move right'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#resize
-alt-shift-minus = 'resize smart -50'
-alt-shift-equal = 'resize smart +50'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-alt-q = 'workspace q'
-alt-w = 'workspace w'
-alt-f = ['workspace f', 'layout accordion']
-alt-p = ['workspace p', 'layout accordion']
-alt-g = 'workspace g'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-q = 'move-node-to-workspace q'
-alt-shift-w = 'move-node-to-workspace w'
-alt-shift-f = 'move-node-to-workspace f'
-alt-shift-p = 'move-node-to-workspace p'
-alt-shift-g = 'move-node-to-workspace g'
-
-# App shortcuts with cmd+ctrl prefix
-cmd-ctrl-a = 'exec-and-forget open -a "Alacritty"'        # a for alacritty
-cmd-ctrl-p = 'exec-and-forget open -a "Basecamp"'         # p for basecamp
-cmd-ctrl-o = 'exec-and-forget open -a "Obsidian"'         # o for obsidian
-cmd-ctrl-t = 'exec-and-forget open -a "kitty"'            # t for terminal
-cmd-ctrl-b = 'exec-and-forget open -a "Safari"'           # b for browser
-cmd-ctrl-m = 'exec-and-forget open -a "Music"'            # m for music
-cmd-ctrl-d = 'exec-and-forget open -a "System Settings"'  # d for system settings
-
-# Sequential workspace switching (using home row mods: A=cmd, T=ctrl)
-cmd-ctrl-leftSquareBracket = 'workspace --wrap-around prev'
-cmd-ctrl-rightSquareBracket = 'workspace --wrap-around next'
-
-# Cycle through apps in current workspace (stack-like behavior)
-cmd-alt-leftSquareBracket = 'focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-prev'
-cmd-alt-rightSquareBracket = 'focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-next' 
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
-alt-enter = 'workspace-back-and-forth'
-# See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
-# alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#mode
-alt-shift-semicolon = 'mode service'
+# All shortcuts moved to skhd - AeroSpace only handles window management
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
