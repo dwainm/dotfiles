@@ -115,11 +115,15 @@ workspace < space : aerospace layout floating tiling ; default  # toggle floatin
 # Resize windows (no modifier needed in workspace mode)
 workspace < 0x1B : aerospace resize smart -50 ; default  # minus key (-)  
 workspace < 0x18 : aerospace resize smart +50 ; default  # equal key (=)
-# Move windows (swap places)
+# Move windows (swap places) - this also breaks joins by moving windows out
 workspace < h : aerospace move left ; default
 workspace < j : aerospace move down ; default
 workspace < k : aerospace move up ; default
 workspace < l : aerospace move right ; default
+# Split current container (breaks joins for focused window)
+workspace < s : aerospace split horizontal ; default
+workspace < shift - s : aerospace split vertical ; default
+workspace < f : aerospace flatten-workspace-tree ; default  # flatten/reset workspace
 # Join with adjacent windows
 workspace < shift - h : aerospace join-with left ; default
 workspace < shift - j : aerospace join-with down ; default
