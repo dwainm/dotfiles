@@ -10,6 +10,7 @@
   caps
   a s d f
   j k l ;
+  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
 )
 
 (defvar
@@ -38,4 +39,5 @@
   @caps
   @a @s @d @f
   @j @k @l @;
+  brdn brup f3 f4 f5 f6 prev pp next mute voldwn volup
 )

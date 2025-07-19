@@ -17,7 +17,7 @@ case "$1" in
         sudo launchctl bootstrap system "$PLIST_PATH"
         echo "Kanata started"
         ;;
-    
+
     stop)
         echo "Stopping Kanata service..."
         sudo launchctl bootout "$SERVICE_NAME" 2>/dev/null || true
@@ -25,7 +25,7 @@ case "$1" in
         sudo rm -f "$PLIST_PATH"
         echo "Kanata stopped"
         ;;
-    
+
     status)
         echo "Checking Kanata status..."
         if sudo launchctl list | grep -q "com.kanata"; then
@@ -35,14 +35,22 @@ case "$1" in
             echo "✗ Kanata service is not running"
         fi
         ;;
-    
+
+    restart)
+        echo "Restarting Kanata service..."
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+
     *)
-        echo "Usage: $0 {start|stop|status}"
+        echo "Usage: $0 {start|stop|status|restart}"
         echo ""
         echo "Commands:"
         echo "  start   - Install and start Kanata service"
-        echo "  stop    - Stop and remove Kanata service"  
+        echo "  stop    - Stop and remove Kanata service"
         echo "  status  - Check if Kanata is running"
+        echo "  restart - Restart Kanata service (useful after config changes)"
         exit 1
         ;;
 esac
