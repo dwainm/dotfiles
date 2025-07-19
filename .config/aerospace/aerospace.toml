@@ -89,12 +89,14 @@ alt-q = 'workspace q'
 alt-w = 'workspace w'
 alt-f = ['workspace f', 'layout accordion']
 alt-p = ['workspace p', 'layout accordion']
+alt-g = 'workspace g'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 alt-shift-q = 'move-node-to-workspace q'
 alt-shift-w = 'move-node-to-workspace w'
 alt-shift-f = 'move-node-to-workspace f'
 alt-shift-p = 'move-node-to-workspace p'
+alt-shift-g = 'move-node-to-workspace g'
 
 # App shortcuts with cmd+ctrl prefix
 cmd-ctrl-a = 'exec-and-forget open -a "Alacritty"'        # a for alacritty
@@ -120,7 +122,6 @@ alt-enter = 'workspace-back-and-forth'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
-
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
@@ -184,3 +185,4 @@ run = 'layout floating'
     'w' = 'main'
     'f' = 'main'
     'p' = 'main'
+    'g' = 'main'
