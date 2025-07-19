@@ -50,22 +50,14 @@ ctrl + cmd - c : open -na "Google Chrome" --args --new-window
 # Dropdown terminal (keep your existing script)
 ctrl - m: source ~/.zshrc && skhd_ddterm
 
-# Swapping/Moving windows
-ctrl + shift - h : aerospace move left
-ctrl + shift - j : aerospace move down
-ctrl + shift - k : aerospace move up
-ctrl + shift - l : aerospace move right
+# Swapping/Moving windows - moved to window mode
 
-# Layout management
-alt - 0x2C : aerospace layout tiles horizontal vertical  # comma (,)
-alt - 0x2B : aerospace layout accordion horizontal vertical  # period (.)
+# Layout management - moved to workspace mode
 
 # Focus back and forth
 alt - o : aerospace focus-back-and-forth
 
-# Resize windows
-alt + shift - 0x1B : aerospace resize smart -50  # minus key (-)
-alt + shift - 0x18 : aerospace resize smart +50  # equal key (=)
+# Resize windows - moved to window mode
 
 # Workspaces
 alt - q : aerospace workspace q
@@ -74,12 +66,7 @@ alt - f : aerospace workspace f
 alt - p : aerospace workspace p
 alt - g : aerospace workspace g
 
-# Move windows to workspaces
-cmd + alt - q : aerospace move-node-to-workspace q
-cmd + alt - w : aerospace move-node-to-workspace w
-cmd + alt - f : aerospace move-node-to-workspace f
-cmd + alt - p : aerospace move-node-to-workspace p
-cmd + alt - g : aerospace move-node-to-workspace g
+# Move windows to workspaces - moved to window mode
 
 # App shortcuts (from your AeroSpace config)
 cmd + ctrl - a : open -a "Alacritty"
@@ -101,23 +88,51 @@ cmd + alt - 0x1E : aerospace focus --boundaries workspace --boundaries-action wr
 # Back and forth workspace
 alt - return : aerospace workspace-back-and-forth
 
-# Service mode shortcuts (equivalent to AeroSpace service mode)
-alt + shift - 0x29 : echo "Service mode - use individual shortcuts instead"  # semicolon (;)
-# These replace the service mode bindings:
-# Reload config (was service mode + esc)
-cmd + shift - r : aerospace reload-config
-# Flatten workspace tree (was service mode + r)  
-cmd + shift - f : aerospace flatten-workspace-tree
-# Toggle floating/tiling (was service mode + f)
-cmd + shift - t : aerospace layout floating tiling
-# Close all but current (was service mode + backspace)
-cmd + shift - backspace : aerospace close-all-windows-but-current
+# Mode declarations with sketchybar integration
+:: default : ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL
+:: service : ~/.config/sketchybar/helpers/mode_notifier.sh SERVICE  
+:: workspace : ~/.config/sketchybar/helpers/mode_notifier.sh WORKSPACE
 
-# Join with adjacent windows (use alt + shift instead)
-alt + shift - h : aerospace join-with left
-alt + shift - j : aerospace join-with down
-alt + shift - k : aerospace join-with up
-alt + shift - l : aerospace join-with right
+# Mode switching shortcuts
+alt + shift - 0x29 ; service    # semicolon (;) - enter service mode
+alt + shift - w ; workspace     # enter workspace mode
+alt + shift - n ; default       # back to normal/default mode
+# Service mode bindings - only work when in service mode
+service < escape ; default
+service < alt + shift - w ; workspace         # switch to workspace mode
+service < r : aerospace reload-config ; default
+service < f : aerospace flatten-workspace-tree ; default
+
+# Workspace mode bindings - layout changes and window management
+workspace < escape ; default
+workspace < alt + shift - 0x29 ; service      # semicolon (;) - switch to service mode
+# Layout changes
+workspace < t : aerospace layout tiles ; default           # tiles layout
+workspace < a : aerospace layout accordion ; default       # accordion layout
+workspace < h : aerospace layout accordion horizontal ; default  # accordion horizontal only
+workspace < v : aerospace layout accordion vertical ; default    # accordion vertical only  
+workspace < space : aerospace layout floating tiling ; default  # toggle floating/tiling
+# Resize windows (no modifier needed in workspace mode)
+workspace < 0x1B : aerospace resize smart -50 ; default  # minus key (-)  
+workspace < 0x18 : aerospace resize smart +50 ; default  # equal key (=)
+# Move windows (swap places)
+workspace < h : aerospace move left ; default
+workspace < j : aerospace move down ; default
+workspace < k : aerospace move up ; default
+workspace < l : aerospace move right ; default
+# Join with adjacent windows
+workspace < shift - h : aerospace join-with left ; default
+workspace < shift - j : aerospace join-with down ; default
+workspace < shift - k : aerospace join-with up ; default
+workspace < shift - l : aerospace join-with right ; default
+# Move windows to workspaces
+workspace < alt - q : aerospace move-node-to-workspace q ; default
+workspace < alt - w : aerospace move-node-to-workspace w ; default
+workspace < alt - f : aerospace move-node-to-workspace f ; default
+workspace < alt - p : aerospace move-node-to-workspace p ; default
+workspace < alt - g : aerospace move-node-to-workspace g ; default
+# Close all windows but current
+workspace < backspace : aerospace close-all-windows-but-current ; default
 
 ############################################
 ### Layer - Run Custom Scripts Layer (preserved from original)
