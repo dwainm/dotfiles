@@ -99,12 +99,14 @@ alt + shift - w ; workspace     # enter workspace mode
 alt + shift - n ; default       # back to normal/default mode
 # Service mode bindings - only work when in service mode
 service < escape ; default
+service < alt + shift - n ; default           # switch to normal mode
 service < alt + shift - w ; workspace         # switch to workspace mode
 service < r : aerospace reload-config ; default
 service < f : aerospace flatten-workspace-tree ; default
 
 # Workspace mode bindings - layout changes and window management
 workspace < escape ; default
+workspace < alt + shift - n ; default         # switch to normal mode
 workspace < alt + shift - 0x29 ; service      # semicolon (;) - switch to service mode
 # Layout changes
 workspace < t : aerospace layout tiles ; default           # tiles layout
