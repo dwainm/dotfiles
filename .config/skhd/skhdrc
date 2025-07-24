@@ -13,8 +13,7 @@
 #
 ###########
 
-# Toggle between layouts (simplified for AeroSpace)
-ctrl + cmd - t : aerospace layout tiles
+# Toggle between layouts (simplified for AeroSpace) - removed, use workspace mode instead
 
 # Changing Window Focus with Ctrl+hjkl - Smart navigation for terminals
 ctrl - h [
@@ -77,10 +76,15 @@ alt + shift - g : aerospace move-node-to-workspace g && aerospace workspace g
 cmd + ctrl - a : open -a "Alacritty"
 cmd + ctrl - p : open -a "Basecamp"
 cmd + ctrl - o : open -a "Obsidian"
-cmd + ctrl - t : open -a "kitty"
 cmd + ctrl - b : open -a "Safari"
 cmd + ctrl - m : open -a "Music"
 cmd + ctrl - d : open -a "System Settings"
+
+# Smart kitty navigation - use AppleScript to send tmux commands (Ctrl+Space prefix)
+cmd + ctrl - v : /usr/bin/osascript -e 'tell application "kitty" to activate' && sleep 0.2 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke " " using {control down}' && sleep 0.1 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke ";"'
+
+# Jump to kitty and send different tmux command
+cmd + ctrl - t : /usr/bin/osascript -e 'tell application "kitty" to activate' && sleep 0.2 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke " " using {control down}' && sleep 0.1 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke ";"'
 
 # Workspace switching
 cmd + ctrl - 0x21 : aerospace workspace --wrap-around prev  # left bracket ([)
@@ -157,8 +161,8 @@ workspace < alt - backspace : aerospace close-all-windows-but-current ; default
 ############################################
 
 ### Kitty
-# Kitty full instance
-ctrl + cmd - k : open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
+# Jump to existing kitty (fallback: open new if none exists)  
+ctrl + cmd - k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
 
 ### Email Coms - Open up all important email views with one shortcut
 ctrl + cmd - e : source ~/.zshrc && open_all_mail_filter_links
