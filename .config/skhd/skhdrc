@@ -148,8 +148,8 @@ workspace < shift - w : aerospace move-node-to-workspace w && aerospace workspac
 workspace < shift - f : aerospace move-node-to-workspace f && aerospace workspace f ; default
 workspace < shift - p : aerospace move-node-to-workspace p && aerospace workspace p ; default
 workspace < shift - g : aerospace move-node-to-workspace g && aerospace workspace g ; default
-# Close all windows but current
-workspace < backspace : aerospace close-all-windows-but-current ; default
+# Close all windows but current (with alt modifier for safety)
+workspace < alt - backspace : aerospace close-all-windows-but-current ; default
 
 ############################################
 ### Layer - Run Custom Scripts Layer (preserved from original)
