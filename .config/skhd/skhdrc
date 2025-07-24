@@ -113,16 +113,16 @@ service < f : aerospace flatten-workspace-tree ; default
 workspace < escape ; default
 workspace < cmd + alt + shift - n ; default         # switch to normal mode
 workspace < cmd + alt + shift - 0x29 ; service      # semicolon (;) - switch to service mode
-# Layout changes
-workspace < t : aerospace layout tiles ; default           # tiles layout
-workspace < a : aerospace layout accordion ; default       # accordion layout
-workspace < h : aerospace layout accordion horizontal ; default  # accordion horizontal only
-workspace < v : aerospace layout accordion vertical ; default    # accordion vertical only  
-workspace < space : aerospace layout floating tiling ; default  # toggle floating/tiling
+# Layout changes (with alt modifier)
+workspace < alt - t : aerospace layout tiles ; default           # tiles layout
+workspace < alt - a : aerospace layout accordion ; default       # accordion layout
+workspace < alt - h : aerospace layout accordion horizontal ; default  # accordion horizontal only
+workspace < alt - v : aerospace layout accordion vertical ; default    # accordion vertical only  
+workspace < alt - space : aerospace layout floating tiling ; default  # toggle floating/tiling
 # Resize windows (no modifier needed in workspace mode)
 workspace < 0x1B : aerospace resize smart -50 ; default  # minus key (-)  
 workspace < 0x18 : aerospace resize smart +50 ; default  # equal key (=)
-# Move windows (swap places) - this also breaks joins by moving windows out
+# Move windows (swap places) - clean hjkl for frequent use
 workspace < h : aerospace move left ; default
 workspace < j : aerospace move down ; default
 workspace < k : aerospace move up ; default
