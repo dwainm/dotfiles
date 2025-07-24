@@ -66,7 +66,12 @@ alt - f : aerospace workspace f
 alt - p : aerospace workspace p
 alt - g : aerospace workspace g
 
-# Move windows to workspaces - moved to window mode
+# Move windows to workspaces and follow
+alt + shift - q : aerospace move-node-to-workspace q && aerospace workspace q
+alt + shift - w : aerospace move-node-to-workspace w && aerospace workspace w
+alt + shift - f : aerospace move-node-to-workspace f && aerospace workspace f
+alt + shift - p : aerospace move-node-to-workspace p && aerospace workspace p
+alt + shift - g : aerospace move-node-to-workspace g && aerospace workspace g
 
 # App shortcuts (from your AeroSpace config)
 cmd + ctrl - a : open -a "Alacritty"
@@ -94,20 +99,20 @@ alt - return : aerospace workspace-back-and-forth
 :: workspace : ~/.config/sketchybar/helpers/mode_notifier.sh WORKSPACE
 
 # Mode switching shortcuts
-alt + shift - 0x29 ; service    # semicolon (;) - enter service mode
-alt + shift - w ; workspace     # enter workspace mode
-alt + shift - n ; default       # back to normal/default mode
+cmd + alt + shift - 0x29 ; service    # semicolon (;) - enter service mode
+cmd + alt + shift - w ; workspace     # enter workspace mode
+cmd + alt + shift - n ; default       # back to normal/default mode
 # Service mode bindings - only work when in service mode
 service < escape ; default
-service < alt + shift - n ; default           # switch to normal mode
-service < alt + shift - w ; workspace         # switch to workspace mode
+service < cmd + alt + shift - n ; default           # switch to normal mode
+service < cmd + alt + shift - w ; workspace         # switch to workspace mode
 service < r : aerospace reload-config ; default
 service < f : aerospace flatten-workspace-tree ; default
 
 # Workspace mode bindings - layout changes and window management
 workspace < escape ; default
-workspace < alt + shift - n ; default         # switch to normal mode
-workspace < alt + shift - 0x29 ; service      # semicolon (;) - switch to service mode
+workspace < cmd + alt + shift - n ; default         # switch to normal mode
+workspace < cmd + alt + shift - 0x29 ; service      # semicolon (;) - switch to service mode
 # Layout changes
 workspace < t : aerospace layout tiles ; default           # tiles layout
 workspace < a : aerospace layout accordion ; default       # accordion layout
@@ -131,12 +136,18 @@ workspace < shift - h : aerospace join-with left ; default
 workspace < shift - j : aerospace join-with down ; default
 workspace < shift - k : aerospace join-with up ; default
 workspace < shift - l : aerospace join-with right ; default
-# Move windows to workspaces
-workspace < alt - q : aerospace move-node-to-workspace q ; default
-workspace < alt - w : aerospace move-node-to-workspace w ; default
-workspace < alt - f : aerospace move-node-to-workspace f ; default
-workspace < alt - p : aerospace move-node-to-workspace p ; default
-workspace < alt - g : aerospace move-node-to-workspace g ; default
+# Workspace switching
+workspace < q : aerospace workspace q ; default
+workspace < w : aerospace workspace w ; default
+workspace < f : aerospace workspace f ; default
+workspace < p : aerospace workspace p ; default
+workspace < g : aerospace workspace g ; default
+# Move windows to workspaces and follow
+workspace < shift - q : aerospace move-node-to-workspace q && aerospace workspace q ; default
+workspace < shift - w : aerospace move-node-to-workspace w && aerospace workspace w ; default
+workspace < shift - f : aerospace move-node-to-workspace f && aerospace workspace f ; default
+workspace < shift - p : aerospace move-node-to-workspace p && aerospace workspace p ; default
+workspace < shift - g : aerospace move-node-to-workspace g && aerospace workspace g ; default
 # Close all windows but current
 workspace < backspace : aerospace close-all-windows-but-current ; default
 

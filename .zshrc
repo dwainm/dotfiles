@@ -312,8 +312,6 @@ function gcd() {
 	git clone $1 && cd "${REPONAME}"
 }
 
-### Home brew
-export PATH="/usr/local/bin:$PATH"
 
 ######
 # Custom Scripts
