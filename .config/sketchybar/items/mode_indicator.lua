@@ -29,14 +29,16 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
   local icon_map = {
     NORMAL = "●",
     SERVICE = "⚙️", 
-    WORKSPACE = "🏢"
+    WORKSPACE = "🏢",
+    LINK = "🔗"
   }
   
   -- Define bar background colors for each mode
   local bar_colors = {
     NORMAL = 0xf02c2e34,      -- current default color
     SERVICE = 0xf09ed072,     -- shade of green  
-    WORKSPACE = 0xf076cce0    -- tint of blue
+    WORKSPACE = 0xf076cce0,   -- tint of blue
+    LINK = 0xf0ff6b9d         -- bright pink/magenta for links
   }
   
   -- Update the mode indicator icon
