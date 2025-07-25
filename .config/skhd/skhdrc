@@ -128,8 +128,10 @@ workspace < alt - h : aerospace layout accordion horizontal ; default  # accordi
 workspace < alt - v : aerospace layout accordion vertical ; default    # accordion vertical only  
 workspace < alt - space : aerospace layout floating tiling ; default  # toggle floating/tiling
 # Resize windows (no modifier needed in workspace mode)
-workspace < 0x1B : aerospace resize smart -50 ; default  # minus key (-)  
-workspace < 0x18 : aerospace resize smart +50 ; default  # equal key (=)
+workspace < 0x1B : aerospace resize smart -50 ; default  # minus key (-) - normal speed  
+workspace < 0x18 : aerospace resize smart +50 ; default  # equal key (=) - normal speed
+workspace < shift - 0x1B : aerospace resize smart -100 ; default  # shift + minus key (-) - double speed
+workspace < shift - 0x18 : aerospace resize smart +100 ; default  # shift + equal key (=) - double speed
 # Move windows (swap places) - clean hjkl for frequent use
 workspace < h : aerospace move left ; default
 workspace < j : aerospace move down ; default
