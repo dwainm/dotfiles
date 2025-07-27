@@ -40,19 +40,6 @@ ctrl - l [
 # Fullscreen toggle
 ctrl - f : aerospace fullscreen
 
-# Balance/rebalance (not directly applicable to AeroSpace, but keep for consistency)
-ctrl - i : echo "Balance not applicable to AeroSpace"
-
-# Open Chrome
-ctrl + cmd - c : open -na "Google Chrome" --args --new-window
-
-# Dropdown terminal (keep your existing script)
-ctrl - m: source ~/.zshrc && skhd_ddterm
-
-# Swapping/Moving windows - moved to window mode
-
-# Layout management - moved to workspace mode
-
 # Focus back and forth
 alt - o : aerospace focus-back-and-forth
 
@@ -183,14 +170,3 @@ link < y : open "https://news.ycombinator.com" ; default # Y Combinator News
 ### Kitty
 # Jump to existing kitty (fallback: open new if none exists)  
 ctrl + cmd - k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
-
-### Email Coms - Open up all important email views with one shortcut
-ctrl + cmd - e : source ~/.zshrc && open_all_mail_filter_links
-
-### Flow app timer: https://www.flow.app/help#documentation
-#start
-ctrl + cmd - l : osascript -e 'tell application "Flow" to start'
-#stop
-ctrl + cmd - u : osascript -e 'tell application "Flow" to stop'
-#skip
-ctrl + cmd - y : osascript -e 'tell application "Flow" to skip'
