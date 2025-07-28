@@ -6,6 +6,10 @@
 bindkey -v
 export KEYTIMEOUT=1
 
+# Allow backspace to delete across newlines in multiline paste
+bindkey "^?" backward-delete-char
+bindkey "^H" backward-delete-char
+
 ### Completion
 # Uncomment the following line to display red dots whilst waiting for completion.
 # COMPLETION_WAITING_DOTS="true"

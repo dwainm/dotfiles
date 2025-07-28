@@ -37,6 +37,9 @@ ctrl - l [
   "Alacritty"       ~
 ]
 
+# Bring backspace to the home row
+alt - 0x27 : skhd -k "backspace"
+
 # Fullscreen toggle
 ctrl - f : aerospace fullscreen
 
@@ -170,3 +173,4 @@ link < y : open "https://news.ycombinator.com" ; default # Y Combinator News
 ### Kitty
 # Jump to existing kitty (fallback: open new if none exists)  
 ctrl + cmd - k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
+
