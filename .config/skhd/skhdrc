@@ -62,19 +62,7 @@ alt + shift - f : aerospace move-node-to-workspace f && aerospace workspace f
 alt + shift - p : aerospace move-node-to-workspace p && aerospace workspace p
 alt + shift - g : aerospace move-node-to-workspace g && aerospace workspace g
 
-# App shortcuts (from your AeroSpace config)
-cmd + ctrl - a : open -a "Alacritty"
-cmd + ctrl - p : open -a "Basecamp"
-cmd + ctrl - o : open -a "Obsidian"
-cmd + ctrl - b : open -a "Safari"
-cmd + ctrl - m : open -a "Music"
-cmd + ctrl - d : open -a "System Settings"
-
-# Smart kitty navigation - use AppleScript to send tmux commands (Ctrl+Space prefix)
-cmd + ctrl - v : /usr/bin/osascript -e 'tell application "kitty" to activate' && sleep 0.2 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke " " using {control down}' && sleep 0.1 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke ";"'
-
-# Jump to kitty and send different tmux command
-cmd + ctrl - t : /usr/bin/osascript -e 'tell application "kitty" to activate' && sleep 0.2 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke " " using {control down}' && sleep 0.1 && /usr/bin/osascript -e 'tell application "System Events" to tell process "kitty" to keystroke ";"'
+# App shortcuts removed - now in launcher mode (double-tap N)
 
 # Workspace switching
 cmd + ctrl - 0x21 : aerospace workspace --wrap-around prev  # left bracket ([)
@@ -89,14 +77,16 @@ alt - return : aerospace workspace-back-and-forth
 
 # Mode declarations with sketchybar integration
 :: default : ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL
-:: service : ~/.config/sketchybar/helpers/mode_notifier.sh SERVICE  
+:: service : ~/.config/sketchybar/helpers/mode_notifier.sh SERVICE
 :: workspace : ~/.config/sketchybar/helpers/mode_notifier.sh WORKSPACE
 :: link : ~/.config/sketchybar/helpers/mode_notifier.sh LINK
+:: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
 
 # Mode switching shortcuts
 cmd + alt + shift - 0x29 ; service    # semicolon (;) - enter service mode
 cmd + alt + shift - w ; workspace     # enter workspace mode
 cmd + alt + shift - l ; link          # enter link mode
+f13 ; launcher                        # double-tap N (ctrl) - enter launcher mode
 cmd + alt + shift - n ; default       # back to normal/default mode
 # Service mode bindings - only work when in service mode
 service < escape ; default
@@ -165,12 +155,21 @@ link < g : open "https://gmail.com" ; default       # Gmail
 link < shift - k : open "https://app.klop.finance" ; default # Klop production
 link < y : open "https://news.ycombinator.com" ; default # Y Combinator News
 
-############################################
-### Layer - Run Custom Scripts Layer (preserved from original)
-### Mod: ctrl + cmd / ctrl + cmd + shift
-############################################
-
-### Kitty
-# Jump to existing kitty (fallback: open new if none exists)  
-ctrl + cmd - k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
+# Launcher mode bindings - quick app launching (triggered by double-tap N)
+launcher < escape ; default
+launcher < return ; default                         # return key exits to normal mode
+launcher < cmd + alt + shift - n ; default          # switch to normal mode
+launcher < cmd + alt + shift - 0x29 ; service       # semicolon (;) - switch to service mode
+launcher < cmd + alt + shift - w ; workspace        # switch to workspace mode
+launcher < cmd + alt + shift - l ; link             # switch to link mode
+# App launchers - single key press to open apps
+launcher < a : open -a "Alacritty"; skhd -k "return"
+launcher < p : open -a "Basecamp"; skhd -k "return"
+launcher < o : open -a "Obsidian"; skhd -k "return"
+launcher < b : open -a "Safari"; skhd -k "return"
+launcher < m : open -a "Music"; skhd -k "return"
+launcher < d : open -a "System Settings"; skhd -k "return"
+launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"; skhd -k "return"
+launcher < v : /usr/bin/osascript -e 'tell application "kitty" to activate' && sleep 0.1 && kitty @ send-text "tmux select-pane -t 1\r"; skhd -k "return"
+launcher < t : /usr/bin/osascript -e 'tell application "kitty" to activate' && sleep 0.1 && kitty @ send-text "tmux select-pane -t 2\r"; skhd -k "return"
 

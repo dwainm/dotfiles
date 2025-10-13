@@ -121,6 +121,22 @@ local mode_shortcuts = {
       { key = "y", desc = "Hacker News" },
       { key = "esc", desc = "Back to normal" }
     }
+  },
+  LAUNCHER = {
+    icon = "🚀",
+    title = "LAUNCHER MODE",
+    shortcuts = {
+      { key = "a", desc = "Alacritty terminal" },
+      { key = "p", desc = "Basecamp" },
+      { key = "o", desc = "Obsidian" },
+      { key = "b", desc = "Safari browser" },
+      { key = "m", desc = "Music" },
+      { key = "d", desc = "System Settings" },
+      { key = "k", desc = "Kitty terminal" },
+      { key = "v", desc = "Kitty vim pane" },
+      { key = "t", desc = "Kitty terminal pane" },
+      { key = "esc", desc = "Back to normal" }
+    }
   }
 }
 
@@ -170,17 +186,19 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
   local mode = env.MODE or "NORMAL"
   local icon_map = {
     NORMAL = "●",
-    SERVICE = "⚙️", 
+    SERVICE = "⚙️",
     WORKSPACE = "🏢",
-    LINK = "🔗"
+    LINK = "🔗",
+    LAUNCHER = "🚀"
   }
-  
+
   -- Define bar background colors for each mode
   local bar_colors = {
     NORMAL = 0xf02c2e34,      -- current default color
-    SERVICE = 0xf09ed072,     -- shade of green  
+    SERVICE = 0xf09ed072,     -- shade of green
     WORKSPACE = 0xf076cce0,   -- tint of blue
-    LINK = 0xf0ff6b9d         -- bright pink/magenta for links
+    LINK = 0xf0ff6b9d,        -- bright pink/magenta for links
+    LAUNCHER = 0xf0ff9500     -- orange for launcher
   }
   
   -- Update the mode indicator icon

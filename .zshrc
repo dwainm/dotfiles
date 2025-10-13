@@ -437,6 +437,10 @@ fi
 ###########
 # Ruby
 ###########
+
+for cmd in rspec ruby rubocop rails jekyll; do
+  alias $cmd="bundle exec $cmd"
+done
 # export GEM_HOME="$HOME/.gem"
 
 # ssh
