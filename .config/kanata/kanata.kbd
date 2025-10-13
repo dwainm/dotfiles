@@ -25,15 +25,14 @@
   d (tap-hold $tap-time $hold-time d lsft)  ;; D -> Shift
   f (tap-hold $tap-time $hold-time f lctl)  ;; F -> Ctrl
 
-  ;; CapsLock as tap-hold
-  caps (tap-hold $tap-time $hold-time esc lctl)  ;; CapsLock -> tap Esc, hold Ctrl
-
-  ;; Right hand physical positions with tap-dance for J (N in Colemak)
-  ;; Single tap = j, Hold = Ctrl, Double tap = trigger launcher mode (F13)
-  j (tap-dance 200 (
-    (tap-hold $tap-time $hold-time j rctl)
+  ;; CapsLock with tap-dance: single tap = Esc, hold = Ctrl, double tap = launcher (F13)
+  caps (tap-dance 300 (
+    (tap-hold $tap-time $hold-time esc lctl)
     (macro f13)
   ))
+
+  ;; Right hand physical positions - simplified J back to tap-hold
+  j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time k rsft)  ;; K -> Shift
   l (tap-hold $tap-time $hold-time l ralt)  ;; L -> Alt
   ; (tap-hold $tap-time $hold-time ; rmet)  ;; ; -> Cmd
