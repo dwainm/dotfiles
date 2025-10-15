@@ -13,6 +13,17 @@
 #
 ###########
 
+# Media Controls with Ctrl + Function Keys (F1-F12)
+# Brightness - skipped (requires additional permissions/tools)
+# Media playback
+ctrl - f7  : osascript -e 'tell application "Music" to previous track'  # Previous Track
+ctrl - f8  : osascript -e 'tell application "Music" to playpause'       # Play/Pause
+ctrl - f9  : osascript -e 'tell application "Music" to next track'      # Next Track
+# Volume
+ctrl - f10 : osascript -e "set volume output muted not (output muted of (get volume settings))"  # Toggle Mute
+ctrl - f11 : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"  # Volume Down
+ctrl - f12 : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"  # Volume Up
+
 # Toggle between layouts (simplified for AeroSpace) - removed, use workspace mode instead
 
 # Changing Window Focus with Ctrl+hjkl - Smart navigation for terminals
