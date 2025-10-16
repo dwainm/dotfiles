@@ -11,7 +11,7 @@ return {
     },
     {
       "Q",
-      function() require("dapui").eval() end,
+      function() require("dapui").eval(nil, { enter = true, width = 80, height = 20 }) end,
       mode = { "n", "v" },
       desc = "DAP Peek",
     },
