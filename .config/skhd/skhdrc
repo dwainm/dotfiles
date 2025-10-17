@@ -14,7 +14,9 @@
 ###########
 
 # Media Controls with Ctrl + Function Keys (F1-F12)
-# Brightness - skipped (requires additional permissions/tools)
+# Brightness
+ctrl - f1  : brightness $(brightness -l | grep -oE '[0-9]+\.[0-9]+' | head -1 | awk '{val=$1-0.1; if(val<0) val=0; print val}')  # Brightness Down
+ctrl - f2  : brightness $(brightness -l | grep -oE '[0-9]+\.[0-9]+' | head -1 | awk '{val=$1+0.1; if(val>1) val=1; print val}')  # Brightness Up
 # Media playback
 ctrl - f7  : osascript -e 'tell application "Music" to previous track'  # Previous Track
 ctrl - f8  : osascript -e 'tell application "Music" to playpause'       # Play/Pause
