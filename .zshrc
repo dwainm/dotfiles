@@ -327,6 +327,12 @@ function gcd() {
 	git clone $1 && cd "${REPONAME}"
 }
 
+###
+# Config repo management
+##
+alias cgap='config add -p'
+alias cgc='config commit -m'
+alias cgca='config commit --amend -m'
 
 ######
 # Custom Scripts
