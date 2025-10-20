@@ -19,10 +19,16 @@
 
 (defalias
   ;; Physical key positions (QWERTY home row)
-  a (tap-hold $tap-time $hold-time a lmet)  ;; A -> Cmd
-  s (tap-hold $tap-time $hold-time s lalt)  ;; S -> Alt
-  d (tap-hold $tap-time $hold-time d lsft)  ;; D -> Shift
-  f (tap-hold $tap-time $hold-time f lctl)  ;; F -> Ctrl
+  ;; Left hand = LEFT modifiers (Colemak: a, r, s, t)
+  a (tap-hold $tap-time $hold-time a lmet)  ;; A -> Left Cmd (Colemak 'a')
+  s (tap-hold $tap-time $hold-time s lalt)  ;; S -> Left Alt (Colemak 'r')
+  d (tap-hold $tap-time $hold-time d lsft)  ;; D -> Left Shift (Colemak 's')
+  ;; F -> Left Ctrl when held, but f+space is instant (no wait)
+  f (fork
+    (tap-hold $tap-time $hold-time f lctl)  ;; default: normal tap-hold to Left Ctrl
+    (macro C-spc)                            ;; f+space = instant Ctrl+Space
+    (spc)                                    ;; Space triggers instant mode
+  )
 
   ;; CapsLock with tap-dance: single tap = Esc, hold = Ctrl, double tap = launcher (F13)
   caps (tap-dance 300 (
@@ -30,11 +36,11 @@
     (macro f13)
   ))
 
-  ;; Right hand physical positions - simplified J back to tap-hold
-  j (tap-hold $tap-time $hold-time j rctl)
-  k (tap-hold $tap-time $hold-time k rsft)  ;; K -> Shift
-  l (tap-hold $tap-time $hold-time l ralt)  ;; L -> Alt
-  ; (tap-hold $tap-time $hold-time ; rmet)  ;; ; -> Cmd
+  ;; Right hand = RIGHT modifiers (Colemak: n, e, i, o)
+  j (tap-hold $tap-time $hold-time j rctl)  ;; J -> Right Ctrl (Colemak 'n')
+  k (tap-hold $tap-time $hold-time k rsft)  ;; K -> Right Shift (Colemak 'e')
+  l (tap-hold $tap-time $hold-time l ralt)  ;; L -> Right Alt (Colemak 'i')
+  ; (tap-hold $tap-time $hold-time ; rmet)  ;; ; -> Right Cmd (Colemak 'o')
 )
 
 (deflayer base

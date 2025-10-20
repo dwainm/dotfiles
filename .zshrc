@@ -241,6 +241,7 @@ alias dockerstop='docker stop $(docker ps -a -q)'
 alias vim=nvim
 alias vi=nvim
 alias v=nvim
+alias jobs='jobs -l'
 function vimrc(){
 	vi ~/.vim/vimrc
 }
