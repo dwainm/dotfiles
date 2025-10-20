@@ -333,6 +333,7 @@ function gcd() {
 alias cgap='config add -p'
 alias cgc='config commit -m'
 alias cgca='config commit --amend -m'
+alias cgp='config push'
 
 ######
 # Custom Scripts
