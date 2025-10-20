@@ -288,15 +288,6 @@ alias gdone='git push origin HEAD'
 alias glg='git log --pretty=format:"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]" --abbrev-commit -30'
 alias gres='git reset --hard'
 
-# Dotfiles gitifie
-alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
-alias cap='config add -p'
-alias coz='config add ~/.zshrc'
-alias cst='config status'
-alias coc='config commit'
-alias copus='config push'
-alias copul='config pull'
-
 #delete branche
 function gbdel(){
   git branch | grep $1 | xargs git branch -D
@@ -330,9 +321,12 @@ function gcd() {
 ###
 # Config repo management
 ##
+alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
 alias cgap='config add -p'
 alias cgc='config commit -m'
 alias cgca='config commit --amend -m'
+alias cgp='config push'
+alias cgs='config status'
 
 ######
 # Custom Scripts
