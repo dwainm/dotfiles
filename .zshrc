@@ -277,6 +277,16 @@ alias ajs='ack --js --ignore-dir tests --ignore-dir tmp '
 # Git
 ##
 alias gap="git add -p"
+alias gs='git status -s'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gc='git commit -m'
+alias gca='git commit --amend'
+alias gsave='git add -A && git commit -m "chore: save point"'
+alias gundo='git reset HEAD~1 --mixed'
+alias gdone='git push origin HEAD'
+alias glg='git log --pretty=format:"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]" --abbrev-commit -30'
+alias gres='git reset --hard'
 
 # Dotfiles gitifie
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
