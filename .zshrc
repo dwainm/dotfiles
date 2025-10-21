@@ -276,6 +276,7 @@ alias ajs='ack --js --ignore-dir tests --ignore-dir tmp '
 ###
 # Git
 ##
+alias g="git"
 alias gap="git add -p"
 alias gs='git status -s'
 alias gco='git checkout'
@@ -324,7 +325,7 @@ function gcd() {
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
 alias cgap='config add -p'
 alias cgc='config commit -m'
-alias cgca='config commit --amend -m'
+alias cgca='config commit --amend'
 alias cgp='config push'
 alias cgs='config status'
 
