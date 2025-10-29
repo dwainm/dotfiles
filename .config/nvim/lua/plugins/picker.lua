@@ -13,7 +13,8 @@ return {
         function()
           require("fzf-lua").live_grep({
             cwd = vim.fn.getcwd(),
-            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --type ruby -e"
+            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --type ruby",
+            exec_empty_query = true,
           })
         end,
         desc = "Grep Ruby Files"
@@ -23,7 +24,8 @@ return {
         function()
           require("fzf-lua").live_grep({
             cwd = vim.fn.getcwd(),
-            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --type js -e"
+            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --type js",
+            exec_empty_query = true,
           })
         end,
         desc = "Grep JavaScript Files"
@@ -33,7 +35,8 @@ return {
         function()
           require("fzf-lua").live_grep({
             cwd = vim.fn.getcwd(),
-            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --type css -e"
+            rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --type css",
+            exec_empty_query = true,
           })
         end,
         desc = "Grep CSS Files"
