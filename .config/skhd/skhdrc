@@ -96,24 +96,16 @@ alt - return : aerospace workspace-back-and-forth
 :: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
 
 # Mode switching shortcuts
-cmd + alt + shift - 0x29 ; service    # semicolon (;) - enter service mode
-cmd + alt + shift - w ; workspace     # enter workspace mode
-cmd + alt + shift - l ; link          # enter link mode
 f13 ; launcher                        # double-tap N (ctrl) - enter launcher mode
-cmd + alt + shift - n ; default       # back to normal/default mode
 # Service mode bindings - only work when in service mode
 service < escape ; default
-service < cmd + alt + shift - n ; default           # switch to normal mode
-service < cmd + alt + shift - w ; workspace         # switch to workspace mode
-service < cmd + alt + shift - l ; link              # switch to link mode
+service < f13 ; launcher                            # double-tap N - back to launcher
 service < r : aerospace reload-config ; default
 service < f : aerospace flatten-workspace-tree ; default
 
 # Workspace mode bindings - layout changes and window management
 workspace < escape ; default
-workspace < cmd + alt + shift - n ; default         # switch to normal mode
-workspace < cmd + alt + shift - 0x29 ; service      # semicolon (;) - switch to service mode
-workspace < cmd + alt + shift - l ; link            # switch to link mode
+workspace < f13 ; launcher                          # double-tap N - back to launcher
 # Layout changes (with alt modifier)
 workspace < alt - t : aerospace layout tiles ; default           # tiles layout
 workspace < alt - a : aerospace layout accordion ; default       # accordion layout
@@ -156,25 +148,23 @@ workspace < alt - backspace : aerospace close-all-windows-but-current ; default
 
 # Link mode bindings - quick access to commonly visited links
 link < escape ; default
-link < cmd + alt + shift - n ; default              # switch to normal mode
-link < cmd + alt + shift - 0x29 ; service           # semicolon (;) - switch to service mode
-link < cmd + alt + shift - w ; workspace            # switch to workspace mode
+link < f13 ; launcher                               # double-tap N - back to launcher
 # Link shortcuts
 link < x : open "https://x.com" ; default           # X/Twitter
 link < shift - x : open "https://x.com/dwainm" ; default # Your X profile
 link < p : open "https://github.com/dwainm/Klop/pulls" ; default  # Klop PRs
 link < i : open "https://github.com/dwainm/Klop/issues" ; default # Klop Issues
-link < g : open "https://gmail.com" ; default       # Gmail
+link < g : open -a "Safari" "https://gmail.com" ; default       # Gmail in Safari
 link < shift - k : open "https://app.klop.finance" ; default # Klop production
 link < y : open "https://news.ycombinator.com" ; default # Y Combinator News
 
 # Launcher mode bindings - quick app launching (triggered by double-tap N)
 launcher < escape ; default
 launcher < return ; default                         # return key exits to normal mode
-launcher < cmd + alt + shift - n ; default          # switch to normal mode
-launcher < cmd + alt + shift - 0x29 ; service       # semicolon (;) - switch to service mode
-launcher < cmd + alt + shift - w ; workspace        # switch to workspace mode
-launcher < cmd + alt + shift - l ; link             # switch to link mode
+# Mode switching from launcher
+launcher < l ; link                                 # enter link mode
+launcher < w ; workspace                            # enter workspace mode
+launcher < 0x29 ; service                           # semicolon (;) - enter service mode
 # App launchers - single key press to open apps
 launcher < a : open -a "Alacritty"; skhd -k "return"
 launcher < p : open -a "Basecamp"; skhd -k "return"

@@ -71,21 +71,17 @@ local mode_shortcuts = {
       { key = "ctrl+f", desc = "Toggle fullscreen" },
       { key = "ctrl+cmd+c", desc = "Open Chrome" },
       { key = "ctrl+m", desc = "Dropdown terminal" },
-      { key = "cmd+alt+shift+;", desc = "Service mode" },
-      { key = "cmd+alt+shift+w", desc = "Workspace mode" },
-      { key = "cmd+alt+shift+l", desc = "Link mode" }
+      { key = "double-tap N", desc = "Launcher mode" }
     }
   },
   SERVICE = {
     icon = "⚙️",
-    title = "SERVICE MODE", 
+    title = "SERVICE MODE",
     shortcuts = {
       { key = "r", desc = "Reload AeroSpace config" },
       { key = "f", desc = "Flatten workspace tree" },
-      { key = "esc", desc = "Back to normal mode" },
-      { key = "cmd+alt+shift+n", desc = "Normal mode" },
-      { key = "cmd+alt+shift+w", desc = "Workspace mode" },
-      { key = "cmd+alt+shift+l", desc = "Link mode" }
+      { key = "double-tap N", desc = "Back to launcher" },
+      { key = "esc", desc = "Back to normal mode" }
     }
   },
   WORKSPACE = {
@@ -105,7 +101,9 @@ local mode_shortcuts = {
       { key = "shift+-", desc = "Resize smaller (2x)" },
       { key = "shift+=", desc = "Resize larger (2x)" },
       { key = "q/w/f/p/g", desc = "Switch workspace" },
-      { key = "shift+q/w/f/p/g", desc = "Move window + follow" }
+      { key = "shift+q/w/f/p/g", desc = "Move window + follow" },
+      { key = "double-tap N", desc = "Back to launcher" },
+      { key = "esc", desc = "Back to normal" }
     }
   },
   LINK = {
@@ -116,9 +114,10 @@ local mode_shortcuts = {
       { key = "shift+x", desc = "Your X profile" },
       { key = "p", desc = "Klop PRs" },
       { key = "i", desc = "Klop Issues" },
-      { key = "g", desc = "Gmail" },
+      { key = "g", desc = "Gmail in Safari" },
       { key = "shift+k", desc = "Klop production" },
       { key = "y", desc = "Hacker News" },
+      { key = "double-tap N", desc = "Back to launcher" },
       { key = "esc", desc = "Back to normal" }
     }
   },
@@ -126,6 +125,9 @@ local mode_shortcuts = {
     icon = "🚀",
     title = "LAUNCHER MODE",
     shortcuts = {
+      { key = "l", desc = "Link mode" },
+      { key = "w", desc = "Workspace mode" },
+      { key = ";", desc = "Service mode" },
       { key = "a", desc = "Alacritty terminal" },
       { key = "p", desc = "Basecamp" },
       { key = "o", desc = "Obsidian" },
