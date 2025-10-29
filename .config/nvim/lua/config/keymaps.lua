@@ -2,6 +2,9 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- Yank entire line from beginning
+vim.keymap.set("n", "Y", "0yy", { desc = "Yank entire line" })
+
 -- Safari reload
 vim.keymap.set("n", "<leader><F5>", function()
   local script = [[
