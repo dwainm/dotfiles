@@ -150,13 +150,14 @@ workspace < alt - backspace : aerospace close-all-windows-but-current ; default
 link < escape ; default
 link < f13 ; launcher                               # double-tap N - back to launcher
 # Link shortcuts
-link < x : open "https://x.com" ; default           # X/Twitter
-link < shift - x : open "https://x.com/dwainm" ; default # Your X profile
-link < p : open "https://github.com/dwainm/Klop/pulls" ; default  # Klop PRs
-link < i : open "https://github.com/dwainm/Klop/issues" ; default # Klop Issues
-link < g : open -a "Safari" "https://gmail.com" ; default       # Gmail in Safari
-link < shift - k : open "https://app.klop.finance" ; default # Klop production
-link < y : open "https://news.ycombinator.com" ; default # Y Combinator News
+link < x : open "https://x.com"; skhd -k "escape"           # X/Twitter
+link < shift - x : open "https://x.com/dwainm"; skhd -k "escape" # Your X profile
+link < p : open "https://github.com/dwainm/Klop/pulls"; skhd -k "escape"  # Klop PRs
+link < i : open "https://github.com/dwainm/Klop/issues"; skhd -k "escape" # Klop Issues
+link < g : open -a "Safari" "https://gmail.com"; skhd -k "escape"       # Gmail in Safari
+link < shift - k : open "https://app.klop.finance"; skhd -k "escape" # Klop production
+link < y : open "https://news.ycombinator.com"; skhd -k "escape" # Y Combinator News
+link < shift - g : open -a "Safari" "https://x.com/i/grok"; skhd -k "escape" # Grok in Safari on workspace g
 
 # Launcher mode bindings - quick app launching (triggered by double-tap N)
 launcher < escape ; default
