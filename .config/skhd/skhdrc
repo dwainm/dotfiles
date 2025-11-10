@@ -166,6 +166,8 @@ launcher < return ; default                         # return key exits to normal
 launcher < l ; link                                 # enter link mode
 launcher < w ; workspace                            # enter workspace mode
 launcher < 0x29 ; service                           # semicolon (;) - enter service mode
+# Window switching
+launcher < 0x21 : aerospace focus-back-and-forth; skhd -k "return"  # [ - switch to previously focused window
 # App launchers - single key press to open apps
 launcher < a : open -a "Alacritty"; skhd -k "return"
 launcher < p : open -a "Basecamp"; skhd -k "return"
