@@ -24,18 +24,15 @@ end, { desc = "Reload Safari" })
 -----------
 -- Git
 -----------
--- Remove uneeded keys
-local maps = { "gb", "gB", "gd", "gf", "gl", "gL", "gs", "gS", "gY" }
-for _, m in ipairs(maps) do
-  vim.keymap.del("n", "<leader>" .. m)
-end
+-- LazyGit on <leader>g
+vim.keymap.set("n", "<leader>g", "<cmd>LazyGit<cr>", { desc = "LazyGit" })
 
--- Replace with gitsigns (buffer-local, no picker)
+-- Other git commands on <leader>G
 local gs = require("gitsigns") -- Cache for efficiency
-vim.keymap.set("n", "<leader>gb", function()
+vim.keymap.set("n", "<leader>Gb", function()
   gs.blame_line({ full = true })
-end, { desc = "Git Blame Line" }) -- blame current line
-vim.keymap.set("n", "<leader>gd", gs.preview_hunk, { desc = "Git Diff Hunk" }) -- preview hunk diff
-vim.keymap.set({ "n", "v" }, "<leader>gs", gs.stage_hunk, { desc = "Git Stage Hunk" }) -- stage hunk
-vim.keymap.set("n", "<leader>gS", gs.stage_buffer, { desc = "Git Stage Buffer" }) -- stage buffer
-vim.keymap.set({ "n", "v" }, "<leader>gr", gs.reset_hunk, { desc = "Git Reset Hunk" }) -- reset hunk
+end, { desc = "Blame Line" })
+vim.keymap.set("n", "<leader>Gd", gs.preview_hunk, { desc = "Diff Hunk" })
+vim.keymap.set({ "n", "v" }, "<leader>Gs", gs.stage_hunk, { desc = "Stage Hunk" })
+vim.keymap.set("n", "<leader>GS", gs.stage_buffer, { desc = "Stage Buffer" })
+vim.keymap.set({ "n", "v" }, "<leader>Gr", gs.reset_hunk, { desc = "Reset Hunk" })
