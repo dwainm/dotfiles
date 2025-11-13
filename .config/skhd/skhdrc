@@ -169,7 +169,7 @@ launcher < 0x29 ; service                           # semicolon (;) - enter serv
 # Window switching
 launcher < 0x21 : aerospace focus-back-and-forth; skhd -k "return"  # [ - switch to previously focused window
 # App launchers - single key press to open apps
-launcher < a : open -a "Alacritty"; skhd -k "return"
+launcher < a : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'tmux select-window -t "$(tmux display-message -p "#{session_name}"):AI"'; skhd -k "return"
 launcher < p : open -a "Basecamp"; skhd -k "return"
 launcher < o : open -a "Obsidian"; skhd -k "return"
 launcher < b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'; skhd -k "return"
@@ -177,6 +177,6 @@ launcher < s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id c
 launcher < m : open -a "Music"; skhd -k "return"
 launcher < d : open -a "System Settings"; skhd -k "return"
 launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"; skhd -k "return"
-launcher < v : /usr/bin/osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'tty=$(tmux list-clients -F "#{client_tty} #{client_termname}" | grep xterm-kitty | cut -d" " -f1 | head -1); target=$(tmux list-panes -a -F "#{session_name}:#{window_index}.#{pane_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); tmux switch-client -c $tty -t ${target}'; skhd -k "return"
+launcher < v : osascript -e 'tell application "kitty" to activate' && tmux select-window -t $(tmux list-windows -F '#{window_index} #{pane_current_command}' | grep -E 'nvim|vim' | head -1 | cut -d' ' -f1); skhd -k "return"
 launcher < t : /usr/bin/osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'tty=$(tmux list-clients -F "#{client_tty} #{client_termname}" | grep xterm-kitty | cut -d" " -f1 | head -1); nvim_win=$(tmux list-panes -a -F "#{session_name}:#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); nvim_win_num=$(echo $nvim_win | cut -d: -f2); session=$(echo $nvim_win | cut -d: -f1); target=$(tmux list-windows -t $session -F "#{session_name}:#{window_index}" | grep -v ":${nvim_win_num}$" | head -1); [ -z "$target" ] && target=$(tmux new-window -t $session -P -F "#{session_name}:#{window_index}"); tmux switch-client -c $tty -t $target'; skhd -k "return"
 
