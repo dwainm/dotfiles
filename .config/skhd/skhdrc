@@ -1,53 +1,53 @@
 #!/usr/bin/env sh
 
 ############
-# Layer - Most used actions 
+# Layer - Most used actions
 # Keys: ctrl / ctrl + shift
 # ---------------------------
 # Updated for AeroSpace instead of yabai
 # 1. Jumping between windows (Mac, Tmux, Vim)
 # 2. Swapping windows
 # 3. Opening up applications
-# 4. Making a window fullscreen 
+# 4. Making a window fullscreen
 # 5. Layout management
 #
 ###########
 
 # Media Controls with Ctrl + Function Keys (F1-F12)
 # Brightness
-ctrl - f1  : brightness $(brightness -l | grep -oE '[0-9]+\.[0-9]+' | head -1 | awk '{val=$1-0.1; if(val<0) val=0; print val}')  # Brightness Down
-ctrl - f2  : brightness $(brightness -l | grep -oE '[0-9]+\.[0-9]+' | head -1 | awk '{val=$1+0.1; if(val>1) val=1; print val}')  # Brightness Up
+ctrl - f1 : brightness $(brightness -l | grep -oE '[0-9]+\.[0-9]+' | head -1 | awk '{val=$1-0.1; if(val<0) val=0; print val}') # Brightness Down
+ctrl - f2 : brightness $(brightness -l | grep -oE '[0-9]+\.[0-9]+' | head -1 | awk '{val=$1+0.1; if(val>1) val=1; print val}') # Brightness Up
 # Media playback
-ctrl - f7  : osascript -e 'tell application "Music" to previous track'  # Previous Track
-ctrl - f8  : osascript -e 'tell application "Music" to playpause'       # Play/Pause
-ctrl - f9  : osascript -e 'tell application "Music" to next track'      # Next Track
+ctrl - f7 : osascript -e 'tell application "Music" to previous track' # Previous Track
+ctrl - f8 : osascript -e 'tell application "Music" to playpause'      # Play/Pause
+ctrl - f9 : osascript -e 'tell application "Music" to next track'     # Next Track
 # Volume
-ctrl - f10 : osascript -e "set volume output muted not (output muted of (get volume settings))"  # Toggle Mute
-ctrl - f11 : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)"  # Volume Down
-ctrl - f12 : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)"  # Volume Up
+ctrl - f10 : osascript -e "set volume output muted not (output muted of (get volume settings))"     # Toggle Mute
+ctrl - f11 : osascript -e "set volume output volume ((output volume of (get volume settings)) - 5)" # Volume Down
+ctrl - f12 : osascript -e "set volume output volume ((output volume of (get volume settings)) + 5)" # Volume Up
 
 # Toggle between layouts (simplified for AeroSpace) - removed, use workspace mode instead
 
 # Changing Window Focus with Ctrl+hjkl - Smart navigation for terminals
 ctrl - h [
-  *                 : aerospace focus left
-  "kitty"           ~
-  "Alacritty"       ~
+* : aerospace focus left
+"kitty" ~
+"Alacritty" ~
 ]
 ctrl - j [
-  *                 : aerospace focus down
-  "kitty"           ~
-  "Alacritty"       ~
+* : aerospace focus down
+"kitty" ~
+"Alacritty" ~
 ]
 ctrl - k [
-  *                 : aerospace focus up
-  "kitty"           ~
-  "Alacritty"       ~
+* : aerospace focus up
+"kitty" ~
+"Alacritty" ~
 ]
 ctrl - l [
-  *                 : aerospace focus right
-  "kitty"           ~
-  "Alacritty"       ~
+* : aerospace focus right
+"kitty" ~
+"Alacritty" ~
 ]
 
 # Bring backspace to the home row
@@ -78,12 +78,12 @@ alt + shift - g : aerospace move-node-to-workspace g && aerospace workspace g
 # App shortcuts removed - now in launcher mode (double-tap N)
 
 # Workspace switching
-cmd + ctrl - 0x21 : aerospace workspace --wrap-around prev  # left bracket ([)
-cmd + ctrl - 0x1E : aerospace workspace --wrap-around next  # right bracket (])
+cmd + ctrl - 0x21 : aerospace workspace --wrap-around prev # left bracket ([)
+cmd + ctrl - 0x1E : aerospace workspace --wrap-around next # right bracket (])
 
 # Window cycling in workspace
-cmd + alt - 0x21 : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-prev  # left bracket ([)
-cmd + alt - 0x1E : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-next  # right bracket (])
+cmd + alt - 0x21 : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-prev # left bracket ([)
+cmd + alt - 0x1E : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-next # right bracket (])
 
 # Back and forth workspace
 alt - return : aerospace workspace-back-and-forth
@@ -96,87 +96,150 @@ alt - return : aerospace workspace-back-and-forth
 :: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
 
 # Mode switching shortcuts
-f13 ; launcher                        # double-tap N (ctrl) - enter launcher mode
+f13
+launcher # double-tap N (ctrl) - enter launcher mode
 # Service mode bindings - only work when in service mode
-service < escape ; default
-service < f13 ; launcher                            # double-tap N - back to launcher
-service < r : aerospace reload-config ; default
-service < f : aerospace flatten-workspace-tree ; default
+service <escape
+default
+service <f13
+launcher # double-tap N - back to launcher
+service <r : aerospace reload-config
+default
+service <f : aerospace flatten-workspace-tree
+default
 
 # Workspace mode bindings - layout changes and window management
-workspace < escape ; default
-workspace < f13 ; launcher                          # double-tap N - back to launcher
+workspace <escape
+default
+workspace <f13
+launcher # double-tap N - back to launcher
 # Layout changes (with alt modifier)
-workspace < alt - t : aerospace layout tiles ; default           # tiles layout
-workspace < alt - a : aerospace layout accordion ; default       # accordion layout
-workspace < alt - h : aerospace layout accordion horizontal ; default  # accordion horizontal only
-workspace < alt - v : aerospace layout accordion vertical ; default    # accordion vertical only  
-workspace < alt - space : aerospace layout floating tiling ; default  # toggle floating/tiling
+workspace <alt - t : aerospace layout tiles
+default # tiles layout
+workspace <alt - a : aerospace layout accordion
+default # accordion layout
+workspace <alt - h : aerospace layout accordion horizontal
+default # accordion horizontal only
+workspace <alt - v : aerospace layout accordion vertical
+default # accordion vertical only
+workspace <alt - space : aerospace layout floating tiling
+default # toggle floating/tiling
 # Resize windows (no modifier needed in workspace mode)
-workspace < 0x1B : aerospace resize smart -50 ; default  # minus key (-) - normal speed  
-workspace < 0x18 : aerospace resize smart +50 ; default  # equal key (=) - normal speed
-workspace < shift - 0x1B : aerospace resize smart -100 ; default  # shift + minus key (-) - double speed
-workspace < shift - 0x18 : aerospace resize smart +100 ; default  # shift + equal key (=) - double speed
+workspace <0x1B : aerospace resize smart -50
+default # minus key (-) - normal speed
+workspace <0x18 : aerospace resize smart +50
+default # equal key (=) - normal speed
+workspace <shift - 0x1B : aerospace resize smart -100
+default # shift + minus key (-) - double speed
+workspace <shift - 0x18 : aerospace resize smart +100
+default # shift + equal key (=) - double speed
 # Move windows (swap places) - clean hjkl for frequent use
-workspace < h : aerospace move left ; default
-workspace < j : aerospace move down ; default
-workspace < k : aerospace move up ; default
-workspace < l : aerospace move right ; default
+workspace <h : aerospace move left
+default
+workspace <j : aerospace move down
+default
+workspace <k : aerospace move up
+default
+workspace <l : aerospace move right
+default
 # Split current container (breaks joins for focused window)
-workspace < s : aerospace split horizontal ; default
-workspace < shift - s : aerospace split vertical ; default
-workspace < f : aerospace flatten-workspace-tree ; default  # flatten/reset workspace
+workspace <s : aerospace split horizontal
+default
+workspace <shift - s : aerospace split vertical
+default
+workspace <f : aerospace flatten-workspace-tree
+default # flatten/reset workspace
 # Join with adjacent windows
-workspace < shift - h : aerospace join-with left ; default
-workspace < shift - j : aerospace join-with down ; default
-workspace < shift - k : aerospace join-with up ; default
-workspace < shift - l : aerospace join-with right ; default
+workspace <shift - h : aerospace join-with left
+default
+workspace <shift - j : aerospace join-with down
+default
+workspace <shift - k : aerospace join-with up
+default
+workspace <shift - l : aerospace join-with right
+default
 # Workspace switching
-workspace < q : aerospace workspace q ; default
-workspace < w : aerospace workspace w ; default
-workspace < f : aerospace workspace f ; default
-workspace < p : aerospace workspace p ; default
-workspace < g : aerospace workspace g ; default
+workspace <q : aerospace workspace q
+default
+workspace <w : aerospace workspace w
+default
+workspace <f : aerospace workspace f
+default
+workspace <p : aerospace workspace p
+default
+workspace <g : aerospace workspace g
+default
 # Move windows to workspaces and follow
-workspace < shift - q : aerospace move-node-to-workspace q && aerospace workspace q ; default
-workspace < shift - w : aerospace move-node-to-workspace w && aerospace workspace w ; default
-workspace < shift - f : aerospace move-node-to-workspace f && aerospace workspace f ; default
-workspace < shift - p : aerospace move-node-to-workspace p && aerospace workspace p ; default
-workspace < shift - g : aerospace move-node-to-workspace g && aerospace workspace g ; default
+workspace <shift - q : aerospace move-node-to-workspace q && aerospace workspace q
+default
+workspace <shift - w : aerospace move-node-to-workspace w && aerospace workspace w
+default
+workspace <shift - f : aerospace move-node-to-workspace f && aerospace workspace f
+default
+workspace <shift - p : aerospace move-node-to-workspace p && aerospace workspace p
+default
+workspace <shift - g : aerospace move-node-to-workspace g && aerospace workspace g
+default
 # Close all windows but current (with alt modifier for safety)
-workspace < alt - backspace : aerospace close-all-windows-but-current ; default
+workspace <alt - backspace : aerospace close-all-windows-but-current
+default
 
 # Link mode bindings - quick access to commonly visited links
-link < escape ; default
-link < f13 ; launcher                               # double-tap N - back to launcher
+link <escape
+default
+link <f13
+launcher # double-tap N - back to launcher
 # Link shortcuts
-link < x : open "https://x.com"; skhd -k "escape"           # X/Twitter
-link < shift - x : open "https://x.com/dwainm"; skhd -k "escape" # Your X profile
-link < p : open "https://github.com/dwainm/Klop/pulls"; skhd -k "escape"  # Klop PRs
-link < i : open "https://github.com/dwainm/Klop/issues"; skhd -k "escape" # Klop Issues
-link < g : open -a "Safari" "https://gmail.com"; skhd -k "escape"       # Gmail in Safari
-link < shift - k : open "https://app.klop.finance"; skhd -k "escape" # Klop production
-link < y : open "https://news.ycombinator.com"; skhd -k "escape" # Y Combinator News
-link < shift - g : open -a "Safari" "https://x.com/i/grok"; skhd -k "escape" # Grok in Safari on workspace g
+link <x : open "https://x.com"
+skhd -k "escape" # X/Twitter
+link <shift - x : open "https://x.com/dwainm"
+skhd -k "escape" # Your X profile
+link <p : open "https://github.com/dwainm/Klop/pulls"
+skhd -k "escape" # Klop PRs
+link <i : open "https://github.com/dwainm/Klop/issues"
+skhd -k "escape" # Klop Issues
+link <g : open -a "Safari" "https://gmail.com"
+skhd -k "escape" # Gmail in Safari
+link <shift - k : open "https://app.klop.finance"
+skhd -k "escape" # Klop production
+link <y : open "https://news.ycombinator.com"
+skhd -k "escape" # Y Combinator News
+link <shift - g : open -a "Safari" "https://x.com/i/grok"
+skhd -k "escape" # Grok in Safari on workspace g
 
 # Launcher mode bindings - quick app launching (triggered by double-tap N)
-launcher < escape ; default
-launcher < return ; default                         # return key exits to normal mode
+launcher <escape
+default
+launcher <return
+default # return key exits to normal mode
 # Mode switching from launcher
-launcher < l ; link                                 # enter link mode
-launcher < w ; workspace                            # enter workspace mode
-launcher < 0x29 ; service                           # semicolon (;) - enter service mode
+launcher <l
+link # enter link mode
+launcher <w
+workspace # enter workspace mode
+launcher <0x29
+service # semicolon (;) - enter service mode
 # Window switching
-launcher < 0x21 : aerospace focus-back-and-forth; skhd -k "return"  # [ - switch to previously focused window
+launcher <0x21 : aerospace focus-back-and-forth
+skhd -k "return" # [ - switch to previously focused window
 # App launchers - single key press to open apps
-launcher < a : open -a "Alacritty"; skhd -k "return"
-launcher < p : open -a "Basecamp"; skhd -k "return"
-launcher < o : open -a "Obsidian"; skhd -k "return"
-launcher < b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'; skhd -k "return"
-launcher < s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace g && open -a "Safari"; fi'; skhd -k "return"
-launcher < m : open -a "Music"; skhd -k "return"
-launcher < d : open -a "System Settings"; skhd -k "return"
-launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"; skhd -k "return"
-launcher < v : /usr/bin/osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'tty=$(tmux list-clients -F "#{client_tty} #{client_termname}" | grep xterm-kitty | cut -d" " -f1 | head -1); target=$(tmux list-panes -a -F "#{session_name}:#{window_index}.#{pane_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); tmux switch-client -c $tty -t ${target}'; skhd -k "return"
-launcher < t : /usr/bin/osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'tty=$(tmux list-clients -F "#{client_tty} #{client_termname}" | grep xterm-kitty | cut -d" " -f1 | head -1); nvim_win=$(tmux list-panes -a -F "#{session_name}:#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); nvim_win_num=$(echo $nvim_win | cut -d: -f2); session=$(echo $nvim_win | cut -d: -f1); target=$(tmux list-windows -t $session -F "#{session_name}:#{window_index}" | grep -v ":${nvim_win_num}$" | head -1); [ -z "$target" ] && target=$(tmux new-window -t $session -P -F "#{session_name}:#{window_index}"); tmux switch-client -c $tty -t $target'; skhd -k "return"
-
+launcher <a : osascript -e 'tell application "kitty" to activate' && tmux select-window -t "$(tmux display-message -p '#{session_name}'):AI"
+skhd -k "return"
+launcher <p : open -a "Basecamp"
+skhd -k "return"
+launcher <o : open -a "Obsidian"
+skhd -k "return"
+launcher <b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'
+skhd -k "return"
+launcher <s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace g && open -a "Safari"; fi'
+skhd -k "return"
+launcher <m : open -a "Music"
+skhd -k "return"
+launcher <d : open -a "System Settings"
+skhd -k "return"
+launcher <k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"
+skhd -k "return"
+launcher <t : /usr/bin/osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'tty=$(tmux list-clients -F "#{client_tty} #{client_termname}" | grep xterm-kitty | cut -d" " -f1 | head -1); nvim_win=$(tmux list-panes -a -F "#{session_name}:#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); nvim_win_num=$(echo $nvim_win | cut -d: -f2); session=$(echo $nvim_win | cut -d: -f1); target=$(tmux list-windows -t $session -F "#{session_name}:#{window_index}" | grep -v ":${nvim_win_num}$" | head -1); [ -z "$target" ] && target=$(tmux new-window -t $session -P -F "#{session_name}:#{window_index}"); tmux switch-client -c $tty -t $target'
+skhd -k "return"
+launcher <v : osascript -e 'tell application "kitty" to activate' && tmux switch-client -t "$(tmux list-panes -t $(tmux display-message -p '#{session_name}') -F '#{session_name}:#{window_index}.#{pane_index} #{pane_current_command}' | grep -E 'nvim|vim' | head -1 | cut -d' ' -f1)"
+skhd -k "return"
