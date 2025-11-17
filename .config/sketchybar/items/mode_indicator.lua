@@ -4,23 +4,25 @@ local settings = require("settings")
 
 -- Mode indicator item (positioned on right to avoid notch)
 local mode_indicator = sbar.add("item", "mode_indicator", {
-  position = "right", 
+  position = "right",
   background = {
     color = colors.transparent,
-    padding_left = 8,
-    padding_right = 8,
+    padding_left = 0,
+    padding_right = 0,
+    border_width = 0,
   },
   icon = {
     string = "●",
     color = colors.white,
     font = { family = settings.font.text, style = settings.font.style_map["Regular"], size = 16.0 },
+    background = { color = colors.transparent, border_width = 0 },
   },
   label = {
     string = "",  -- No label, just icon
     color = colors.transparent,
   },
-  padding_left = 5,
-  padding_right = 5,
+  padding_left = 0,
+  padding_right = 0,
 })
 
 -- Background bracket for popup
