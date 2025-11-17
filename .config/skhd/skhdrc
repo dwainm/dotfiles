@@ -96,7 +96,8 @@ alt - return : aerospace workspace-back-and-forth
 :: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
 
 # Mode switching shortcuts
-f13 ; launcher                        # double-tap N (ctrl) - enter launcher mode
+f13 ; launcher                        # double-tap caps (ctrl) - enter launcher mode
+cmd - space ; launcher                # cmd+space - enter launcher mode (fast!)
 # Service mode bindings - only work when in service mode
 service < escape ; default
 service < f13 ; launcher                            # double-tap N - back to launcher
@@ -172,6 +173,7 @@ launcher < 0x21 : aerospace focus-back-and-forth; skhd -k "return"  # [ - switch
 launcher < a : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'tmux select-window -t "$(tmux display-message -p "#{session_name}"):AI"'; skhd -k "return"
 launcher < p : open -a "Basecamp"; skhd -k "return"
 launcher < o : open -a "Obsidian"; skhd -k "return"
+launcher < r : open -a "Raycast"; skhd -k "return"
 launcher < b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'; skhd -k "return"
 launcher < s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace g && open -a "Safari"; fi'; skhd -k "return"
 launcher < m : open -a "Music"; skhd -k "return"
