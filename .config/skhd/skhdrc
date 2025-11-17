@@ -94,6 +94,7 @@ alt - return : aerospace workspace-back-and-forth
 :: workspace : ~/.config/sketchybar/helpers/mode_notifier.sh WORKSPACE
 :: link : ~/.config/sketchybar/helpers/mode_notifier.sh LINK
 :: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
+:: writing : ~/.config/sketchybar/helpers/mode_notifier.sh INSERT
 
 # Mode switching shortcuts
 f13 ; launcher                        # double-tap caps (ctrl) - enter launcher mode
@@ -167,6 +168,7 @@ launcher < return ; default                         # return key exits to normal
 launcher < l ; link                                 # enter link mode
 launcher < w ; workspace                            # enter workspace mode
 launcher < 0x29 ; service                           # semicolon (;) - enter service mode
+launcher < i ; writing  # enter writing mode
 # Window switching
 launcher < 0x21 : aerospace focus-back-and-forth; skhd -k "return"  # [ - switch to previously focused window
 # App launchers - single key press to open apps
@@ -181,4 +183,7 @@ launcher < d : open -a "System Settings"; skhd -k "return"
 launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"; skhd -k "return"
 launcher < v : osascript -e 'tell application "kitty" to activate' && tmux select-window -t $(tmux list-windows -F '#{window_index} #{pane_current_command}' | grep -E 'nvim|vim' | head -1 | cut -d' ' -f1); skhd -k "return"
 launcher < t : osascript -e 'tell application "kitty" to activate' && tmux select-window -t $(tmux list-windows -F '#{window_index} #{pane_current_command}' | grep -E 'zsh|bash' | head -1 | cut -d' ' -f1); skhd -k "return"
+
+# Writing mode bindings - distraction-free writing mode
+writing < escape ; default  # Exit writing mode
 

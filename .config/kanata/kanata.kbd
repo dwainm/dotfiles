@@ -7,9 +7,10 @@
 )
 
 (defsrc
-  caps
+  caps esc
   a s d f
   j k l ;
+  f14
 )
 
 (defvar
@@ -41,10 +42,25 @@
   k (tap-hold $tap-time $hold-time k rsft)  ;; K -> Right Shift (Colemak 'e')
   l (tap-hold $tap-time $hold-time l ralt)  ;; L -> Right Alt (Colemak 'i')
   ; (tap-hold $tap-time $hold-time ; rmet)  ;; ; -> Right Cmd (Colemak 'o')
+
+  ;; Exit insert mode and send escape
+  exit-insert (multi esc (layer-switch base))
+
+  ;; Insert mode trigger
+  insert (layer-switch insert)
 )
 
 (deflayer base
-  @caps
+  @caps esc
   @a @s @d @f
   @j @k @l @;
+  @insert
+)
+
+;; Insert mode - pure typing, no modifiers
+(deflayer insert
+  @exit-insert @exit-insert  ;; Both Caps and Esc send escape and return to base
+  a s d f                     ;; Plain keys, no modifiers
+  j k l ;                     ;; Plain keys, no modifiers
+  _                           ;; F14 does nothing in insert mode
 )

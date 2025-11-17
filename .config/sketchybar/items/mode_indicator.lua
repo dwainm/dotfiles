@@ -128,9 +128,11 @@ local mode_shortcuts = {
       { key = "l", desc = "Link mode" },
       { key = "w", desc = "Workspace mode" },
       { key = ";", desc = "Service mode" },
+      { key = "i", desc = "Writing mode" },
       { key = "a", desc = "Alacritty terminal" },
       { key = "p", desc = "Basecamp" },
       { key = "o", desc = "Obsidian" },
+      { key = "r", desc = "Raycast" },
       { key = "b", desc = "Safari browser" },
       { key = "m", desc = "Music" },
       { key = "d", desc = "System Settings" },
@@ -138,6 +140,15 @@ local mode_shortcuts = {
       { key = "v", desc = "Kitty vim pane" },
       { key = "t", desc = "Kitty terminal pane" },
       { key = "esc", desc = "Back to normal" }
+    }
+  },
+  INSERT = {
+    icon = "✍️",
+    title = "INSERT MODE - Distraction-Free Writing",
+    shortcuts = {
+      { key = "esc", desc = "Exit insert mode" },
+      { key = "No shortcuts", desc = "All modifiers disabled" },
+      { key = "Pure typing", desc = "Focus on writing" }
     }
   }
 }
@@ -191,7 +202,8 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
     SERVICE = "⚙️",
     WORKSPACE = "🏢",
     LINK = "🔗",
-    LAUNCHER = "🚀"
+    LAUNCHER = "🚀",
+    INSERT = "✍️"
   }
 
   -- Define bar background colors for each mode
@@ -200,7 +212,8 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
     SERVICE = 0xf09ed072,     -- shade of green
     WORKSPACE = 0xf076cce0,   -- tint of blue
     LINK = 0xf0ff6b9d,        -- bright pink/magenta for links
-    LAUNCHER = 0xf0ff9500     -- orange for launcher
+    LAUNCHER = 0xf0ff9500,    -- orange for launcher
+    INSERT = 0xf0ffffff       -- white for insert/writing mode
   }
   
   -- Update the mode indicator icon
