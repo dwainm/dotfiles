@@ -443,6 +443,10 @@ else
   export EDITOR='nvim'
 fi
 
+# Rails uses RAILS_EDITOR over EDITOR
+export RAILS_EDITOR='nvim'
+export VISUAL='nvim'
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
