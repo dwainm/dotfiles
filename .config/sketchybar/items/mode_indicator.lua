@@ -152,6 +152,17 @@ local mode_shortcuts = {
       { key = "No shortcuts", desc = "All modifiers disabled" },
       { key = "Pure typing", desc = "Focus on writing" }
     }
+  },
+  MUX = {
+    icon = "🖥️",
+    title = "MUX MODE - Tmux Operations",
+    shortcuts = {
+      { key = "t", desc = "Fuzzy session switcher" },
+      { key = "s", desc = "Choose tree (sessions)" },
+      { key = ";", desc = "Tmux command mode" },
+      { key = "double-tap N", desc = "Back to launcher" },
+      { key = "esc", desc = "Back to normal" }
+    }
   }
 }
 
@@ -205,7 +216,8 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
     WORKSPACE = "🏢",
     LINK = "🔗",
     LAUNCHER = "🚀",
-    INSERT = "✍️"
+    INSERT = "✍️",
+    MUX = "🖥️"
   }
 
   -- Define bar background colors for each mode
@@ -215,7 +227,8 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
     WORKSPACE = 0xf076cce0,   -- tint of blue
     LINK = 0xf0ff6b9d,        -- bright pink/magenta for links
     LAUNCHER = 0xf0ff9500,    -- orange for launcher
-    INSERT = 0xf0ffffff       -- white for insert/writing mode
+    INSERT = 0xf0ffffff,      -- white for insert/writing mode
+    MUX = 0xf0a855f7          -- purple for mux/tmux mode
   }
   
   -- Update the mode indicator icon

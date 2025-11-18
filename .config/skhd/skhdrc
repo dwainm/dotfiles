@@ -95,6 +95,7 @@ alt - return : aerospace workspace-back-and-forth
 :: link : ~/.config/sketchybar/helpers/mode_notifier.sh LINK
 :: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
 :: writing : ~/.config/sketchybar/helpers/mode_notifier.sh INSERT
+:: mux : ~/.config/sketchybar/helpers/mode_notifier.sh MUX
 
 # Mode switching shortcuts
 f13 ; launcher                        # double-tap caps (ctrl) - enter launcher mode
@@ -178,7 +179,7 @@ launcher < o : open -a "Obsidian"; skhd -k "return"
 launcher < r : open -a "Raycast"; skhd -k "return"
 launcher < b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'; skhd -k "return"
 launcher < s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace g && open -a "Safari"; fi'; skhd -k "return"
-launcher < m : open -a "Music"; skhd -k "return"
+launcher < m ; mux  # enter mux mode for tmux operations
 launcher < d : open -a "System Settings"; skhd -k "return"
 launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"; skhd -k "return"
 launcher < v : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2); WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); tmux select-window -t $SESSION:$WINDOW'; skhd -k "return"
@@ -186,4 +187,11 @@ launcher < t : osascript -e 'tell application "kitty" to activate' && /bin/sh -c
 
 # Writing mode bindings - distraction-free writing mode
 writing < escape ; default  # Exit writing mode
+
+# Mux mode bindings - tmux operations
+mux < escape ; default
+mux < f13 ; launcher  # double-tap caps - back to launcher
+mux < t : osascript -e 'tell application "kitty" to activate' && tmux run-shell "cd ~/.tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session.sh switch"; skhd -k "escape"  # fuzzy session switcher
+mux < s : osascript -e 'tell application "kitty" to activate' && tmux choose-tree -s; skhd -k "escape"  # choose-tree -s
+mux < 0x29 : osascript -e 'tell application "kitty" to activate' && tmux command-prompt; skhd -k "escape"  # tmux command mode (;)
 
