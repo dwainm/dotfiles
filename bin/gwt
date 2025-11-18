@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+# Git Worktree + Tmux Session Creator
+# Creates a git worktree and corresponding tmux session with AI, editor, and shell windows
+
+set -e
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Show usage
+show_help() {
+  cat << EOF
+Usage: gwt [options] <branch-name>
+
+Creates a git worktree in a sibling directory and sets up a tmux session with:
+  - Window 1 "AI": Claude Code interactive CLI
+  - Window 2: nvim editor
+  - Window 3: Shell
+
+Options:
+  -d                Delete the worktree and tmux session for the specified branch
+  -b <base-branch>  Branch off specified branch (default: auto-detect trunk/master/main)
+  -c                Branch off current branch
+  -h, --help        Show this help message
+
+Examples:
+  gwt feature-name              # Branch off trunk/master/main
+  gwt feature-name -b develop   # Branch off develop branch
+  gwt feature-name -c           # Branch off current branch
+  gwt -d feature-name           # Delete worktree and tmux session
+
+The worktree will be created at: ../<repo-name>-<branch-name>
+The tmux session will be named: <repo-name>-<branch-name>
+EOF
+}
+
+# Parse arguments
+BRANCH_NAME=""
+BASE_BRANCH=""
+USE_CURRENT=false
+DELETE_MODE=false
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help)
+      show_help
+      exit 0
+      ;;
+    -d)
+      DELETE_MODE=true
+      shift
+      ;;
+    -b)
+      BASE_BRANCH="$2"
+      shift 2
+      ;;
+    -c)
+      USE_CURRENT=true
+      shift
+      ;;
+    -*)
+      echo -e "${RED}Error: Unknown option $1${NC}"
+      show_help
+      exit 1
+      ;;
+    *)
+      if [[ -z "$BRANCH_NAME" ]]; then
+        BRANCH_NAME="$1"
+      else
+        echo -e "${RED}Error: Multiple branch names provided${NC}"
+        show_help
+        exit 1
+      fi
+      shift
+      ;;
+  esac
+done
+
+# Validate branch name provided
+if [[ -z "$BRANCH_NAME" ]]; then
+  echo -e "${RED}Error: Branch name required${NC}"
+  show_help
+  exit 1
+fi
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir > /dev/null 2>&1; then
+  echo -e "${RED}Error: Not in a git repository${NC}"
+  exit 1
+fi
+
+# Get current repo root and name (needed for both create and delete)
+REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_NAME=$(basename "$REPO_ROOT")
+WORKTREE_NAME="${REPO_NAME}-${BRANCH_NAME}"
+WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${WORKTREE_NAME}"
+
+# Handle delete mode
+if [[ "$DELETE_MODE" = true ]]; then
+  DELETED_SOMETHING=false
+
+  # Kill tmux session if it exists
+  if tmux has-session -t "$WORKTREE_NAME" 2>/dev/null; then
+    echo -e "${YELLOW}Killing tmux session: ${WORKTREE_NAME}${NC}"
+    tmux kill-session -t "$WORKTREE_NAME"
+    echo -e "${GREEN}✓ Tmux session deleted${NC}"
+    DELETED_SOMETHING=true
+  else
+    echo -e "${BLUE}No tmux session found: ${WORKTREE_NAME}${NC}"
+  fi
+
+  # Remove git worktree if it exists
+  if git worktree list | grep -q "$WORKTREE_PATH"; then
+    echo -e "${YELLOW}Removing worktree: ${WORKTREE_PATH}${NC}"
+    git worktree remove "$WORKTREE_PATH" 2>/dev/null || git worktree remove --force "$WORKTREE_PATH"
+    echo -e "${GREEN}✓ Worktree removed${NC}"
+    DELETED_SOMETHING=true
+  else
+    echo -e "${BLUE}No worktree found: ${WORKTREE_PATH}${NC}"
+  fi
+
+  if [[ "$DELETED_SOMETHING" = false ]]; then
+    echo -e "${YELLOW}Nothing to delete${NC}"
+    exit 1
+  fi
+
+  exit 0
+fi
+
+# Check if tmux is installed (only needed for create mode)
+if ! command -v tmux > /dev/null 2>&1; then
+  echo -e "${RED}Error: tmux is not installed${NC}"
+  echo "Install with: brew install tmux"
+  exit 1
+fi
+
+# Check if claude is installed
+if ! command -v claude > /dev/null 2>&1; then
+  echo -e "${YELLOW}Warning: claude CLI not found. Install from https://code.claude.ai${NC}"
+fi
+
+# Determine base branch
+if [[ "$USE_CURRENT" = true ]]; then
+  BASE_BRANCH=$(git branch --show-current)
+  if [[ -z "$BASE_BRANCH" ]]; then
+    echo -e "${RED}Error: Not on a branch (detached HEAD)${NC}"
+    exit 1
+  fi
+  echo -e "${BLUE}Branching off current branch: ${BASE_BRANCH}${NC}"
+elif [[ -z "$BASE_BRANCH" ]]; then
+  # Auto-detect main branch
+  if git show-ref --verify --quiet refs/heads/trunk; then
+    BASE_BRANCH="trunk"
+  elif git show-ref --verify --quiet refs/heads/master; then
+    BASE_BRANCH="master"
+  elif git show-ref --verify --quiet refs/heads/main; then
+    BASE_BRANCH="main"
+  else
+    echo -e "${RED}Error: Could not detect main branch (tried trunk, master, main)${NC}"
+    echo "Use -b to specify a base branch or -c to use current branch"
+    exit 1
+  fi
+  echo -e "${BLUE}Auto-detected base branch: ${BASE_BRANCH}${NC}"
+else
+  # Verify specified base branch exists
+  if ! git show-ref --verify --quiet "refs/heads/$BASE_BRANCH"; then
+    echo -e "${RED}Error: Base branch '${BASE_BRANCH}' does not exist${NC}"
+    exit 1
+  fi
+  echo -e "${BLUE}Using base branch: ${BASE_BRANCH}${NC}"
+fi
+
+# Check if worktree already exists
+if [[ -d "$WORKTREE_PATH" ]]; then
+  echo -e "${RED}Error: Worktree directory already exists: ${WORKTREE_PATH}${NC}"
+  exit 1
+fi
+
+# Check if tmux session already exists
+if tmux has-session -t "$WORKTREE_NAME" 2>/dev/null; then
+  echo -e "${YELLOW}Warning: tmux session '${WORKTREE_NAME}' already exists${NC}"
+  echo -e "${BLUE}Attaching to existing session...${NC}"
+  tmux attach-session -t "$WORKTREE_NAME"
+  exit 0
+fi
+
+# Create git worktree
+echo -e "${GREEN}Creating worktree: ${WORKTREE_PATH}${NC}"
+git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" "$BASE_BRANCH"
+
+# Create tmux session (detached)
+echo -e "${GREEN}Creating tmux session: ${WORKTREE_NAME}${NC}"
+
+# Create session with first window
+tmux new-session -d -s "$WORKTREE_NAME" -n "AI" -c "$WORKTREE_PATH"
+
+# Set up first window (AI)
+if command -v claude > /dev/null 2>&1; then
+  tmux send-keys -t "$WORKTREE_NAME:AI" "claude" C-m
+else
+  tmux send-keys -t "$WORKTREE_NAME:AI" "echo 'Claude CLI not installed. Install from https://code.claude.ai'" C-m
+fi
+
+# Create second window (nvim)
+tmux new-window -t "$WORKTREE_NAME" -n "nvim" -c "$WORKTREE_PATH"
+if command -v nvim > /dev/null 2>&1; then
+  tmux send-keys -t "$WORKTREE_NAME:nvim" "nvim" C-m
+else
+  tmux send-keys -t "$WORKTREE_NAME:nvim" "echo 'nvim not installed'" C-m
+fi
+
+# Create third window (shell)
+tmux new-window -t "$WORKTREE_NAME" -n "shell" -c "$WORKTREE_PATH"
+
+# Select first window
+tmux select-window -t "$WORKTREE_NAME:AI"
+
+echo -e "${GREEN}✓ Worktree created at: ${WORKTREE_PATH}${NC}"
+echo -e "${GREEN}✓ Tmux session created: ${WORKTREE_NAME}${NC}"
+echo -e "${BLUE}To attach: tmux attach -t ${WORKTREE_NAME}${NC}"
+echo -e "${BLUE}To list sessions: tmux ls${NC}"
