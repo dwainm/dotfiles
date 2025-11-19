@@ -294,18 +294,32 @@ compdef g=git
 
 # Custom completion for gwt (git worktree helper)
 _gwt() {
-  local -a branches
+  local -a branches worktrees repo_name
 
   # Get list of local branches
   branches=(${(f)"$(git branch 2>/dev/null | sed 's/^[* ]*//')"})
 
-  _arguments \
-    '-d[Delete worktree and tmux session]' \
-    '-b[Branch off specified branch]:base branch:($branches)' \
-    '-c[Branch off current branch]' \
-    '-h[Show help]' \
-    '--help[Show help]' \
-    '*:branch name:($branches)'
+  # Get repo name and extract branch names from worktrees
+  if git rev-parse --git-dir > /dev/null 2>&1; then
+    repo_name=$(basename "$(git rev-parse --show-toplevel)")
+    # Get worktree paths, extract basenames, strip repo prefix
+    worktrees=(${(f)"$(git worktree list 2>/dev/null | awk 'NR>1 {print $1}' | xargs -I {} basename {} | sed "s/^${repo_name}-//")"})
+  fi
+
+  # Check if -d flag is in the command line
+  if [[ ${words[(I)-d]} -gt 0 ]]; then
+    # For delete mode, show existing worktrees (branch names only)
+    _arguments '-d[Delete worktree]' "*:branch name:($worktrees)"
+  else
+    # For create mode, show all branches
+    _arguments \
+      '-d[Delete worktree and tmux session]' \
+      '-b[Branch off specified branch]:base branch:($branches)' \
+      '-c[Branch off current branch]' \
+      '-h[Show help]' \
+      '--help[Show help]' \
+      '*:branch name:($branches)'
+  fi
 }
 
 compdef _gwt gwt
