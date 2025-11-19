@@ -289,6 +289,27 @@ alias gdone='git push origin HEAD'
 alias glg='git log --pretty=format:"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]" --abbrev-commit -30'
 alias gres='git reset --hard'
 
+# Enable git completion for g alias
+compdef g=git
+
+# Custom completion for gwt (git worktree helper)
+_gwt() {
+  local -a branches
+
+  # Get list of local branches
+  branches=(${(f)"$(git branch 2>/dev/null | sed 's/^[* ]*//')"})
+
+  _arguments \
+    '-d[Delete worktree and tmux session]' \
+    '-b[Branch off specified branch]:base branch:($branches)' \
+    '-c[Branch off current branch]' \
+    '-h[Show help]' \
+    '--help[Show help]' \
+    '*:branch name:($branches)'
+}
+
+compdef _gwt gwt
+
 #delete branche
 function gbdel(){
   git branch | grep $1 | xargs git branch -D
