@@ -319,6 +319,20 @@ function gcd() {
 	git clone $1 && cd "${REPONAME}"
 }
 
+# Update local main to exactly where you are right now (no merge commit, no push)
+gum() {
+  local current_branch=$(git rev-parse --abbrev-ref HEAD)
+  local pretty_commit=$(git log --oneline -1 HEAD)
+
+  echo "🔥 gum: making local main identical to $current_branch"
+  echo "   $pretty_commit"
+
+  git update-ref refs/heads/main HEAD
+
+  echo "✅ Done — local main is now everywhere at this commit"
+  echo "   When ready: git push origin main"
+}
+
 ###
 # Config repo management
 ##
@@ -458,6 +472,42 @@ for cmd in rspec ruby rubocop rails jekyll; do
   alias $cmd="bundle exec $cmd"
 done
 # export GEM_HOME="$HOME/.gem"
+
+###########
+# Rails Development
+###########
+
+dev() {
+  # Find the Rails root no matter where you are
+  local dir="$(pwd)"
+  while [[ "$dir" != "" && ! -f "$dir/bin/rails" ]]; do
+    dir=${dir%/*}
+  done
+
+  [[ -f "$dir/bin/rails" ]] || { echo "❌ Not a Rails root"; return 1; }
+  cd "$dir"
+
+  # Generate random ports to avoid conflicts when running multiple Rails projects
+  local http_port=$((3000 + RANDOM % 999))           # 3000–3998
+  local debug_port=$((40000 + RANDOM % 25535))       # 40000–65535
+  local asset_port=$((3035 + RANDOM % 200))          # 3035–3234 for Vite/Tailwind/etc.
+  local pid_file="tmp/pids/server.${http_port}.pid"
+
+  echo "🚀 Starting Rails in $(basename "$PWD")"
+  echo "   → http://localhost:$http_port  (debug: $debug_port)"
+
+  # Set ports via env vars. Your config/environments/development.rb must respect these!
+  # RUBY_DEBUG_PORT is read by: DEBUGGER__.open_tcp(port: ENV["RUBY_DEBUG_PORT"].to_i)
+  # See: config/environments/development.rb for debug port configuration
+  RUBY_DEBUG_PORT="$debug_port" \
+  RB_DEBUGGER_PORT="$debug_port" \
+  DEBUGGER_PORT="$debug_port" \
+  PORT="$http_port" \
+  PIDFILE="$pid_file" \
+  VITE_RUBY_PORT="$asset_port" \
+  JS_DEV_SERVER_PORT="$asset_port" \
+    bin/dev "$@"
+}
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"

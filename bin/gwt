@@ -192,6 +192,28 @@ fi
 echo -e "${GREEN}Creating worktree: ${WORKTREE_PATH}${NC}"
 git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" "$BASE_BRANCH"
 
+# Handle Rails database symlinking
+if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then
+  echo -e "${BLUE}Rails project detected${NC}"
+
+  # Check if main repo has a storage directory
+  if [[ -d "$REPO_ROOT/storage" ]]; then
+    # Remove the newly created storage directory if it exists
+    if [[ -d "$WORKTREE_PATH/storage" ]]; then
+      echo -e "${YELLOW}Removing worktree storage directory${NC}"
+      rm -rf "$WORKTREE_PATH/storage"
+    fi
+
+    # Create symlink to main repo's storage
+    echo -e "${GREEN}Symlinking storage to main repo (shared database)${NC}"
+    ln -s "$REPO_ROOT/storage" "$WORKTREE_PATH/storage"
+    echo -e "${GREEN}✓ Database will be shared across all worktrees${NC}"
+  else
+    echo -e "${YELLOW}Note: Main repo has no storage directory yet${NC}"
+    echo -e "${YELLOW}Storage will be created independently in this worktree${NC}"
+  fi
+fi
+
 # Create tmux session (detached)
 echo -e "${GREEN}Creating tmux session: ${WORKTREE_NAME}${NC}"
 
