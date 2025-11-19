@@ -23,6 +23,7 @@ Creates a git worktree in a sibling directory and sets up a tmux session with:
 
 Options:
   -d                Delete the worktree and tmux session for the specified branch
+  -f                Force delete (skip unpushed commits check)
   -b <base-branch>  Branch off specified branch (default: auto-detect trunk/master/main)
   -c                Branch off current branch
   -h, --help        Show this help message
@@ -43,6 +44,7 @@ BRANCH_NAME=""
 BASE_BRANCH=""
 USE_CURRENT=false
 DELETE_MODE=false
+FORCE_DELETE=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -52,6 +54,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -d)
       DELETE_MODE=true
+      shift
+      ;;
+    -f)
+      FORCE_DELETE=true
       shift
       ;;
     -b)
@@ -102,6 +108,38 @@ WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${WORKTREE_NAME}"
 # Handle delete mode
 if [[ "$DELETE_MODE" = true ]]; then
   DELETED_SOMETHING=false
+
+  # Check for unpushed commits (unless force delete)
+  if [[ "$FORCE_DELETE" = false ]]; then
+    # Check if branch exists and has upstream
+    if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
+      UPSTREAM=$(git for-each-ref --format='%(upstream:short)' "refs/heads/$BRANCH_NAME")
+      if [[ -n "$UPSTREAM" ]]; then
+        # Check for unpushed commits
+        UNPUSHED=$(git log --oneline "$UPSTREAM..$BRANCH_NAME" 2>/dev/null)
+        if [[ -n "$UNPUSHED" ]]; then
+          echo -e "${RED}Error: Branch '${BRANCH_NAME}' has unpushed commits:${NC}"
+          echo "$UNPUSHED"
+          echo -e "${YELLOW}Use -f to force delete${NC}"
+          exit 1
+        fi
+      else
+        # No upstream, check if branch has any commits not in main branches
+        for main in trunk master main; do
+          if git show-ref --verify --quiet "refs/heads/$main"; then
+            UNPUSHED=$(git log --oneline "$main..$BRANCH_NAME" 2>/dev/null)
+            if [[ -n "$UNPUSHED" ]]; then
+              echo -e "${RED}Error: Branch '${BRANCH_NAME}' has commits not in ${main}:${NC}"
+              echo "$UNPUSHED"
+              echo -e "${YELLOW}Use -f to force delete${NC}"
+              exit 1
+            fi
+            break
+          fi
+        done
+      fi
+    fi
+  fi
 
   # Kill tmux session if it exists
   if tmux has-session -t "$WORKTREE_NAME" 2>/dev/null; then
