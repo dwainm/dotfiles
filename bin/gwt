@@ -166,8 +166,9 @@ elif [[ -z "$BASE_BRANCH" ]]; then
   fi
   echo -e "${BLUE}Auto-detected base branch: ${BASE_BRANCH}${NC}"
 else
-  # Verify specified base branch exists
-  if ! git show-ref --verify --quiet "refs/heads/$BASE_BRANCH"; then
+  # Verify specified base branch exists (check both local and remote)
+  if ! git show-ref --verify --quiet "refs/heads/$BASE_BRANCH" && \
+     ! git show-ref --verify --quiet "refs/remotes/$BASE_BRANCH"; then
     echo -e "${RED}Error: Base branch '${BASE_BRANCH}' does not exist${NC}"
     exit 1
   fi
@@ -204,10 +205,10 @@ if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then
       rm -rf "$WORKTREE_PATH/storage"
     fi
 
-    # Create symlink to main repo's storage
-    echo -e "${GREEN}Symlinking storage to main repo (shared database)${NC}"
-    ln -s "$REPO_ROOT/storage" "$WORKTREE_PATH/storage"
-    echo -e "${GREEN}✓ Database will be shared across all worktrees${NC}"
+    # Copy storage from main repo
+    echo -e "${GREEN}Copying storage from main repo (independent database)${NC}"
+    cp -r "$REPO_ROOT/storage" "$WORKTREE_PATH/storage"
+    echo -e "${GREEN}✓ Database copied to worktree${NC}"
   else
     echo -e "${YELLOW}Note: Main repo has no storage directory yet${NC}"
     echo -e "${YELLOW}Storage will be created independently in this worktree${NC}"

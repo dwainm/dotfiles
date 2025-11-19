@@ -296,8 +296,8 @@ compdef g=git
 _gwt() {
   local -a branches worktrees repo_name
 
-  # Get list of local branches
-  branches=(${(f)"$(git branch 2>/dev/null | sed 's/^[* ]*//')"})
+  # Get list of local and remote branches
+  branches=(${(f)"$(git branch -a 2>/dev/null | sed 's/^[* ]*//' | sed 's/remotes\///')"})
 
   # Get repo name and extract branch names from worktrees
   if git rev-parse --git-dir > /dev/null 2>&1; then
