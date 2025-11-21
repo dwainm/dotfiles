@@ -253,6 +253,16 @@ if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then
   fi
 fi
 
+# Handle CLAUDE-DEV.md -> CLAUDE.md setup
+if [[ -f "$REPO_ROOT/CLAUDE-DEV.md" ]]; then
+  echo -e "${BLUE}Setting up dev CLAUDE.md in worktree${NC}"
+  cp "$REPO_ROOT/CLAUDE-DEV.md" "$WORKTREE_PATH/CLAUDE.md"
+  cd "$WORKTREE_PATH"
+  git update-index --skip-worktree CLAUDE.md
+  cd "$REPO_ROOT"
+  echo -e "${GREEN}✓ CLAUDE.md configured for dev work${NC}"
+fi
+
 # Create tmux session (detached)
 echo -e "${GREEN}Creating tmux session: ${WORKTREE_NAME}${NC}"
 
