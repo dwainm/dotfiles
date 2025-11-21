@@ -63,10 +63,6 @@ cmd + ctrl - f : aerospace workspace f
 cmd + ctrl - p : aerospace workspace p
 cmd + ctrl - g : aerospace workspace g
 
-# Workspace cycling
-cmd + ctrl - 0x21 : aerospace workspace --wrap-around prev  # left bracket ([)
-cmd + ctrl - 0x1E : aerospace workspace --wrap-around next  # right bracket (])
-
 # Mode declarations with sketchybar integration
 :: default : ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL
 :: service : ~/.config/sketchybar/helpers/mode_notifier.sh SERVICE
