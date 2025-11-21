@@ -1,3 +1,4 @@
 [tools]
+go = "latest"
 node = "23"
 ruby = "3.3.7"

@@ -141,6 +141,7 @@ local mode_shortcuts = {
       { key = "k", desc = "Kitty terminal" },
       { key = "v", desc = "Kitty vim pane" },
       { key = "t", desc = "Kitty terminal pane" },
+      { key = "n", desc = "Start pomodoro (40m)" },
       { key = "esc", desc = "Back to normal" }
     }
   },
@@ -162,6 +163,13 @@ local mode_shortcuts = {
       { key = ";", desc = "Tmux command mode" },
       { key = "double-tap N", desc = "Back to launcher" },
       { key = "esc", desc = "Back to normal" }
+    }
+  },
+  BREAK = {
+    icon = "☕",
+    title = "BREAK MODE - Take a break!",
+    shortcuts = {
+      { key = "esc", desc = "End break, start new work session" }
     }
   }
 }
@@ -217,7 +225,8 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
     LINK = "🔗",
     LAUNCHER = "🚀",
     INSERT = "✍️",
-    MUX = "🖥️"
+    MUX = "🖥️",
+    BREAK = "☕"
   }
 
   -- Define bar background colors for each mode
@@ -228,7 +237,8 @@ sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
     LINK = 0xf0ff6b9d,        -- bright pink/magenta for links
     LAUNCHER = 0xf0ff9500,    -- orange for launcher
     INSERT = 0xf0ffffff,      -- white for insert/writing mode
-    MUX = 0xf0a855f7          -- purple for mux/tmux mode
+    MUX = 0xf0a855f7,         -- purple for mux/tmux mode
+    BREAK = 0xf09ed072        -- green for break mode
   }
   
   -- Update the mode indicator icon

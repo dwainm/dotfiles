@@ -1,0 +1,11 @@
+#!/bin/bash
+# Hook triggered when work pomodoro ends
+
+# Play sound
+afplay /System/Library/Sounds/Glass.aiff &
+
+# Enter skhd break mode
+skhd -k "shift + ctrl + alt + cmd - b"
+
+# Start 5-minute break
+pomodoro break 5

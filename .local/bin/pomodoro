@@ -1,0 +1,94 @@
+#!/bin/bash
+# Simple pomodoro timer
+
+STATE_DIR="$HOME/.config/pomo"
+STATE_FILE="$STATE_DIR/state"
+HOOK_FILE="$STATE_DIR/on_event.sh"
+PID_FILE="$STATE_DIR/pomo.pid"
+
+mkdir -p "$STATE_DIR"
+
+start_timer() {
+    local mins=${1:-40}
+    local mode=${2:-work}
+    local end_time=$(($(date +%s) + mins * 60))
+    
+    # Kill existing timer
+    stop_timer 2>/dev/null
+    
+    # Write state
+    echo "$end_time $mode" > "$STATE_FILE"
+    
+    # Run timer in background
+    (
+        echo $$ > "$PID_FILE"
+        while true; do
+            if [[ ! -f "$STATE_FILE" ]]; then
+                exit 0
+            fi
+            
+            read -r end mode < "$STATE_FILE"
+            now=$(date +%s)
+            
+            if [[ $now -ge $end ]]; then
+                if [[ "$mode" == "work" ]]; then
+                    # Work ended, start break
+                    export POMO_STATE="BREAKING"
+                    [[ -x "$HOOK_FILE" ]] && "$HOOK_FILE"
+                    # Start 5-min break
+                    new_end=$((now + 5 * 60))
+                    echo "$new_end break" > "$STATE_FILE"
+                else
+                    # Break ended
+                    export POMO_STATE="COMPLETE"
+                    [[ -x "$HOOK_FILE" ]] && "$HOOK_FILE"
+                    rm -f "$STATE_FILE" "$PID_FILE"
+                    exit 0
+                fi
+            fi
+            sleep 1
+        done
+    ) &
+    disown
+}
+
+stop_timer() {
+    # Kill all existing timer processes
+    pkill -f "pomodoro start" 2>/dev/null
+    rm -f "$STATE_FILE" "$PID_FILE"
+}
+
+get_status() {
+    if [[ ! -f "$STATE_FILE" ]]; then
+        echo ""
+        return
+    fi
+    
+    read -r end mode < "$STATE_FILE"
+    now=$(date +%s)
+    remaining=$((end - now))
+    
+    if [[ $remaining -le 0 ]]; then
+        echo "0:00"
+    else
+        mins=$((remaining / 60))
+        secs=$((remaining % 60))
+        printf "%d:%02d\n" $mins $secs
+    fi
+}
+
+case "$1" in
+    start)
+        start_timer "${2:-40}" "work"
+        ;;
+    stop)
+        stop_timer
+        ;;
+    status)
+        get_status
+        ;;
+    *)
+        echo "Usage: pomodoro {start [mins]|stop|status}"
+        exit 1
+        ;;
+esac

@@ -71,10 +71,17 @@ cmd + ctrl - g : aerospace workspace g
 :: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
 :: writing : ~/.config/sketchybar/helpers/mode_notifier.sh INSERT
 :: mux : ~/.config/sketchybar/helpers/mode_notifier.sh MUX
+:: break : ~/.config/sketchybar/helpers/mode_notifier.sh BREAK
 
 # Mode switching shortcuts
+shift + ctrl + alt + cmd - b ; break  # hyper+b - enter break mode (triggered by pomodoro hook)
+shift + ctrl + alt + cmd - n ; default  # hyper+n - return to default mode
 f13 ; launcher                        # double-tap caps (ctrl) - enter launcher mode
 cmd - space ; launcher                # cmd+space - enter launcher mode (fast!)
+# Break mode bindings - only escape works, starts new work session
+break < escape : pomodoro start 40 &; skhd -k "return"
+break < return ; default
+
 # Service mode bindings - only work when in service mode
 service < escape ; default
 service < f13 ; launcher                            # double-tap N - back to launcher
@@ -155,6 +162,8 @@ launcher < r : open -a "Raycast"; skhd -k "return"
 launcher < b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'; skhd -k "return"
 launcher < s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace g && open -a "Safari"; fi'; skhd -k "return"
 launcher < m ; mux  # enter mux mode for tmux operations
+launcher < 7 ; break  # test: enter break mode
+launcher < n : pomodoro start 40 && skhd -k "return"  # start 40-min pomodoro
 launcher < d : open -a "System Settings"; skhd -k "return"
 launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"; skhd -k "return"
 launcher < v : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2); WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); tmux select-window -t $SESSION:$WINDOW'; skhd -k "return"
