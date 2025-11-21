@@ -56,37 +56,16 @@ alt - 0x27 : skhd -k "backspace"
 # Fullscreen toggle
 ctrl - f : aerospace fullscreen
 
-# Focus back and forth
-alt - o : aerospace focus-back-and-forth
-
-# Resize windows - moved to window mode
-
 # Workspaces
-alt - q : aerospace workspace q
-alt - w : aerospace workspace w
-alt - f : aerospace workspace f
-alt - p : aerospace workspace p
-alt - g : aerospace workspace g
+cmd + ctrl - q : aerospace workspace q
+cmd + ctrl - w : aerospace workspace w
+cmd + ctrl - f : aerospace workspace f
+cmd + ctrl - p : aerospace workspace p
+cmd + ctrl - g : aerospace workspace g
 
-# Move windows to workspaces and follow
-alt + shift - q : aerospace move-node-to-workspace q && aerospace workspace q
-alt + shift - w : aerospace move-node-to-workspace w && aerospace workspace w
-alt + shift - f : aerospace move-node-to-workspace f && aerospace workspace f
-alt + shift - p : aerospace move-node-to-workspace p && aerospace workspace p
-alt + shift - g : aerospace move-node-to-workspace g && aerospace workspace g
-
-# App shortcuts removed - now in launcher mode (double-tap N)
-
-# Workspace switching
+# Workspace cycling
 cmd + ctrl - 0x21 : aerospace workspace --wrap-around prev  # left bracket ([)
 cmd + ctrl - 0x1E : aerospace workspace --wrap-around next  # right bracket (])
-
-# Window cycling in workspace
-cmd + alt - 0x21 : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-prev  # left bracket ([)
-cmd + alt - 0x1E : aerospace focus --boundaries workspace --boundaries-action wrap-around-the-workspace dfs-next  # right bracket (])
-
-# Back and forth workspace
-alt - return : aerospace workspace-back-and-forth
 
 # Mode declarations with sketchybar integration
 :: default : ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL
