@@ -566,3 +566,20 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 eval "$(~/.local/bin/mise activate)"
 
+alias glo="git log --oneline"
+
+migrate() {
+  local dir="$(pwd)"
+  while [[ "$dir" != "" && ! -f "$dir/bin/rails" ]]; do
+    dir=${dir%/*}
+  done
+  
+  [[ -f "$dir/bin/rails" ]] || {
+    echo "❌ Not a Rails root"
+    return 1
+  }
+  
+  cd "$dir"
+  echo "🗄️  Running migrations in $(basename "$PWD")"
+  bin/rails db:migrate "$@"
+}

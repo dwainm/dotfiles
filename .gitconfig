@@ -18,3 +18,5 @@
 	tool = diffmerge
 [pull]
 	rebase = false
+[alias]
+	glo = log --oneline
