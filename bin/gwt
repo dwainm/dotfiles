@@ -22,6 +22,7 @@ Creates a git worktree in a sibling directory and sets up a tmux session with:
   - Window 3: Shell
 
 Options:
+  -l                List all git worktrees
   -d                Delete the worktree and tmux session for the specified branch
   -f                Force delete (skip unpushed commits check)
   -b <base-branch>  Branch off specified branch (default: auto-detect trunk/master/main)
@@ -45,12 +46,17 @@ BASE_BRANCH=""
 USE_CURRENT=false
 DELETE_MODE=false
 FORCE_DELETE=false
+LIST_MODE=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     -h|--help)
       show_help
       exit 0
+      ;;
+    -l)
+      LIST_MODE=true
+      shift
       ;;
     -d)
       DELETE_MODE=true
@@ -85,6 +91,19 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Handle list mode
+if [[ "$LIST_MODE" = true ]]; then
+  # Check if we're in a git repository
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo -e "${RED}Error: Not in a git repository${NC}"
+    exit 1
+  fi
+
+  echo -e "${BLUE}Git worktrees:${NC}"
+  git worktree list
+  exit 0
+fi
 
 # Validate branch name provided
 if [[ -z "$BRANCH_NAME" ]]; then
