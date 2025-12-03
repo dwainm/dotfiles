@@ -583,3 +583,4 @@ migrate() {
   echo "🗄️  Running migrations in $(basename "$PWD")"
   bin/rails db:migrate "$@"
 }
+alias clear='clear && printf "[3J"'
