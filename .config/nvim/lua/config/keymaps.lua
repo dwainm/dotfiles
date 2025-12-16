@@ -24,9 +24,7 @@ end, { desc = "Reload Safari" })
 -----------
 -- Git
 -----------
--- LazyGit on <leader>g
-vim.keymap.set("n", "<leader>g", "<cmd>LazyGit<cr>", { desc = "LazyGit" })
-
+-- LazyGit is already mapped to <leader>gg by LazyVim
 -- Other git commands on <leader>G
 local gs = require("gitsigns") -- Cache for efficiency
 vim.keymap.set("n", "<leader>Gb", function()
