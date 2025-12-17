@@ -44,3 +44,19 @@
 - Nerd Fonts (JetBrains Mono, Hack)
 - Git worktrees over branches
 - zoxide for navigation, fzf for fuzzy finding
+
+## ERB Coding Conventions
+**Comment Style** (required for erb-formatter compatibility):
+- Use `<%# comment %>` on separate lines for ERB comments
+- Use `<!-- comment -->` for HTML-related comments
+- **NEVER** use inline Ruby comments inside `<% %>` tags (e.g., `<% # comment`)
+  - erb-formatter converts these incorrectly, breaking syntax
+
+Example:
+```erb
+<%# This is the correct way to comment %>
+<% item = @item %>
+
+<!-- HTML comment for markup-related notes -->
+<div><%= item.name %></div>
+```
