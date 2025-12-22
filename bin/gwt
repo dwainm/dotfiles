@@ -27,12 +27,14 @@ Options:
   -f                Force delete (skip unpushed commits check)
   -b <base-branch>  Branch off specified branch (default: auto-detect trunk/master/main)
   -c                Branch off current branch
+  -B                Checkout existing branch (fails if branch doesn't exist)
   -h, --help        Show this help message
 
 Examples:
   gwt feature-name              # Branch off trunk/master/main
   gwt feature-name -b develop   # Branch off develop branch
   gwt feature-name -c           # Branch off current branch
+  gwt -B existing-branch        # Checkout existing branch
   gwt -d feature-name           # Delete worktree and tmux session
 
 The worktree will be created at: ../<repo-name>-<branch-name>
@@ -47,6 +49,7 @@ USE_CURRENT=false
 DELETE_MODE=false
 FORCE_DELETE=false
 LIST_MODE=false
+FORCE_EXISTING=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -72,6 +75,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -c)
       USE_CURRENT=true
+      shift
+      ;;
+    -B)
+      FORCE_EXISTING=true
       shift
       ;;
     -*)
@@ -200,36 +207,47 @@ if ! command -v claude > /dev/null 2>&1; then
   echo -e "${YELLOW}Warning: claude CLI not found. Install from https://code.claude.ai${NC}"
 fi
 
-# Determine base branch
-if [[ "$USE_CURRENT" = true ]]; then
-  BASE_BRANCH=$(git branch --show-current)
-  if [[ -z "$BASE_BRANCH" ]]; then
-    echo -e "${RED}Error: Not on a branch (detached HEAD)${NC}"
+# Handle existing branch mode
+if [[ "$FORCE_EXISTING" = true ]]; then
+  # Verify branch exists
+  if ! git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
+    echo -e "${RED}Error: Branch '${BRANCH_NAME}' does not exist${NC}"
+    echo "Use 'gwt $BRANCH_NAME' without -B to create a new branch"
     exit 1
   fi
-  echo -e "${BLUE}Branching off current branch: ${BASE_BRANCH}${NC}"
-elif [[ -z "$BASE_BRANCH" ]]; then
-  # Auto-detect main branch
-  if git show-ref --verify --quiet refs/heads/trunk; then
-    BASE_BRANCH="trunk"
-  elif git show-ref --verify --quiet refs/heads/master; then
-    BASE_BRANCH="master"
-  elif git show-ref --verify --quiet refs/heads/main; then
-    BASE_BRANCH="main"
-  else
-    echo -e "${RED}Error: Could not detect main branch (tried trunk, master, main)${NC}"
-    echo "Use -b to specify a base branch or -c to use current branch"
-    exit 1
-  fi
-  echo -e "${BLUE}Auto-detected base branch: ${BASE_BRANCH}${NC}"
+  echo -e "${BLUE}Checking out existing branch: ${BRANCH_NAME}${NC}"
 else
-  # Verify specified base branch exists (check both local and remote)
-  if ! git show-ref --verify --quiet "refs/heads/$BASE_BRANCH" && \
-     ! git show-ref --verify --quiet "refs/remotes/$BASE_BRANCH"; then
-    echo -e "${RED}Error: Base branch '${BASE_BRANCH}' does not exist${NC}"
-    exit 1
+  # Determine base branch for new branch creation
+  if [[ "$USE_CURRENT" = true ]]; then
+    BASE_BRANCH=$(git branch --show-current)
+    if [[ -z "$BASE_BRANCH" ]]; then
+      echo -e "${RED}Error: Not on a branch (detached HEAD)${NC}"
+      exit 1
+    fi
+    echo -e "${BLUE}Branching off current branch: ${BASE_BRANCH}${NC}"
+  elif [[ -z "$BASE_BRANCH" ]]; then
+    # Auto-detect main branch
+    if git show-ref --verify --quiet refs/heads/trunk; then
+      BASE_BRANCH="trunk"
+    elif git show-ref --verify --quiet refs/heads/master; then
+      BASE_BRANCH="master"
+    elif git show-ref --verify --quiet refs/heads/main; then
+      BASE_BRANCH="main"
+    else
+      echo -e "${RED}Error: Could not detect main branch (tried trunk, master, main)${NC}"
+      echo "Use -b to specify a base branch or -c to use current branch"
+      exit 1
+    fi
+    echo -e "${BLUE}Auto-detected base branch: ${BASE_BRANCH}${NC}"
+  else
+    # Verify specified base branch exists (check both local and remote)
+    if ! git show-ref --verify --quiet "refs/heads/$BASE_BRANCH" && \
+       ! git show-ref --verify --quiet "refs/remotes/$BASE_BRANCH"; then
+      echo -e "${RED}Error: Base branch '${BASE_BRANCH}' does not exist${NC}"
+      exit 1
+    fi
+    echo -e "${BLUE}Using base branch: ${BASE_BRANCH}${NC}"
   fi
-  echo -e "${BLUE}Using base branch: ${BASE_BRANCH}${NC}"
 fi
 
 # Check if worktree already exists
@@ -248,7 +266,13 @@ fi
 
 # Create git worktree
 echo -e "${GREEN}Creating worktree: ${WORKTREE_PATH}${NC}"
-git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" "$BASE_BRANCH"
+if [[ "$FORCE_EXISTING" = true ]]; then
+  # Checkout existing branch
+  git worktree add "$WORKTREE_PATH" "$BRANCH_NAME"
+else
+  # Create new branch
+  git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" "$BASE_BRANCH"
+fi
 
 # Handle Rails database symlinking
 if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then

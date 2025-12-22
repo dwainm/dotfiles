@@ -1,0 +1,295 @@
+#!/usr/bin/env bash
+
+# spec - Simple CLI tool for managing project specs
+# Usage:
+#   spec [list]           - List all specs in timeline order
+#   spec new <name>       - Create new spec in planned folder
+#   spec move <folder> <name> - Move spec between done/active/planned
+
+SPECS_DIR="docs/specs"
+FOLDERS=("planned" "active" "done")
+
+# Ensure specs directory structure exists
+ensure_dirs() {
+    for folder in "${FOLDERS[@]}"; do
+        mkdir -p "$SPECS_DIR/$folder"
+    done
+}
+
+# Get current date in dd-mm-yy format
+get_date() {
+    date +"%d-%m-%y"
+}
+
+# Find spec file by name (without date prefix)
+find_spec() {
+    local name="$1"
+    find "$SPECS_DIR" -type f -name "*-${name}.md" 2>/dev/null | head -n 1
+}
+
+# List all specs in timeline order (newest first)
+list_specs() {
+    local filter_folder="$1"
+    ensure_dirs
+
+    # Validate filter folder if provided
+    if [ -n "$filter_folder" ]; then
+        local valid=0
+        for folder in "${FOLDERS[@]}"; do
+            if [ "$folder" = "$filter_folder" ]; then
+                valid=1
+                break
+            fi
+        done
+
+        if [ $valid -eq 0 ]; then
+            echo "Error: Invalid folder '$filter_folder'. Must be one of: ${FOLDERS[*]}"
+            exit 1
+        fi
+    fi
+
+    echo "📋 Project Specs"
+    echo ""
+
+    for folder in "${FOLDERS[@]}"; do
+        # Skip folders that don't match filter
+        if [ -n "$filter_folder" ] && [ "$folder" != "$filter_folder" ]; then
+            continue
+        fi
+
+        local files=$(find "$SPECS_DIR/$folder" -type f -name "*.md" 2>/dev/null | sort -r)
+        if [ -n "$files" ]; then
+            echo "[$folder]"
+            echo "$files" | while read -r file; do
+                local basename=$(basename "$file" .md)
+
+                # Extract date (dd-mm-yy) and name from filename
+                if [[ $basename =~ ^([0-9]{2})-([0-9]{2})-([0-9]{2})-(.+)$ ]]; then
+                    local day="${BASH_REMATCH[1]}"
+                    local month="${BASH_REMATCH[2]}"
+                    local year="${BASH_REMATCH[3]}"
+                    local name="${BASH_REMATCH[4]}"
+
+                    # Convert name: replace hyphens with spaces and title case
+                    name=$(echo "$name" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
+
+                    echo "  - $name ($day/$month/$year)"
+                else
+                    # Fallback for non-standard filenames
+                    echo "  - $basename"
+                fi
+            done
+            echo ""
+        fi
+    done
+}
+
+# Create new spec in planned folder
+new_spec() {
+    local name="$1"
+
+    if [ -z "$name" ]; then
+        echo "Error: Spec name required"
+        echo "Usage: spec new <name>"
+        exit 1
+    fi
+
+    ensure_dirs
+
+    local date=$(get_date)
+    local filename="$date-$name.md"
+    local filepath="$SPECS_DIR/planned/$filename"
+
+    if [ -f "$filepath" ]; then
+        echo "Error: Spec already exists: $filepath"
+        exit 1
+    fi
+
+    cat > "$filepath" <<EOF
+# $name
+
+**Created:** $(date +"%d %B %Y")
+**Status:** Planned
+
+## Overview
+
+## Requirements
+
+## Implementation Notes
+
+## Testing Plan
+
+EOF
+
+    echo "✅ Created: $filepath"
+
+    # Open in editor if EDITOR is set
+    if [ -n "$EDITOR" ]; then
+        $EDITOR "$filepath"
+    fi
+}
+
+# Move spec between folders
+move_spec() {
+    local target_folder="$1"
+    local name="$2"
+
+    if [ -z "$target_folder" ] || [ -z "$name" ]; then
+        echo "Error: Target folder and spec name required"
+        echo "Usage: spec move <planned|active|done> <name>"
+        exit 1
+    fi
+
+    # Validate target folder
+    local valid=0
+    for folder in "${FOLDERS[@]}"; do
+        if [ "$folder" = "$target_folder" ]; then
+            valid=1
+            break
+        fi
+    done
+
+    if [ $valid -eq 0 ]; then
+        echo "Error: Invalid folder '$target_folder'. Must be one of: ${FOLDERS[*]}"
+        exit 1
+    fi
+
+    # Find the spec file
+    local spec_file=$(find_spec "$name")
+
+    if [ -z "$spec_file" ]; then
+        echo "Error: Spec not found: $name"
+        exit 1
+    fi
+
+    local filename=$(basename "$spec_file")
+    local new_path="$SPECS_DIR/$target_folder/$filename"
+
+    if [ "$spec_file" = "$new_path" ]; then
+        echo "ℹ️  Spec already in $target_folder: $filename"
+        exit 0
+    fi
+
+    mv "$spec_file" "$new_path"
+    echo "✅ Moved to $target_folder: $filename"
+}
+
+# Output shell completions
+show_completions() {
+    cat <<'EOF'
+#compdef spec
+
+_spec() {
+    local -a commands
+    commands=(
+        'list:List all specs in timeline order'
+        'new:Create new spec in planned folder'
+        'move:Move spec between folders'
+        'completion:Output shell completion script'
+        'help:Show help message'
+    )
+
+    local -a folders
+    folders=('planned' 'active' 'done')
+
+    # Get list of all specs (name part only, without date prefix)
+    _get_specs() {
+        local specs_dir="docs/specs"
+        if [[ -d "$specs_dir" ]]; then
+            find "$specs_dir" -type f -name "*.md" 2>/dev/null | while read -r file; do
+                # Extract spec name (everything after dd-mm-yy-)
+                basename "$file" .md | sed -E 's/^[0-9]{2}-[0-9]{2}-[0-9]{2}-//'
+            done
+        fi
+    }
+
+    local context state state_descr line
+    typeset -A opt_args
+
+    _arguments -C \
+        '1: :->command' \
+        '*:: :->args'
+
+    case $state in
+        command)
+            _describe 'command' commands
+            ;;
+        args)
+            case $words[1] in
+                list|ls)
+                    if [[ $CURRENT -eq 2 ]]; then
+                        _describe 'folder' folders
+                    fi
+                    ;;
+                move|mv)
+                    if [[ $CURRENT -eq 2 ]]; then
+                        _describe 'folder' folders
+                    elif [[ $CURRENT -eq 3 ]]; then
+                        local -a specs
+                        specs=(${(f)"$(_get_specs)"})
+                        _describe 'spec' specs
+                    fi
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+compdef _spec spec
+EOF
+}
+
+# Main command dispatcher
+main() {
+    local cmd="${1:-list}"
+
+    case "$cmd" in
+        list|ls|"")
+            shift
+            list_specs "$1"
+            ;;
+        new|create)
+            shift
+            new_spec "$*"
+            ;;
+        move|mv)
+            shift
+            move_spec "$1" "$2"
+            ;;
+        completion)
+            show_completions
+            ;;
+        help|--help|-h)
+            cat <<EOF
+spec - Simple CLI tool for managing project specs
+
+Usage:
+  spec [list] [folder]     List all specs (or filter by folder)
+  spec new <name>          Create new spec in planned folder
+  spec move <folder> <name>  Move spec between folders
+  spec completion          Output shell completion script
+
+Folders: planned, active, done
+Spec files: dd-mm-yy-name.md
+
+Setup:
+  Add to ~/.zshrc:  eval "\$(spec completion)"
+
+Examples:
+  spec                     # List all specs
+  spec list planned        # List only planned specs
+  spec list active         # List only active specs
+  spec new "user auth"     # Create new spec
+  spec move active "user auth"  # Move to active
+  spec move done "user auth"    # Mark as done
+EOF
+            ;;
+        *)
+            echo "Error: Unknown command '$cmd'"
+            echo "Run 'spec help' for usage"
+            exit 1
+            ;;
+    esac
+}
+
+main "$@"
