@@ -27,14 +27,15 @@ Options:
   -f                Force delete (skip unpushed commits check)
   -b <base-branch>  Branch off specified branch (default: auto-detect trunk/master/main)
   -c                Branch off current branch
-  -B                Checkout existing branch (fails if branch doesn't exist)
+  -B                Checkout existing branch (local or remote, fetches if needed)
   -h, --help        Show this help message
 
 Examples:
   gwt feature-name              # Branch off trunk/master/main
   gwt feature-name -b develop   # Branch off develop branch
   gwt feature-name -c           # Branch off current branch
-  gwt -B existing-branch        # Checkout existing branch
+  gwt -B existing-branch        # Checkout existing local branch
+  gwt -B feature/remote-branch  # Fetch and checkout remote branch
   gwt -d feature-name           # Delete worktree and tmux session
 
 The worktree will be created at: ../<repo-name>-<branch-name>
@@ -209,13 +210,27 @@ fi
 
 # Handle existing branch mode
 if [[ "$FORCE_EXISTING" = true ]]; then
-  # Verify branch exists
-  if ! git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
-    echo -e "${RED}Error: Branch '${BRANCH_NAME}' does not exist${NC}"
-    echo "Use 'gwt $BRANCH_NAME' without -B to create a new branch"
-    exit 1
+  # Check if branch exists locally
+  if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
+    echo -e "${BLUE}Checking out existing local branch: ${BRANCH_NAME}${NC}"
+  # Check if branch exists on a remote
+  elif git show-ref --verify --quiet "refs/remotes/origin/$BRANCH_NAME"; then
+    echo -e "${BLUE}Fetching remote branch: origin/${BRANCH_NAME}${NC}"
+    git fetch origin "$BRANCH_NAME"
+    REMOTE_BRANCH="origin/$BRANCH_NAME"
+  else
+    # Try other remotes
+    REMOTE_BRANCH=$(git branch -r --list "*/$BRANCH_NAME" | head -1 | xargs)
+    if [[ -n "$REMOTE_BRANCH" ]]; then
+      REMOTE_NAME=$(echo "$REMOTE_BRANCH" | cut -d'/' -f1)
+      echo -e "${BLUE}Fetching remote branch: ${REMOTE_BRANCH}${NC}"
+      git fetch "$REMOTE_NAME" "$BRANCH_NAME"
+    else
+      echo -e "${RED}Error: Branch '${BRANCH_NAME}' does not exist locally or on any remote${NC}"
+      echo "Use 'gwt $BRANCH_NAME' without -B to create a new branch"
+      exit 1
+    fi
   fi
-  echo -e "${BLUE}Checking out existing branch: ${BRANCH_NAME}${NC}"
 else
   # Determine base branch for new branch creation
   if [[ "$USE_CURRENT" = true ]]; then
@@ -267,8 +282,13 @@ fi
 # Create git worktree
 echo -e "${GREEN}Creating worktree: ${WORKTREE_PATH}${NC}"
 if [[ "$FORCE_EXISTING" = true ]]; then
-  # Checkout existing branch
-  git worktree add "$WORKTREE_PATH" "$BRANCH_NAME"
+  if [[ -n "$REMOTE_BRANCH" ]]; then
+    # Create local branch tracking the remote
+    git worktree add --track -b "$BRANCH_NAME" "$WORKTREE_PATH" "$REMOTE_BRANCH"
+  else
+    # Checkout existing local branch
+    git worktree add "$WORKTREE_PATH" "$BRANCH_NAME"
+  fi
 else
   # Create new branch
   git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" "$BASE_BRANCH"
