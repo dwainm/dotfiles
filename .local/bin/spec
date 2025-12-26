@@ -21,10 +21,11 @@ get_date() {
     date +"%d-%m-%y"
 }
 
-# Find spec file by name (without date prefix)
+# Find spec file or directory by name (without date prefix)
 find_spec() {
     local name="$1"
-    find "$SPECS_DIR" -type f -name "*-${name}.md" 2>/dev/null | head -n 1
+    # Look for both .md files and directories matching the pattern
+    find "$SPECS_DIR" -maxdepth 2 \( -type f -name "*-${name}.md" -o -type d -name "*-${name}" \) 2>/dev/null | head -n 1
 }
 
 # List all specs in timeline order (newest first)
@@ -57,13 +58,17 @@ list_specs() {
             continue
         fi
 
-        local files=$(find "$SPECS_DIR/$folder" -type f -name "*.md" 2>/dev/null | sort -r)
-        if [ -n "$files" ]; then
-            echo "[$folder]"
-            echo "$files" | while read -r file; do
-                local basename=$(basename "$file" .md)
+        # Find both .md files and directories at first level (excluding the folder itself)
+        local items=$(find "$SPECS_DIR/$folder" -maxdepth 1 \( -type f -name "*.md" -o -type d \) ! -path "$SPECS_DIR/$folder" 2>/dev/null | sort -r)
 
-                # Extract date (dd-mm-yy) and name from filename
+        if [ -n "$items" ]; then
+            echo "[$folder]"
+            echo "$items" | while read -r item; do
+                local basename=$(basename "$item")
+                # Remove .md extension if it's a file
+                basename="${basename%.md}"
+
+                # Extract date (dd-mm-yy) and name from filename/dirname
                 if [[ $basename =~ ^([0-9]{2})-([0-9]{2})-([0-9]{2})-(.+)$ ]]; then
                     local day="${BASH_REMATCH[1]}"
                     local month="${BASH_REMATCH[2]}"
@@ -75,7 +80,7 @@ list_specs() {
 
                     echo "  - $name ($day/$month/$year)"
                 else
-                    # Fallback for non-standard filenames
+                    # Fallback for non-standard filenames/dirnames
                     echo "  - $basename"
                 fi
             done
