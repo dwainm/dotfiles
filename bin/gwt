@@ -332,9 +332,9 @@ echo -e "${GREEN}Creating tmux session: ${WORKTREE_NAME}${NC}"
 # Create session with first window
 tmux new-session -d -s "$WORKTREE_NAME" -n "AI" -c "$WORKTREE_PATH"
 
-# Set up first window (AI)
+# Set up first window (AI) - use cc alias for dangerously-skip-permissions
 if command -v claude > /dev/null 2>&1; then
-  tmux send-keys -t "$WORKTREE_NAME:AI" "claude" C-m
+  tmux send-keys -t "$WORKTREE_NAME:AI" "cc" C-m
 else
   tmux send-keys -t "$WORKTREE_NAME:AI" "echo 'Claude CLI not installed. Install from https://code.claude.ai'" C-m
 fi
