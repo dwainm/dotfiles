@@ -18,8 +18,8 @@ Usage: gwt [options] <branch-name>
 
 Creates a git worktree in a sibling directory and sets up a tmux session with:
   - Window 1 "AI": Claude Code interactive CLI
-  - Window 2: nvim editor
-  - Window 3: Shell
+  - Window 2 "shell": Terminal
+  - Window 3 "nvim": nvim editor
 
 Options:
   -l                List all git worktrees
@@ -339,16 +339,16 @@ else
   tmux send-keys -t "$WORKTREE_NAME:AI" "echo 'Claude CLI not installed. Install from https://code.claude.ai'" C-m
 fi
 
-# Create second window (nvim)
+# Create second window (shell)
+tmux new-window -t "$WORKTREE_NAME" -n "shell" -c "$WORKTREE_PATH"
+
+# Create third window (nvim)
 tmux new-window -t "$WORKTREE_NAME" -n "nvim" -c "$WORKTREE_PATH"
 if command -v nvim > /dev/null 2>&1; then
   tmux send-keys -t "$WORKTREE_NAME:nvim" "nvim" C-m
 else
   tmux send-keys -t "$WORKTREE_NAME:nvim" "echo 'nvim not installed'" C-m
 fi
-
-# Create third window (shell)
-tmux new-window -t "$WORKTREE_NAME" -n "shell" -c "$WORKTREE_PATH"
 
 # Select first window
 tmux select-window -t "$WORKTREE_NAME:AI"
