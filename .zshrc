@@ -570,6 +570,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 eval "$(~/.local/bin/mise activate)"
 
 alias glo="git log --oneline"
+alias cc="claude --dangerously-skip-permissions"
 
 migrate() {
   local dir="$(pwd)"

@@ -25,7 +25,8 @@ get_date() {
 find_spec() {
     local name="$1"
     # Look for both .md files and directories matching the pattern
-    find "$SPECS_DIR" -maxdepth 2 \( -type f -name "*-${name}.md" -o -type d -name "*-${name}" \) 2>/dev/null | head -n 1
+    # Also match exact name (for files without date prefix)
+    find "$SPECS_DIR" -maxdepth 2 \( -type f \( -name "*-${name}.md" -o -name "${name}.md" \) -o -type d \( -name "*-${name}" -o -name "${name}" \) \) 2>/dev/null | head -n 1
 }
 
 # List all specs in timeline order (newest first)
@@ -134,6 +135,17 @@ EOF
     fi
 }
 
+# Check if we're in a git repo
+is_git_repo() {
+    git rev-parse --git-dir >/dev/null 2>&1
+}
+
+# Check if a file is tracked by git
+is_git_tracked() {
+    local file="$1"
+    git ls-files --error-unmatch "$file" >/dev/null 2>&1
+}
+
 # Move spec between folders
 move_spec() {
     local target_folder="$1"
@@ -175,8 +187,15 @@ move_spec() {
         exit 0
     fi
 
-    mv "$spec_file" "$new_path"
-    echo "✅ Moved to $target_folder: $filename"
+    # Check if file is git-tracked and use git mv + commit
+    if is_git_repo && is_git_tracked "$spec_file"; then
+        git mv "$spec_file" "$new_path"
+        git commit -m "Move spec '$name' to $target_folder"
+        echo "✅ Moved to $target_folder: $filename (git committed)"
+    else
+        mv "$spec_file" "$new_path"
+        echo "✅ Moved to $target_folder: $filename"
+    fi
 }
 
 # Output shell completions
