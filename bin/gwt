@@ -14,26 +14,30 @@ NC='\033[0m' # No Color
 # Show usage
 show_help() {
   cat << EOF
-Usage: gwt [options] <branch-name>
+Usage: gwt [options] <new-branch-name>
 
 Creates a git worktree in a sibling directory and sets up a tmux session with:
   - Window 1 "AI": Claude Code interactive CLI
   - Window 2 "shell": Terminal
   - Window 3 "nvim": nvim editor
 
+Arguments:
+  <new-branch-name>  The name of the new branch to create (required)
+
 Options:
   -l                List all git worktrees
   -d                Delete the worktree and tmux session for the specified branch
   -f                Force delete (skip unpushed commits check)
-  -b <base-branch>  Branch off specified branch (default: auto-detect trunk/master/main)
-  -c                Branch off current branch
+  -b <base-branch>  Create new branch FROM this base branch (e.g., gwt my-feature -b develop)
+                    Default: auto-detect trunk/master/main
+  -c                Create new branch FROM current branch
   -B                Checkout existing branch (local or remote, fetches if needed)
   -h, --help        Show this help message
 
 Examples:
-  gwt feature-name              # Branch off trunk/master/main
-  gwt feature-name -b develop   # Branch off develop branch
-  gwt feature-name -c           # Branch off current branch
+  gwt feature-name              # Create 'feature-name' from trunk/master/main
+  gwt feature-name -b develop   # Create 'feature-name' from 'develop'
+  gwt feature-name -c           # Create 'feature-name' from current branch
   gwt -B existing-branch        # Checkout existing local branch
   gwt -B feature/remote-branch  # Fetch and checkout remote branch
   gwt -d feature-name           # Delete worktree and tmux session
