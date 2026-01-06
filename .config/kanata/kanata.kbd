@@ -31,11 +31,8 @@
     (spc)                                    ;; Space triggers instant mode
   )
 
-  ;; CapsLock with tap-dance: single tap = Esc, hold = Ctrl, double tap = launcher (F13)
-  caps (tap-dance 300 (
-    (tap-hold $tap-time $hold-time esc lctl)
-    (macro f13)
-  ))
+  ;; CapsLock: tap = Esc, hold = Ctrl
+  caps (tap-hold $tap-time $hold-time esc lctl)
 
   ;; Right hand = RIGHT modifiers (Colemak: n, e, i, o)
   j (tap-hold $tap-time $hold-time j rctl)  ;; J -> Right Ctrl (Colemak 'n')
