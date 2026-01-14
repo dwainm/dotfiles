@@ -136,7 +136,7 @@ local mode_shortcuts = {
       { key = "o", desc = "Obsidian" },
       { key = "r", desc = "Raycast" },
       { key = "b", desc = "Safari browser" },
-      { key = "m", desc = "Music" },
+      { key = "m", desc = "Mail" },
       { key = "d", desc = "System Settings" },
       { key = "k", desc = "Kitty terminal" },
       { key = "v", desc = "Kitty vim pane" },

@@ -157,7 +157,7 @@ launcher < o : open -a "Obsidian"; skhd -k "return"
 launcher < r : open -a "Raycast"; skhd -k "return"
 launcher < b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'; skhd -k "return"
 launcher < s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace g && open -a "Safari"; fi'; skhd -k "return"
-launcher < m ; mux  # enter mux mode for tmux operations
+launcher < m : open -a "Mail"; skhd -k "return"  # open Mail
 launcher < 7 ; break  # test: enter break mode
 launcher < n : pomodoro start 40 && skhd -k "return"  # start 40-min pomodoro
 launcher < d : open -a "System Settings"; skhd -k "return"
