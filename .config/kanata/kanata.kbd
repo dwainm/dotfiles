@@ -31,8 +31,8 @@
     (spc)                                    ;; Space triggers instant mode
   )
 
-  ;; CapsLock: tap = Esc, hold = Ctrl
-  caps (tap-hold $tap-time $hold-time esc lctl)
+  ;; CapsLock: always Esc
+  caps esc
 
   ;; Right hand = RIGHT modifiers (Colemak: n, e, i, o)
   j (tap-hold $tap-time $hold-time j rctl)  ;; J -> Right Ctrl (Colemak 'n')
