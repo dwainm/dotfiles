@@ -18,7 +18,7 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
 fi
 
 JOBS_DIR="jobs"
-FOLDERS=("planned" "active" "done")
+FOLDERS=("planned" "active" "done" "ideas")
 TYPES=("task" "spec" "bug" "idea")
 
 # Ensure jobs directory structure exists
@@ -39,8 +39,16 @@ find_job() {
     find "$JOBS_DIR" -maxdepth 2 -type f \( -name "*-${name}.md" -o -name "${name}.md" \) 2>/dev/null | head -n 1
 }
 
-# Get type emoji
+# Get type emoji based on folder
 type_emoji() {
+    case "$1" in
+        ideas) echo "💡" ;;
+        *) echo "✓" ;;
+    esac
+}
+
+# Get type emoji for job creation
+job_type_emoji() {
     case "$1" in
         spec) echo "📋" ;;
         bug) echo "🐛" ;;
@@ -49,26 +57,10 @@ type_emoji() {
     esac
 }
 
-# Extract type from file frontmatter
-get_type() {
-    local file="$1"
-    local type=$(grep -m1 "^type:" "$file" 2>/dev/null | sed 's/type:[[:space:]]*//')
-    echo "${type:-task}"
-}
-
 # List all jobs
 list_jobs() {
     local filter_folder="$1"
-    local filter_type="$2"
-    local show_ideas=0
     ensure_dirs
-
-    # Special case: "ideas" shows only ideas across all folders
-    if [ "$filter_folder" = "ideas" ]; then
-        show_ideas=1
-        filter_folder=""
-        filter_type="idea"
-    fi
 
     # Validate filter folder if provided
     if [ -n "$filter_folder" ]; then
@@ -81,16 +73,12 @@ list_jobs() {
         done
 
         if [ $valid -eq 0 ]; then
-            echo "Error: Invalid folder '$filter_folder'. Must be one of: ${FOLDERS[*]} ideas"
+            echo "Error: Invalid folder '$filter_folder'. Must be one of: ${FOLDERS[*]}"
             exit 1
         fi
     fi
 
-    if [ $show_ideas -eq 1 ]; then
-        echo "Ideas"
-    else
-        echo "Jobs"
-    fi
+    echo "Jobs"
     echo ""
 
     for folder in "${FOLDERS[@]}"; do
@@ -102,25 +90,13 @@ list_jobs() {
         local items=$(find "$JOBS_DIR/$folder" -maxdepth 1 -type f -name "*.md" 2>/dev/null | sort -r)
         local has_output=0
         local output=""
+        local emoji=$(type_emoji "$folder")
 
         if [ -n "$items" ]; then
             while read -r item; do
                 [ -z "$item" ] && continue
                 local bname=$(basename "$item")
                 bname="${bname%.md}"
-
-                local type=$(get_type "$item")
-                local emoji=$(type_emoji "$type")
-
-                # Filter by type if specified
-                if [ -n "$filter_type" ] && [ "$type" != "$filter_type" ]; then
-                    continue
-                fi
-
-                # Exclude ideas from normal list (unless specifically requested)
-                if [ $show_ideas -eq 0 ] && [ "$type" = "idea" ]; then
-                    continue
-                fi
 
                 has_output=1
 
@@ -159,7 +135,7 @@ new_job() {
         case "$1" in
             --spec|-s) type="spec"; shift ;;
             --bug|-b) type="bug"; shift ;;
-            --idea|-i) type="idea"; shift ;;
+            --idea|-i) type="idea"; folder="ideas"; shift ;;
             --task|-t) type="task"; shift ;;
             --active|-a) folder="active"; shift ;;
             *) title="$*"; break ;;
@@ -252,7 +228,7 @@ EOF
     git add "$filepath"
     git commit -m "Add $type: $title"
 
-    local emoji=$(type_emoji "$type")
+    local emoji=$(job_type_emoji "$type")
     echo "$emoji Created: $filepath"
 
     # Open in editor if EDITOR is set
@@ -279,7 +255,7 @@ move_job() {
 
     if [ -z "$target_folder" ] || [ -z "$name" ]; then
         echo "Error: Target folder and job name required"
-        echo "Usage: j move <planned|active|done> <name>"
+        echo "Usage: j move <planned|active|done|ideas> <name>"
         exit 1
     fi
 
@@ -334,18 +310,11 @@ promote_idea() {
         exit 1
     fi
 
-    # Find the job file
-    local job_file=$(find_job "$name")
+    # Find the job file (should be in ideas folder)
+    local job_file=$(find "$JOBS_DIR/ideas" -maxdepth 1 -type f \( -name "*-${name}.md" -o -name "${name}.md" \) 2>/dev/null | head -n 1)
 
     if [ -z "$job_file" ]; then
-        echo "Error: Job not found: $name"
-        exit 1
-    fi
-
-    # Verify it's an idea
-    local current_type=$(get_type "$job_file")
-    if [ "$current_type" != "idea" ]; then
-        echo "Error: '$name' is a $current_type, not an idea"
+        echo "Error: Idea not found: $name"
         exit 1
     fi
 
@@ -361,7 +330,7 @@ promote_idea() {
 
     # Commit
     git add "$new_path"
-    git commit -m "Promote idea '$name'"
+    git commit -m "Promote idea '$name' to planned"
 
     echo "💡 Promoted to planned: $filename"
 }
@@ -378,7 +347,7 @@ _j() {
         'new:Create new job'
         'active:Move job to active'
         'done:Move job to done'
-        'promote:Promote idea to task/spec/bug'
+        'promote:Promote idea to planned'
         'move:Move job between folders'
         'completion:Output shell completion script'
         'help:Show help message'
@@ -392,6 +361,15 @@ _j() {
 
     _get_jobs() {
         local jobs_dir="jobs"
+        if [[ -d "$jobs_dir" ]]; then
+            find "$jobs_dir" -type f -name "*.md" 2>/dev/null | while read -r file; do
+                basename "$file" .md | sed -E 's/^[0-9]{2}-[0-9]{2}-[0-9]{2}-//'
+            done
+        fi
+    }
+
+    _get_ideas() {
+        local jobs_dir="jobs/ideas"
         if [[ -d "$jobs_dir" ]]; then
             find "$jobs_dir" -type f -name "*.md" 2>/dev/null | while read -r file; do
                 basename "$file" .md | sed -E 's/^[0-9]{2}-[0-9]{2}-[0-9]{2}-//'
@@ -422,11 +400,18 @@ _j() {
                         _describe 'type' types
                     fi
                     ;;
-                active|done|promote)
+                active|done)
                     if [[ $CURRENT -eq 2 ]]; then
                         local -a jobs
                         jobs=(${(f)"$(_get_jobs)"})
                         _describe 'job' jobs
+                    fi
+                    ;;
+                promote)
+                    if [[ $CURRENT -eq 2 ]]; then
+                        local -a ideas
+                        ideas=(${(f)"$(_get_ideas)"})
+                        _describe 'idea' ideas
                     fi
                     ;;
                 move|mv)
@@ -454,7 +439,7 @@ main() {
     case "$cmd" in
         list|ls|"")
             shift 2>/dev/null
-            list_jobs "$1" "$2"
+            list_jobs "$1"
             ;;
         new|create|add)
             shift
@@ -470,7 +455,7 @@ main() {
             ;;
         promote)
             shift
-            promote_idea "$1" "$2"
+            promote_idea "$1"
             ;;
         move|mv)
             shift
@@ -485,7 +470,6 @@ j - CLI tool for managing project jobs
 
 Usage:
   j [list] [folder]              List all jobs (or filter by folder)
-  j list ideas                   List ideas (separate from jobs)
   j new <title>                  Create new task (default)
   j new --spec <title>           Create new spec
   j new --bug <title>            Create new bug
@@ -493,29 +477,29 @@ Usage:
   j new --active <title>         Create and start immediately
   j active <name>                Move job to active
   j done <name>                  Move job to done
-  j promote <name>                Promote idea to planned
+  j promote <name>               Promote idea to planned
   j move <folder> <name>         Move job between folders
   j completion                   Output shell completion script
 
 Types: task (default), spec, bug, idea
-Folders: planned (default), active, done
+Folders: planned (default), active, done, ideas
 Files: jobs/{folder}/dd-mm-yy-name.md
 
 Setup:
   Add to ~/.zshrc:  eval "\$(j completion)"
 
 Examples:
-  j                              # List all jobs (excludes ideas)
-  j list ideas                   # List ideas
+  j                              # List all jobs
   j list planned                 # List only planned
+  j list ideas                   # List only ideas
   j new "fix login"              # Create task
   j new --bug "crash on mobile"  # Create bug
   j new --spec "auth system"     # Create spec
-  j new --idea "what if..."      # Capture idea
+  j new --idea "what if..."      # Capture idea (goes to ideas/)
   j new --active "quick fix"     # Create and start now
   j active "fix login"           # Start working
   j done "fix login"             # Mark complete
-  j promote "what if"             # Promote idea to planned
+  j promote "what if"            # Move idea to planned
 EOF
             ;;
         *)
