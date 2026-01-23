@@ -18,6 +18,9 @@ start_timer() {
     
     # Write state
     echo "$end_time $mode" > "$STATE_FILE"
+
+    # Refresh sketchybar
+    sketchybar --trigger forced 2>/dev/null
     
     # Run timer in background
     (
