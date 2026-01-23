@@ -140,26 +140,32 @@ link < shift - k : open "https://app.klop.finance"; skhd -k "escape" # Klop prod
 link < y : open "https://news.ycombinator.com"; skhd -k "escape" # Y Combinator News
 link < shift - g : open -a "Safari" "https://x.com/i/grok"; skhd -k "escape" # Grok in Safari on workspace g
 
-# Launcher mode bindings - quick app launching (triggered by double-tap N)
+# Launcher mode bindings - quick app launching
 launcher < escape ; default
-launcher < return ; default                         # return key exits to normal mode
+launcher < return ; default
 # Mode switching from launcher
-launcher < l ; link                                 # enter link mode
-launcher < w ; workspace                            # enter workspace mode
+launcher < l ; link
 launcher < 0x29 ; service                           # semicolon (;) - enter service mode
-launcher < i ; writing  # enter writing mode
+launcher < i ; writing
+# Workspace switching (q/w/f/p/g)
+launcher < q : aerospace workspace q; skhd -k "return"
+launcher < w : aerospace workspace w; skhd -k "return"
+launcher < f : aerospace workspace f; skhd -k "return"
+launcher < p : aerospace workspace p; skhd -k "return"
+launcher < g : aerospace workspace g; skhd -k "return"
+# Next/previous workspace
+launcher < 0x1E : aerospace workspace --wrap-around next; skhd -k "return"
+launcher < 0x21 : aerospace workspace --wrap-around prev; skhd -k "return"
 # Window switching
-launcher < 0x21 : aerospace focus-back-and-forth; skhd -k "return"  # [ - switch to previously focused window
-# App launchers - single key press to open apps
+launcher < 0x2A : aerospace focus-back-and-forth; skhd -k "return"  # backslash - switch to previously focused window
+# App launchers
 launcher < a : osascript -e 'tell application "kitty" to activate' && tmux select-window -t $(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d' ' -f2):AI; skhd -k "return"
-launcher < p : open -a "Basecamp"; skhd -k "return"
 launcher < o : open -a "Obsidian"; skhd -k "return"
 launcher < r : open -a "Raycast"; skhd -k "return"
 launcher < b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace q && open -a "Safari"; fi'; skhd -k "return"
 launcher < s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1); if [ -n "$win" ]; then aerospace focus --window-id $win; else aerospace workspace g && open -a "Safari"; fi'; skhd -k "return"
-launcher < m : open -a "Mail"; skhd -k "return"  # open Mail
-launcher < 7 ; break  # test: enter break mode
-launcher < n : pomodoro start 40 && skhd -k "return"  # start 40-min pomodoro
+launcher < m : open -a "Mail"; skhd -k "return"
+launcher < n : pomodoro start 40 && skhd -k "return"
 launcher < d : open -a "System Settings"; skhd -k "return"
 launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty"; skhd -k "return"
 launcher < v : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2); WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1); tmux select-window -t $SESSION:$WINDOW'; skhd -k "return"
