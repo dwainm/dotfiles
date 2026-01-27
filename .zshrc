@@ -16,8 +16,8 @@ bindkey "^H" backward-delete-char
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
-# Spec CLI tool completion
-eval "$(spec completion)"
+# j CLI tool completion
+eval "$(j completion)"
 
 # Up and Down arrow keys now shows related history based on what is entered on the current prompt
 
@@ -525,10 +525,26 @@ dev() {
   [[ -f "$dir/bin/rails" ]] || { echo "❌ Not a Rails root"; return 1; }
   cd "$dir"
 
-  # Generate random ports to avoid conflicts when running multiple Rails projects
-  local http_port=$((3000 + RANDOM % 999))           # 3000–3998
-  local debug_port=$((40000 + RANDOM % 25535))       # 40000–65535
-  local asset_port=$((3035 + RANDOM % 200))          # 3035–3234 for Vite/Tailwind/etc.
+  local port_file="$dir/.dev-port"
+  local http_port debug_port asset_port
+
+  # Reuse saved ports if they exist, otherwise generate new ones
+  if [[ -f "$port_file" ]]; then
+    source "$port_file"
+    echo "🔄 Reusing saved ports from .dev-port"
+  else
+    http_port=$((3000 + RANDOM % 999))           # 3000–3998
+    debug_port=$((40000 + RANDOM % 25535))       # 40000–65535
+    asset_port=$((3035 + RANDOM % 200))          # 3035–3234 for Vite/Tailwind/etc.
+    # Save ports for future sessions
+    cat > "$port_file" <<EOF
+http_port=$http_port
+debug_port=$debug_port
+asset_port=$asset_port
+EOF
+    echo "💾 Saved new ports to .dev-port"
+  fi
+
   local pid_file="tmp/pids/server.${http_port}.pid"
 
   echo "🚀 Starting Rails in $(basename "$PWD")"
@@ -588,3 +604,7 @@ migrate() {
   bin/rails db:migrate "$@"
 }
 alias clear='clear && printf "[3J"'
+
+# opencode
+export PATH=/Users/dwain/.opencode/bin:$PATH
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"

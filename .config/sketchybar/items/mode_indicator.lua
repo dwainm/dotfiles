@@ -127,11 +127,11 @@ local mode_shortcuts = {
     icon = "🚀",
     title = "LAUNCHER MODE",
     shortcuts = {
-      { key = "q/w/f/p/g", desc = "Switch workspace" },
-      { key = "[/]", desc = "Prev/next workspace" },
       { key = "l", desc = "Link mode" },
+      { key = "w", desc = "Workspace mode" },
       { key = ";", desc = "Service mode" },
       { key = "i", desc = "Writing mode" },
+      { key = "[/]", desc = "Prev/next workspace" },
       { key = "a", desc = "AI tmux window" },
       { key = "o", desc = "Obsidian" },
       { key = "r", desc = "Raycast" },

@@ -30,7 +30,7 @@ ctrl - f12 : ~/.local/bin/mediakey volup  # Volume Up
 
 # Changing Window Focus with Ctrl+hjkl - Smart navigation for terminals
 ctrl - h [
-  *                 : aerospace focus left
+  *                 : aerospace focus dfs-prev
   "kitty"           ~
   "Alacritty"       ~
 ]
@@ -45,7 +45,7 @@ ctrl - k [
   "Alacritty"       ~
 ]
 ctrl - l [
-  *                 : aerospace focus right
+  *                 : aerospace focus dfs-next
   "kitty"           ~
   "Alacritty"       ~
 ]
@@ -145,14 +145,9 @@ launcher < escape ; default
 launcher < return ; default
 # Mode switching from launcher
 launcher < l ; link
+launcher < w ; workspace
 launcher < 0x29 ; service                           # semicolon (;) - enter service mode
 launcher < i ; writing
-# Workspace switching (q/w/f/p/g)
-launcher < q : aerospace workspace q; skhd -k "return"
-launcher < w : aerospace workspace w; skhd -k "return"
-launcher < f : aerospace workspace f; skhd -k "return"
-launcher < p : aerospace workspace p; skhd -k "return"
-launcher < g : aerospace workspace g; skhd -k "return"
 # Next/previous workspace
 launcher < 0x1E : aerospace workspace --wrap-around next; skhd -k "return"
 launcher < 0x21 : aerospace workspace --wrap-around prev; skhd -k "return"
