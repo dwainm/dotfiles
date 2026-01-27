@@ -318,6 +318,36 @@ if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then
     echo -e "${YELLOW}Note: Main repo has no storage directory yet${NC}"
     echo -e "${YELLOW}Storage will be created independently in this worktree${NC}"
   fi
+
+  # Remove .dev-port file so a fresh one is created when dev is run
+  if [[ -f "$WORKTREE_PATH/.dev-port" ]]; then
+    rm "$WORKTREE_PATH/.dev-port"
+    echo -e "${GREEN}✓ Removed .dev-port (fresh ports will be assigned)${NC}"
+  fi
+
+  # Copy Rails credentials keys (these are gitignored but needed for development)
+  if [[ -d "$REPO_ROOT/config/credentials" ]]; then
+    echo -e "${BLUE}Copying Rails credentials keys${NC}"
+    mkdir -p "$WORKTREE_PATH/config/credentials"
+
+    # Copy development key if it exists
+    if [[ -f "$REPO_ROOT/config/credentials/development.key" ]]; then
+      cp "$REPO_ROOT/config/credentials/development.key" "$WORKTREE_PATH/config/credentials/development.key"
+      echo -e "${GREEN}✓ development.key copied${NC}"
+    fi
+
+    # Copy production key if it exists
+    if [[ -f "$REPO_ROOT/config/credentials/production.key" ]]; then
+      cp "$REPO_ROOT/config/credentials/production.key" "$WORKTREE_PATH/config/credentials/production.key"
+      echo -e "${GREEN}✓ production.key copied${NC}"
+    fi
+
+    # Copy master key if it exists (for credentials.yml.enc)
+    if [[ -f "$REPO_ROOT/config/master.key" ]]; then
+      cp "$REPO_ROOT/config/master.key" "$WORKTREE_PATH/config/master.key"
+      echo -e "${GREEN}✓ master.key copied${NC}"
+    fi
+  fi
 fi
 
 # Handle CLAUDE-DEV.md -> CLAUDE.md setup

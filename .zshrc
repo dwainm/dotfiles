@@ -528,22 +528,27 @@ dev() {
   local port_file="$dir/.dev-port"
   local http_port debug_port asset_port
 
-  # Reuse saved ports if they exist, otherwise generate new ones
+  # Reuse saved port if it exists, otherwise generate a new one
+  # .dev-port contains just the http port number (shared with bin/dev and bin/local-tunnel)
   if [[ -f "$port_file" ]]; then
-    source "$port_file"
-    echo "🔄 Reusing saved ports from .dev-port"
+    http_port=$(cat "$port_file")
+    # Validate it's a number
+    if ! [[ "$http_port" =~ ^[0-9]+$ ]]; then
+      http_port=$((3000 + RANDOM % 999))
+      echo "$http_port" > "$port_file"
+      echo "💾 Fixed invalid .dev-port, saved new port"
+    else
+      echo "🔄 Reusing port $http_port from .dev-port"
+    fi
   else
     http_port=$((3000 + RANDOM % 999))           # 3000–3998
-    debug_port=$((40000 + RANDOM % 25535))       # 40000–65535
-    asset_port=$((3035 + RANDOM % 200))          # 3035–3234 for Vite/Tailwind/etc.
-    # Save ports for future sessions
-    cat > "$port_file" <<EOF
-http_port=$http_port
-debug_port=$debug_port
-asset_port=$asset_port
-EOF
-    echo "💾 Saved new ports to .dev-port"
+    echo "$http_port" > "$port_file"
+    echo "💾 Saved new port to .dev-port"
   fi
+
+  # Derive other ports from http_port for consistency
+  debug_port=$((http_port + 37000))              # e.g., 3395 -> 40395
+  asset_port=$((http_port + 100))                # e.g., 3395 -> 3495
 
   local pid_file="tmp/pids/server.${http_port}.pid"
 
