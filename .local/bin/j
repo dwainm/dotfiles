@@ -131,10 +131,34 @@ get_date() {
     date +"%d-%m-%y"
 }
 
-# Find job file by name (without date prefix)
+# Find job file by name (fuzzy text match)
 find_job() {
-    local name="$1"
-    find "$JOBS_DIR" -maxdepth 2 -type f \( -name "*-${name}.md" -o -name "${name}.md" \) 2>/dev/null | head -n 1
+    local search="$1"
+    local search_lower=$(echo "$search" | tr '[:upper:]' '[:lower:]')
+
+    # Convert search to pattern (spaces/hyphens become wildcards)
+    local pattern=$(echo "$search_lower" | sed 's/[-_ ]/.*/g')
+
+    # Find all job files and match against filename
+    local best_match=""
+    local best_score=0
+
+    while IFS= read -r file; do
+        [ -z "$file" ] && continue
+        local bname=$(basename "$file" .md | tr '[:upper:]' '[:lower:]')
+
+        # Check if pattern matches
+        if echo "$bname" | grep -qE "$pattern"; then
+            # Score by how much of the filename is matched (shorter = better match)
+            local score=${#bname}
+            if [ $best_score -eq 0 ] || [ $score -lt $best_score ]; then
+                best_match="$file"
+                best_score=$score
+            fi
+        fi
+    done < <(find "$JOBS_DIR" -maxdepth 2 -type f -name "*.md" 2>/dev/null)
+
+    echo "$best_match"
 }
 
 # Get type emoji based on folder
@@ -410,8 +434,23 @@ promote_idea() {
         exit 1
     fi
 
-    # Find the job file (should be in ideas folder)
-    local job_file=$(find "$JOBS_DIR/ideas" -maxdepth 1 -type f \( -name "*-${name}.md" -o -name "${name}.md" \) 2>/dev/null | head -n 1)
+    # Find the job file (should be in ideas folder) using fuzzy match
+    local search_lower=$(echo "$name" | tr '[:upper:]' '[:lower:]')
+    local pattern=$(echo "$search_lower" | sed 's/[-_ ]/.*/g')
+    local job_file=""
+    local best_score=0
+
+    while IFS= read -r file; do
+        [ -z "$file" ] && continue
+        local bname=$(basename "$file" .md | tr '[:upper:]' '[:lower:]')
+        if echo "$bname" | grep -qE "$pattern"; then
+            local score=${#bname}
+            if [ $best_score -eq 0 ] || [ $score -lt $best_score ]; then
+                job_file="$file"
+                best_score=$score
+            fi
+        fi
+    done < <(find "$JOBS_DIR/ideas" -maxdepth 1 -type f -name "*.md" 2>/dev/null)
 
     if [ -z "$job_file" ]; then
         echo "Error: Idea not found: $name"
