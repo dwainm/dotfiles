@@ -14,17 +14,19 @@ The main Claude session will reference you when:
 Before creating tasks, check if `j` can be used:
 
 ```bash
-# Check if we're in a git repo with jobs/ directory
-if git rev-parse --git-dir >/dev/null 2>&1; then
-    if [ -d "jobs" ]; then
-        echo "READY: jobs/ exists"
+# Fast check - no subprocess (matches j's optimized check)
+if [[ -d ".git" ]]; then
+    if [[ -d "jobs" ]]; then
+        echo "READY"
     else
-        echo "ASK: No jobs/ directory - ask user if they want to create one"
+        echo "ASK"
     fi
 else
-    echo "NO_GIT: Cannot use j outside a git repository"
+    echo "NO_GIT"
 fi
 ```
+
+**If READY:** Proceed with task creation.
 
 **If ASK:** Return to main session with: "This project doesn't have a jobs/ folder yet. Want me to track tasks with j? (This will create jobs/ on first task)"
 
