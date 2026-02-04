@@ -59,6 +59,32 @@ j list --group "name"  # To show progress
 - **j** - In git repos, for work that should persist across sessions
 - **TodoWrite** - Quick scratch tasks, or when not in a git repo
 
+## Dotfiles Management
+
+Dotfiles are managed with a bare git repo at `~/.myconf/` with worktree at `$HOME`.
+
+**Alias:** `config` = `git --git-dir=$HOME/.myconf/ --work-tree=$HOME`
+
+```bash
+# Check status
+config status
+
+# Add a dotfile (use -f for ignored paths)
+config add -f ~/.some/dotfile
+
+# Commit
+config commit -m "Add dotfile"
+
+# Push
+config push
+```
+
+Common paths tracked:
+- `~/.local/bin/` - custom scripts (j, etc.)
+- `~/.claude/` - Claude agents and settings
+- `~/.config/` - app configs
+- `~/.zshrc`, `~/.gitconfig`, etc.
+
 ## Global Agents
 
 | Agent | File | Use For |
