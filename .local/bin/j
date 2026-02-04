@@ -25,6 +25,9 @@ _j() {
         'done:Move job to done'
         'promote:Promote idea to planned'
         'move:Move job between folders'
+        'groups:List all groups'
+        'group:Assign job to group'
+        'ungroup:Remove job from group'
         'completion:Output shell completion script'
         'help:Show help message'
     )
@@ -90,6 +93,20 @@ _j() {
                         _describe 'idea' ideas
                     fi
                     ;;
+                group)
+                    if [[ $CURRENT -eq 2 ]]; then
+                        local -a jobs
+                        jobs=(${(f)"$(_get_jobs)"})
+                        _describe 'job' jobs
+                    fi
+                    ;;
+                ungroup)
+                    if [[ $CURRENT -eq 2 ]]; then
+                        local -a jobs
+                        jobs=(${(f)"$(_get_jobs)"})
+                        _describe 'job' jobs
+                    fi
+                    ;;
                 move|mv)
                     if [[ $CURRENT -eq 2 ]]; then
                         _describe 'folder' folders
@@ -118,6 +135,49 @@ fi
 JOBS_DIR="jobs"
 FOLDERS=("planned" "active" "done" "ideas")
 TYPES=("task" "spec" "bug" "idea")
+
+# Extract group from job file frontmatter
+get_job_group() {
+    local file="$1"
+    grep -m1 "^group:" "$file" 2>/dev/null | sed 's/^group:[[:space:]]*//'
+}
+
+# Set group in job file frontmatter
+set_job_group() {
+    local file="$1"
+    local group="$2"
+
+    if grep -q "^group:" "$file" 2>/dev/null; then
+        # Update existing group
+        sed -i '' "s/^group:.*$/group: $group/" "$file"
+    else
+        # Add group after type line
+        sed -i '' "/^type:/a\\
+group: $group
+" "$file"
+    fi
+}
+
+# Remove group from job file frontmatter
+remove_job_group() {
+    local file="$1"
+    sed -i '' '/^group:/d' "$file"
+}
+
+# List all unique groups across all jobs
+list_groups() {
+    local groups=()
+    while IFS= read -r file; do
+        [ -z "$file" ] && continue
+        local g=$(get_job_group "$file")
+        if [ -n "$g" ]; then
+            groups+=("$g")
+        fi
+    done < <(find "$JOBS_DIR" -type f -name "*.md" 2>/dev/null)
+
+    # Unique and sort
+    printf '%s\n' "${groups[@]}" | sort -u
+}
 
 # Ensure jobs directory structure exists
 ensure_dirs() {
@@ -182,6 +242,7 @@ job_type_emoji() {
 # List all jobs
 list_jobs() {
     local filter_folder="$1"
+    local filter_group="$2"
     ensure_dirs
 
     # Validate filter folder if provided
@@ -200,7 +261,11 @@ list_jobs() {
         fi
     fi
 
-    echo "Jobs"
+    if [ -n "$filter_group" ]; then
+        echo "Jobs [group: $filter_group]"
+    else
+        echo "Jobs"
+    fi
     echo ""
 
     for folder in "${FOLDERS[@]}"; do
@@ -217,6 +282,15 @@ list_jobs() {
         if [ -n "$items" ]; then
             while read -r item; do
                 [ -z "$item" ] && continue
+
+                # Filter by group if specified
+                if [ -n "$filter_group" ]; then
+                    local job_group=$(get_job_group "$item")
+                    if [ "$job_group" != "$filter_group" ]; then
+                        continue
+                    fi
+                fi
+
                 local bname=$(basename "$item")
                 bname="${bname%.md}"
 
@@ -231,7 +305,17 @@ list_jobs() {
 
                     name=$(echo "$name" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1')
 
-                    output+="  $emoji $name ($day/$month/$year)\n"
+                    # Show group tag if listing all (no group filter)
+                    if [ -z "$filter_group" ]; then
+                        local job_group=$(get_job_group "$item")
+                        if [ -n "$job_group" ]; then
+                            output+="  $emoji $name [$job_group] ($day/$month/$year)\n"
+                        else
+                            output+="  $emoji $name ($day/$month/$year)\n"
+                        fi
+                    else
+                        output+="  $emoji $name ($day/$month/$year)\n"
+                    fi
                 else
                     output+="  $emoji $bname\n"
                 fi
@@ -252,6 +336,7 @@ new_job() {
     local folder="planned"
     local title=""
     local open_editor=0
+    local group=""
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -262,6 +347,7 @@ new_job() {
             --task|-t) type="task"; shift ;;
             --active|-a) folder="active"; shift ;;
             --edit|-e) open_editor=1; shift ;;
+            --group|-g) group="$2"; shift 2 ;;
             *) title="$*"; break ;;
         esac
     done
@@ -284,12 +370,19 @@ new_job() {
         exit 1
     fi
 
+    # Build group line if specified
+    local group_line=""
+    if [ -n "$group" ]; then
+        group_line="group: $group"
+    fi
+
     # Generate content based on type
     case "$type" in
         spec)
             cat > "$filepath" <<EOF
 ---
-type: spec
+type: spec${group_line:+
+$group_line}
 created: $(date +"%d %B %Y")
 ---
 
@@ -308,7 +401,8 @@ EOF
         bug)
             cat > "$filepath" <<EOF
 ---
-type: bug
+type: bug${group_line:+
+$group_line}
 created: $(date +"%d %B %Y")
 ---
 
@@ -325,7 +419,8 @@ EOF
         idea)
             cat > "$filepath" <<EOF
 ---
-type: idea
+type: idea${group_line:+
+$group_line}
 created: $(date +"%d %B %Y")
 ---
 
@@ -338,7 +433,8 @@ EOF
         task|*)
             cat > "$filepath" <<EOF
 ---
-type: task
+type: task${group_line:+
+$group_line}
 created: $(date +"%d %B %Y")
 ---
 
@@ -424,6 +520,111 @@ move_job() {
     fi
 }
 
+# Show all groups with counts
+show_groups() {
+    ensure_dirs
+
+    echo "Groups"
+    echo ""
+
+    # Collect all groups from job files
+    local all_groups=$(
+        find "$JOBS_DIR" -type f -name "*.md" -exec grep -l "^group:" {} \; 2>/dev/null | while read -r file; do
+            get_job_group "$file"
+        done | sort -u
+    )
+
+    if [ -z "$all_groups" ]; then
+        echo "  No groups found"
+        echo ""
+        return
+    fi
+
+    # For each unique group, count total and active
+    echo "$all_groups" | while read -r g; do
+        [ -z "$g" ] && continue
+
+        local total=0
+        local active=0
+
+        while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            local file_group=$(get_job_group "$file")
+            if [ "$file_group" = "$g" ]; then
+                total=$((total + 1))
+                if [[ "$file" == *"/active/"* ]]; then
+                    active=$((active + 1))
+                fi
+            fi
+        done < <(find "$JOBS_DIR" -type f -name "*.md" 2>/dev/null)
+
+        echo "  $g ($active active, $total total)"
+    done
+    echo ""
+}
+
+# Assign a job to a group
+assign_job_to_group() {
+    local name="$1"
+    local group="$2"
+
+    if [ -z "$name" ] || [ -z "$group" ]; then
+        echo "Error: Job name and group required"
+        echo "Usage: j group <name> <group>"
+        exit 1
+    fi
+
+    local job_file=$(find_job "$name")
+
+    if [ -z "$job_file" ]; then
+        echo "Error: Job not found: $name"
+        exit 1
+    fi
+
+    set_job_group "$job_file" "$group"
+
+    if is_git_repo && is_git_tracked "$job_file"; then
+        git add "$job_file"
+        git commit -m "Assign job '$name' to group '$group'"
+    fi
+
+    echo "Assigned: $(basename "$job_file" .md) → $group"
+}
+
+# Remove job from its group
+remove_job_from_group() {
+    local name="$1"
+
+    if [ -z "$name" ]; then
+        echo "Error: Job name required"
+        echo "Usage: j ungroup <name>"
+        exit 1
+    fi
+
+    local job_file=$(find_job "$name")
+
+    if [ -z "$job_file" ]; then
+        echo "Error: Job not found: $name"
+        exit 1
+    fi
+
+    local old_group=$(get_job_group "$job_file")
+
+    if [ -z "$old_group" ]; then
+        echo "Job has no group: $(basename "$job_file" .md)"
+        exit 0
+    fi
+
+    remove_job_group "$job_file"
+
+    if is_git_repo && is_git_tracked "$job_file"; then
+        git add "$job_file"
+        git commit -m "Remove job '$name' from group '$old_group'"
+    fi
+
+    echo "Removed from group: $(basename "$job_file" .md) (was: $old_group)"
+}
+
 # Promote idea (moves to planned)
 promote_idea() {
     local name="$1"
@@ -481,7 +682,16 @@ main() {
     case "$cmd" in
         list|ls|"")
             shift 2>/dev/null
-            list_jobs "$1"
+            # Check for --group flag
+            local folder=""
+            local group=""
+            while [[ $# -gt 0 ]]; do
+                case "$1" in
+                    --group|-g) group="$2"; shift 2 ;;
+                    *) folder="$1"; shift ;;
+                esac
+            done
+            list_jobs "$folder" "$group"
             ;;
         new|create|add)
             shift
@@ -503,23 +713,41 @@ main() {
             shift
             move_job "$1" "$2"
             ;;
+        groups)
+            show_groups
+            ;;
+        group)
+            shift
+            assign_job_to_group "$1" "$2"
+            ;;
+        ungroup)
+            shift
+            remove_job_from_group "$1"
+            ;;
         help|--help|-h)
             cat <<EOF
 j - CLI tool for managing project jobs
 
 Usage:
-  j [list] [folder]              List all jobs (or filter by folder)
-  j new <title>                  Create new task (default)
-  j new --spec <title>           Create new spec
-  j new --bug <title>            Create new bug
-  j new --idea <title>           Create new idea
-  j new --active <title>         Create and start immediately
-  j new --edit <title>           Create and open in editor
+  j [list] [folder] [--group G]  List jobs (filter by folder and/or group)
+  j new [options] <title>        Create new job
   j active <name>                Move job to active
   j done <name>                  Move job to done
   j promote <name>               Promote idea to planned
   j move <folder> <name>         Move job between folders
+  j groups                       List all groups with counts
+  j group <name> <group>         Assign job to a group
+  j ungroup <name>               Remove job from its group
   j completion                   Output shell completion script
+
+New job options:
+  --spec, -s                     Create a spec
+  --bug, -b                      Create a bug report
+  --idea, -i                     Create an idea (goes to ideas/)
+  --task, -t                     Create a task (default)
+  --active, -a                   Start immediately in active/
+  --group, -g <group>            Assign to group on creation
+  --edit, -e                     Open in editor after creation
 
 Types: task (default), spec, bug, idea
 Folders: planned (default), active, done, ideas
@@ -531,15 +759,20 @@ Setup:
 Examples:
   j                              # List all jobs
   j list planned                 # List only planned
-  j list ideas                   # List only ideas
+  j list --group bugfix          # List jobs in 'bugfix' group
+  j list active --group bugfix   # Active jobs in 'bugfix' group
+  j groups                       # Show all groups with counts
+
   j new "fix login"              # Create task
+  j new --group bugfix "fix crash"  # Create task in group
   j new --bug "crash on mobile"  # Create bug
-  j new --spec "auth system"     # Create spec
-  j new --idea "what if..."      # Capture idea (goes to ideas/)
   j new --active "quick fix"     # Create and start now
-  j active "fix login"           # Start working
-  j done "fix login"             # Mark complete
-  j promote "what if"            # Move idea to planned
+
+  j active "fix login"           # Start working on job
+  j done "fix login"             # Mark job complete
+
+  j group "fix login" "sprint-1" # Assign existing job to group
+  j ungroup "fix login"          # Remove job from group
 EOF
             ;;
         *)
