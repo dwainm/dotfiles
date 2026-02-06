@@ -127,7 +127,7 @@ EOF
 fi
 
 # Fast git check - no subprocess
-if [[ ! -d ".git" ]]; then
+if [[ ! -e ".git" ]]; then
     echo "Error: Not in a git repository"
     exit 1
 fi
@@ -204,9 +204,7 @@ _ensure_dirs() {
 # Find job by fuzzy name match - optimized
 _find_job() {
     local search="$1"
-    local search_lower="${search,,}"  # bash 4+ lowercase, fallback below
-    # Bash 3.2 fallback
-    [[ -z "$search_lower" || "$search_lower" == "$search" ]] && search_lower=$(echo "$search" | tr '[:upper:]' '[:lower:]')
+    local search_lower=$(echo "$search" | tr '[:upper:]' '[:lower:]')
 
     local pattern="${search_lower//[-_ ]/*}"
     local best_match="" best_score=0
@@ -216,8 +214,7 @@ _find_job() {
             [[ -f "$file" ]] || continue
             local bname="${file##*/}"
             bname="${bname%.md}"
-            local bname_lower="${bname,,}"
-            [[ -z "$bname_lower" || "$bname_lower" == "$bname" ]] && bname_lower=$(echo "$bname" | tr '[:upper:]' '[:lower:]')
+            local bname_lower=$(echo "$bname" | tr '[:upper:]' '[:lower:]')
 
             if [[ "$bname_lower" == *"$pattern"* ]] || [[ "$bname_lower" =~ ${pattern//\*/.*} ]]; then
                 local score=${#bname}
@@ -231,10 +228,16 @@ _find_job() {
     REPLY="$best_match"
 }
 
+# ANSI colors
+_GREEN=$'\033[0;32m'
+_RED=$'\033[0;31m'
+_RESET=$'\033[0m'
+
 # List all jobs - optimized
 list_jobs() {
     local filter_folder="$1"
     local filter_group="$2"
+    local table_mode="$3"
     _ensure_dirs
 
     # Validate filter
@@ -247,6 +250,12 @@ list_jobs() {
             echo "Error: Invalid folder '$filter_folder'. Must be one of: ${FOLDERS[*]}"
             exit 1
         fi
+    fi
+
+    # Table mode
+    if [[ "$table_mode" == "1" ]]; then
+        list_jobs_table "$filter_folder" "$filter_group"
+        return
     fi
 
     if [[ -n "$filter_group" ]]; then
@@ -319,6 +328,80 @@ list_jobs() {
     done
 }
 
+# List jobs in table format
+list_jobs_table() {
+    local filter_folder="$1"
+    local filter_group="$2"
+    local num=0
+    local -a rows=()
+
+    # Collect all rows first
+    for folder in "${FOLDERS[@]}"; do
+        [[ -n "$filter_folder" && "$folder" != "$filter_folder" ]] && continue
+
+        local files=""
+        for item in "$JOBS_DIR/$folder"/*.md; do
+            [[ -f "$item" ]] && files+="$item"$'\n'
+        done
+        [[ -z "$files" ]] && continue
+        files=$(echo -n "$files" | sort -r)
+
+        while IFS= read -r item; do
+            [[ -z "$item" ]] && continue
+
+            if [[ -n "$filter_group" ]]; then
+                _get_job_group "$item"
+                [[ "$REPLY" != "$filter_group" ]] && continue
+            fi
+
+            ((num++))
+            local bname="${item##*/}"
+            bname="${bname%.md}"
+            local name="$bname"
+
+            if [[ "$bname" =~ ^([0-9]{2})-([0-9]{2})-([0-9]{2})-(.+)$ ]]; then
+                name="${BASH_REMATCH[4]}"
+                name="${name//-/ }"
+                _title_case "$name"
+                name="$REPLY"
+            fi
+
+            # Truncate if too long
+            [[ ${#name} -gt 45 ]] && name="${name:0:42}..."
+
+            # Status text and color
+            local status status_color
+            case "$folder" in
+                done)    status="Done";    status_color="$_GREEN" ;;
+                active)  status="Active";  status_color="$_GREEN" ;;
+                ideas)   status="Idea";    status_color="$_RED" ;;
+                *)       status="Planned"; status_color="$_RED" ;;
+            esac
+
+            rows+=("$num|$name|$status|$status_color")
+        done <<< "$files"
+    done
+
+    [[ ${#rows[@]} -eq 0 ]] && echo "No jobs found." && return
+
+    # Print table
+    echo "┌─────┬───────────────────────────────────────────────┬─────────┐"
+    echo "│  #  │ Task                                          │ Status  │"
+    echo "├─────┼───────────────────────────────────────────────┼─────────┤"
+
+    local i=0
+    for row in "${rows[@]}"; do
+        IFS='|' read -r n name status color <<< "$row"
+        printf "│ %-3s │ %-45s │ %b%-7s%b │\n" "$n" "$name" "$color" "$status" "$_RESET"
+        ((i++))
+        if [[ $i -lt ${#rows[@]} ]]; then
+            echo "├─────┼───────────────────────────────────────────────┼─────────┤"
+        fi
+    done
+
+    echo "└─────┴───────────────────────────────────────────────┴─────────┘"
+}
+
 # Create new job
 new_job() {
     local type="task"
@@ -349,8 +432,7 @@ new_job() {
     _ensure_dirs
 
     local date_str=$(date +"%d-%m-%y")
-    local slug="${title,,}"
-    [[ -z "$slug" || "$slug" == "$title" ]] && slug=$(echo "$title" | tr '[:upper:]' '[:lower:]')
+    local slug=$(echo "$title" | tr '[:upper:]' '[:lower:]')
     slug="${slug//[^a-z0-9]/-}"
     slug="${slug//--/-}"
     slug="${slug#-}"
@@ -622,15 +704,13 @@ promote_idea() {
     fi
 
     local job_file=""
-    local search_lower="${name,,}"
-    [[ -z "$search_lower" || "$search_lower" == "$name" ]] && search_lower=$(echo "$name" | tr '[:upper:]' '[:lower:]')
+    local search_lower=$(echo "$name" | tr '[:upper:]' '[:lower:]')
 
     for file in "$JOBS_DIR/ideas"/*.md; do
         [[ -f "$file" ]] || continue
         local bname="${file##*/}"
         bname="${bname%.md}"
-        local bname_lower="${bname,,}"
-        [[ -z "$bname_lower" || "$bname_lower" == "$bname" ]] && bname_lower=$(echo "$bname" | tr '[:upper:]' '[:lower:]')
+        local bname_lower=$(echo "$bname" | tr '[:upper:]' '[:lower:]')
 
         if [[ "$bname_lower" == *"$search_lower"* ]]; then
             job_file="$file"
@@ -665,14 +745,25 @@ main() {
     case "$cmd" in
         list|ls|"")
             shift 2>/dev/null
-            local folder="" group=""
+            local folder="" group="" table=""
             while [[ $# -gt 0 ]]; do
                 case "$1" in
                     --group|-g) group="$2"; shift 2 ;;
+                    --table|-t) table="1"; shift ;;
+                    --status|-s)
+                        case "$2" in
+                            done|d) folder="done" ;;
+                            active|a) folder="active" ;;
+                            planned|p) folder="planned" ;;
+                            ideas|i) folder="ideas" ;;
+                            *) echo "Error: Invalid status '$2'. Use: done, active, planned, ideas"; exit 1 ;;
+                        esac
+                        shift 2 ;;
+                    planned|active|done|ideas) folder="$1"; shift ;;
                     *) folder="$1"; shift ;;
                 esac
             done
-            list_jobs "$folder" "$group"
+            list_jobs "$folder" "$group" "$table"
             ;;
         new|create|add)
             shift
