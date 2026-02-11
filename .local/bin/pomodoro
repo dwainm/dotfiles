@@ -5,6 +5,7 @@ STATE_DIR="$HOME/.config/pomo"
 STATE_FILE="$STATE_DIR/state"
 HOOK_FILE="$STATE_DIR/on_event.sh"
 PID_FILE="$STATE_DIR/pomo.pid"
+DURATION_FILE="$STATE_DIR/duration"
 
 mkdir -p "$STATE_DIR"
 
@@ -12,12 +13,13 @@ start_timer() {
     local mins=${1:-40}
     local mode=${2:-work}
     local end_time=$(($(date +%s) + mins * 60))
-    
+
     # Kill existing timer
     stop_timer 2>/dev/null
-    
-    # Write state
+
+    # Write state and duration
     echo "$end_time $mode" > "$STATE_FILE"
+    echo "$mins $mode" > "$DURATION_FILE"
 
     # Refresh sketchybar
     sketchybar --trigger forced 2>/dev/null
@@ -61,6 +63,27 @@ stop_timer() {
     rm -f "$STATE_FILE" "$PID_FILE"
 }
 
+reset_timer() {
+    if [[ -f "$DURATION_FILE" ]]; then
+        read -r mins mode < "$DURATION_FILE"
+        start_timer "$mins" "$mode"
+    else
+        start_timer 40 work
+    fi
+}
+
+break_now() {
+    # Stop existing timer
+    stop_timer 2>/dev/null
+
+    # Trigger break hook
+    export POMO_STATE="BREAKING"
+    [[ -x "$HOOK_FILE" ]] && "$HOOK_FILE"
+
+    # Start 5-min break with background watcher
+    start_timer 5 break
+}
+
 get_status() {
     if [[ ! -f "$STATE_FILE" ]]; then
         echo ""
@@ -82,16 +105,22 @@ get_status() {
 
 case "$1" in
     start)
-        start_timer "${2:-40}" "work"
+        start_timer "${2:-40}" "${3:-work}"
         ;;
     stop)
         stop_timer
+        ;;
+    reset)
+        reset_timer
+        ;;
+    break)
+        break_now
         ;;
     status)
         get_status
         ;;
     *)
-        echo "Usage: pomodoro {start [mins]|stop|status}"
+        echo "Usage: pomodoro {start [mins] [work|break]|stop|reset|break|status}"
         exit 1
         ;;
 esac
