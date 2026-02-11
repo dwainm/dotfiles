@@ -1,5 +1,4 @@
 local colors = require("colors")
-local icons = require("icons")
 local settings = require("settings")
 
 -- Mode indicator item (positioned on right to avoid notch)
@@ -18,7 +17,7 @@ local mode_indicator = sbar.add("item", "mode_indicator", {
     background = { color = colors.transparent, border_width = 0 },
   },
   label = {
-    string = "",  -- No label, just icon
+    string = "",
     color = colors.transparent,
   },
   padding_left = 0,
@@ -36,21 +35,16 @@ local mode_bracket = sbar.add("bracket", "mode_indicator.bracket", {
 local popup_width = 320
 
 -- Mode title
-local mode_title = sbar.add("item", {
+local mode_title = sbar.add("item", "mode_indicator.title", {
   position = "popup." .. mode_bracket.name,
   icon = {
-    font = {
-      style = settings.font.style_map["Bold"]
-    },
+    font = { style = settings.font.style_map["Bold"] },
     string = "🎯",
   },
   width = popup_width,
   align = "center",
   label = {
-    font = {
-      size = 14,
-      style = settings.font.style_map["Bold"]
-    },
+    font = { size = 14, style = settings.font.style_map["Bold"] },
     string = "NORMAL MODE",
   },
   background = {
@@ -60,20 +54,16 @@ local mode_title = sbar.add("item", {
   }
 })
 
--- Dynamic popup items (will be created based on mode)
-local popup_items = {}
-
 -- Mode-specific shortcuts data
 local mode_shortcuts = {
   NORMAL = {
     icon = "🎯",
     title = "NORMAL MODE",
     shortcuts = {
-      { key = "ctrl+h/j/k/l", desc = "Focus left/down/up/right" },
+      { key = "ctrl+h/j/k/l", desc = "Focus prev/down/up/next" },
       { key = "ctrl+f", desc = "Toggle fullscreen" },
-      { key = "ctrl+cmd+c", desc = "Open Chrome" },
-      { key = "ctrl+m", desc = "Dropdown terminal" },
-      { key = "double-tap N", desc = "Launcher mode" }
+      { key = "cmd+ctrl+q/w/f/p/g", desc = "Switch workspace" },
+      { key = "cmd+space", desc = "Launcher mode" }
     }
   },
   SERVICE = {
@@ -81,8 +71,6 @@ local mode_shortcuts = {
     title = "SERVICE MODE",
     shortcuts = {
       { key = "r", desc = "Reload AeroSpace config" },
-      { key = "f", desc = "Flatten workspace tree" },
-      { key = "double-tap N", desc = "Back to launcher" },
       { key = "esc", desc = "Back to normal mode" }
     }
   },
@@ -92,19 +80,15 @@ local mode_shortcuts = {
     shortcuts = {
       { key = "h/j/k/l", desc = "Move window" },
       { key = "shift+h/j/k/l", desc = "Join with adjacent" },
-      { key = "alt+t", desc = "Tiles layout" },
-      { key = "alt+a", desc = "Accordion layout" },
+      { key = "alt+t/a", desc = "Tiles/Accordion layout" },
       { key = "alt+h/v", desc = "H/V accordion" },
       { key = "alt+space", desc = "Toggle floating" },
+      { key = "0", desc = "Float all (old way)" },
       { key = "s/shift+s", desc = "Split H/V" },
-      { key = "f", desc = "Flatten workspace" },
-      { key = "-", desc = "Resize smaller" },
-      { key = "=", desc = "Resize larger" },
-      { key = "shift+-", desc = "Resize smaller (2x)" },
-      { key = "shift+=", desc = "Resize larger (2x)" },
+      { key = "-/=", desc = "Resize smaller/larger" },
       { key = "q/w/f/p/g", desc = "Switch workspace" },
       { key = "shift+q/w/f/p/g", desc = "Move window + follow" },
-      { key = "double-tap N", desc = "Back to launcher" },
+      { key = "alt+backspace", desc = "Close all but current" },
       { key = "esc", desc = "Back to normal" }
     }
   },
@@ -117,9 +101,9 @@ local mode_shortcuts = {
       { key = "p", desc = "Klop PRs" },
       { key = "i", desc = "Klop Issues" },
       { key = "g", desc = "Gmail in Safari" },
+      { key = "shift+g", desc = "Grok in Safari" },
       { key = "shift+k", desc = "Klop production" },
       { key = "y", desc = "Hacker News" },
-      { key = "double-tap N", desc = "Back to launcher" },
       { key = "esc", desc = "Back to normal" }
     }
   },
@@ -129,18 +113,20 @@ local mode_shortcuts = {
     shortcuts = {
       { key = "l", desc = "Link mode" },
       { key = "w", desc = "Workspace mode" },
-      { key = ";", desc = "Service mode" },
       { key = "i", desc = "Writing mode" },
       { key = "[/]", desc = "Prev/next workspace" },
+      { key = "\\", desc = "Focus back and forth" },
       { key = "a", desc = "AI tmux window" },
       { key = "o", desc = "Obsidian" },
       { key = "r", desc = "Raycast" },
-      { key = "b", desc = "Safari browser" },
+      { key = "b", desc = "Safari (workspace q)" },
+      { key = "s", desc = "Safari (workspace g)" },
+      { key = "c", desc = "Calendar" },
       { key = "m", desc = "Mail" },
       { key = "d", desc = "System Settings" },
       { key = "k", desc = "Kitty terminal" },
-      { key = "v", desc = "Kitty vim pane" },
-      { key = "t", desc = "Kitty terminal pane" },
+      { key = "v", desc = "Vim window" },
+      { key = "t", desc = "Terminal window" },
       { key = "n", desc = "Start pomodoro (40m)" },
       { key = "esc", desc = "Back to normal" }
     }
@@ -169,88 +155,100 @@ local mode_shortcuts = {
     icon = "☕",
     title = "BREAK MODE - Take a break!",
     shortcuts = {
-      { key = "esc", desc = "End break, start new work session" }
+      { key = "esc", desc = "End break, start new pomodoro" },
+      { key = "return", desc = "Back to normal" }
     }
   }
 }
 
--- Function to clear existing popup items
-local function clear_popup_items()
-  for _, item in ipairs(popup_items) do
-    sbar.remove(item.name)
+-- Find max shortcuts count for pool size
+local max_shortcuts = 0
+for _, data in pairs(mode_shortcuts) do
+  if #data.shortcuts > max_shortcuts then
+    max_shortcuts = #data.shortcuts
   end
-  popup_items = {}
 end
 
--- Function to create popup items for shortcuts
-local function create_popup_items(mode)
-  clear_popup_items()
-  
+-- Pre-create pool of popup items (reused across mode changes)
+local popup_items = {}
+for i = 1, max_shortcuts do
+  local item = sbar.add("item", "mode_indicator.shortcut." .. i, {
+    position = "popup." .. mode_bracket.name,
+    drawing = false,
+    icon = {
+      align = "left",
+      string = "",
+      width = popup_width / 2,
+      font = { family = "SF Mono", size = 9, style = settings.font.style_map["Bold"] }
+    },
+    label = {
+      string = "",
+      width = popup_width / 2,
+      align = "left",
+      font = { size = 9 }
+    }
+  })
+  popup_items[i] = item
+end
+
+-- Update popup items for a given mode (reuses existing items)
+local function update_popup_items(mode)
   local data = mode_shortcuts[mode] or mode_shortcuts.NORMAL
-  
+
   -- Update title
   mode_title:set({
     icon = { string = data.icon },
     label = { string = data.title }
   })
-  
-  -- Create individual items for each shortcut
-  for i, shortcut in ipairs(data.shortcuts) do
-    local item = sbar.add("item", {
-      position = "popup." .. mode_bracket.name,
-      icon = {
-        align = "left",
-        string = shortcut.key,
-        width = popup_width / 2,
-        font = { family = "SF Mono", size = 9, style = settings.font.style_map["Bold"] }
-      },
-      label = {
-        string = shortcut.desc,
-        width = popup_width / 2,
-        align = "left",
-        font = { size = 9 }
-      }
-    })
-    table.insert(popup_items, item)
+
+  -- Update/show items for current mode's shortcuts
+  for i, item in ipairs(popup_items) do
+    local shortcut = data.shortcuts[i]
+    if shortcut then
+      item:set({
+        drawing = true,
+        icon = { string = shortcut.key },
+        label = { string = shortcut.desc }
+      })
+    else
+      item:set({ drawing = false })
+    end
   end
 end
 
--- Subscribe to custom events for mode changes
-sbar.subscribe("mode_indicator", { "mode_change", "routine" }, function(env)
-  local mode = env.MODE or "NORMAL"
-  local icon_map = {
-    NORMAL = "●",
-    SERVICE = "⚙️",
-    WORKSPACE = "🏢",
-    LINK = "🔗",
-    LAUNCHER = "🚀",
-    INSERT = "✍️",
-    MUX = "🖥️",
-    BREAK = "☕"
-  }
+-- Icon and color maps
+local icon_map = {
+  NORMAL = "●",
+  SERVICE = "⚙️",
+  WORKSPACE = "🏢",
+  LINK = "🔗",
+  LAUNCHER = "🚀",
+  INSERT = "✍️",
+  MUX = "🖥️",
+  BREAK = "☕"
+}
 
-  -- Define bar background colors for each mode
-  local bar_colors = {
-    NORMAL = 0xf02c2e34,      -- current default color
-    SERVICE = 0xf09ed072,     -- shade of green
-    WORKSPACE = 0xf076cce0,   -- tint of blue
-    LINK = 0xf0ff6b9d,        -- bright pink/magenta for links
-    LAUNCHER = 0xf0ff9500,    -- orange for launcher
-    INSERT = 0xf0ffffff,      -- white for insert/writing mode
-    MUX = 0xf0a855f7,         -- purple for mux/tmux mode
-    BREAK = 0xf09ed072        -- green for break mode
-  }
-  
-  -- Update the mode indicator icon
+local bar_colors = {
+  NORMAL = 0xf02c2e34,
+  SERVICE = 0xf09ed072,
+  WORKSPACE = 0xf076cce0,
+  LINK = 0xf0ff6b9d,
+  LAUNCHER = 0xf0ff9500,
+  INSERT = 0xf0ffffff,
+  MUX = 0xf0a855f7,
+  BREAK = 0xf09ed072
+}
+
+-- Subscribe to mode changes
+mode_indicator:subscribe({ "mode_change", "routine" }, function(env)
+  local mode = env.MODE or "NORMAL"
+
   mode_indicator:set({
     icon = { string = icon_map[mode] or "🎯", color = colors.white },
-    label = { string = "" }  -- Keep label empty
+    label = { string = "" }
   })
-  
-  -- Create popup items for current mode
-  create_popup_items(mode)
-  
-  -- Change the entire bar background color
+
+  update_popup_items(mode)
   sbar.bar({ color = bar_colors[mode] or bar_colors.NORMAL })
 end)
 
@@ -264,9 +262,9 @@ local function toggle_shortcuts()
   mode_bracket:set({ popup = { drawing = should_draw } })
 end
 
--- Initialize with NORMAL mode shortcuts
-create_popup_items("NORMAL")
+-- Initialize with NORMAL mode
+update_popup_items("NORMAL")
 
--- Add click handlers
+-- Click handlers
 mode_indicator:subscribe("mouse.clicked", toggle_shortcuts)
 mode_indicator:subscribe("mouse.exited.global", hide_shortcuts)

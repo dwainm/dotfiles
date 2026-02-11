@@ -5,43 +5,47 @@ local app_icons = require("helpers.app_icons")
 
 local sbar = require('sketchybar')
 
--- Get aerospace workspace information
-local focused_space = io.popen('aerospace list-workspaces --focused'):read('*a'):gsub('%s+', '')
 -- Static workspace list
 local all_spaces = {'q', 'w', 'f', 'p', 'g'}
 
 local spaces = {}
 local space_border_items = {}
 
--- Create spaces for each aerospace workspace
-for counter, workspace_name in pairs(all_spaces) do
-    local is_focused = workspace_name == focused_space
-    
-    -- Get initial windows for this workspace
-    local workspace_windows = io.popen('aerospace list-windows --workspace ' .. workspace_name):read('*a')
-    local initial_icon_line = ""
+-- Helper: parse aerospace window list output into icon string
+local function parse_windows_to_icons(workspace_windows)
+    local icon_line = ""
     local apps = {}
-    
-    -- Parse window list to extract app names
+
     for line in workspace_windows:gmatch('[^\n]+') do
         local app_name = line:match('| ([^|]+) |')
         if app_name then
             app_name = app_name:gsub('^%s*(.-)%s*$', '%1') -- trim whitespace
-            apps[app_name] = (apps[app_name] or 0) + 1
+            apps[app_name] = true
         end
     end
-    
-    -- Build initial icon line from apps
-    for app, count in pairs(apps) do
+
+    for app, _ in pairs(apps) do
         local lookup = app_icons[app]
-        local icon = ((lookup == nil) and app_icons["Default"] or lookup)
-        initial_icon_line = initial_icon_line .. icon
+        local icon = lookup or app_icons["Default"]
+        icon_line = icon_line .. icon
     end
-    
-    if initial_icon_line == "" then
-        initial_icon_line = " —"
-    end
-    
+
+    return icon_line ~= "" and icon_line or " —"
+end
+
+-- Helper: update a space's window icons asynchronously
+local function update_space_icons(workspace_name)
+    local space = spaces[workspace_name]
+    if not space then return end
+
+    sbar.exec('aerospace list-windows --workspace ' .. workspace_name, function(result)
+        local icon_line = parse_windows_to_icons(result or "")
+        space:set({ label = { string = icon_line } })
+    end)
+end
+
+-- Create space items (with placeholder labels, will be populated async)
+for counter, workspace_name in ipairs(all_spaces) do
     local space = sbar.add("item", "space." .. workspace_name, {
         position = 'left',
         padding_left = counter == 1 and 10 or 1,
@@ -51,13 +55,13 @@ for counter, workspace_name in pairs(all_spaces) do
             string = workspace_name,
             padding_left = 15,
             padding_right = 8,
-            color = is_focused and colors.red or colors.white,
+            color = colors.white,
             highlight_color = colors.red,
         },
         label = {
-            string = initial_icon_line,
+            string = " —",  -- placeholder until async load
             padding_right = 20,
-            color = is_focused and colors.white or colors.grey,
+            color = colors.grey,
             highlight_color = colors.white,
             font = "sketchybar-app-font:Regular:16.0",
             y_offset = -1,
@@ -96,11 +100,11 @@ for counter, workspace_name in pairs(all_spaces) do
     space:subscribe('aerospace_workspace_change', function(env)
         local selected = env.FOCUSED_WORKSPACE == workspace_name
         space:set({
-            icon = { 
+            icon = {
                 highlight = selected,
                 color = selected and colors.red or colors.white
             },
-            label = { 
+            label = {
                 highlight = selected,
                 color = selected and colors.white or colors.grey
             }
@@ -161,66 +165,43 @@ local spaces_indicator = sbar.add("item", {
     }
 })
 
--- Subscribe to window changes to update app icons
+-- Subscribe to window changes to update app icons (ASYNC)
 space_window_observer:subscribe("aerospace_workspace_change", function(env)
     -- Update bracket border color based on focused workspace
     local has_focused_workspace = false
-    for _, workspace_name in pairs(all_spaces) do
+    for _, workspace_name in ipairs(all_spaces) do
         if workspace_name == env.FOCUSED_WORKSPACE then
             has_focused_workspace = true
             break
         end
     end
-    
+
     spaces_bracket:set({
         background = {
             border_color = has_focused_workspace and colors.grey or colors.bg2
         }
     })
-    
-    -- Get windows for the focused workspace
-    local workspace_windows = io.popen('aerospace list-windows --workspace ' .. env.FOCUSED_WORKSPACE):read('*a')
-    local icon_line = ""
-    local no_app = true
-    local apps = {}
-    
-    -- Parse window list to extract app names
-    for line in workspace_windows:gmatch('[^\n]+') do
-        local app_name = line:match('| ([^|]+) |')
-        if app_name then
-            app_name = app_name:gsub('^%s*(.-)%s*$', '%1') -- trim whitespace
-            apps[app_name] = (apps[app_name] or 0) + 1
-            no_app = false
-        end
-    end
-    
-    -- Build icon line from apps
-    for app, count in pairs(apps) do
-        local lookup = app_icons[app]
-        local icon = ((lookup == nil) and app_icons["Default"] or lookup)
-        icon_line = icon_line .. icon
-    end
 
-    if no_app then
-        icon_line = " —"
-    end
-    
-    local current_space = spaces[env.FOCUSED_WORKSPACE]
-    if current_space then
-        sbar.animate("tanh", 10, function()
-            current_space:set({ label = icon_line })
-        end)
-    end
+    -- Async: Get windows for the focused workspace
+    sbar.exec('aerospace list-windows --workspace ' .. env.FOCUSED_WORKSPACE, function(result)
+        local icon_line = parse_windows_to_icons(result or "")
+        local current_space = spaces[env.FOCUSED_WORKSPACE]
+        if current_space then
+            sbar.animate("tanh", 10, function()
+                current_space:set({ label = icon_line })
+            end)
+        end
+    end)
 end)
 
-spaces_indicator:subscribe("swap_menus_and_spaces", function(env)
+spaces_indicator:subscribe("swap_menus_and_spaces", function(_)
     local currently_on = spaces_indicator:query().icon.value == icons.switch.on
     spaces_indicator:set({
         icon = currently_on and icons.switch.off or icons.switch.on
     })
 end)
 
-spaces_indicator:subscribe("mouse.entered", function(env)
+spaces_indicator:subscribe("mouse.entered", function(_)
     sbar.animate("tanh", 30, function()
         spaces_indicator:set({
             background = {
@@ -233,7 +214,7 @@ spaces_indicator:subscribe("mouse.entered", function(env)
     end)
 end)
 
-spaces_indicator:subscribe("mouse.exited", function(env)
+spaces_indicator:subscribe("mouse.exited", function(_)
     sbar.animate("tanh", 30, function()
         spaces_indicator:set({
             background = {
@@ -246,8 +227,32 @@ spaces_indicator:subscribe("mouse.exited", function(env)
     end)
 end)
 
-spaces_indicator:subscribe("mouse.clicked", function(env)
+spaces_indicator:subscribe("mouse.clicked", function(_)
     sbar.trigger("swap_menus_and_spaces")
+end)
+
+-- Initial async load: get focused workspace and update all spaces
+sbar.exec('aerospace list-workspaces --focused', function(focused)
+    focused = (focused or ""):gsub('%s+', '')
+
+    -- Update focused state for all spaces
+    for _, workspace_name in ipairs(all_spaces) do
+        local space = spaces[workspace_name]
+        local selected = workspace_name == focused
+        space:set({
+            icon = { color = selected and colors.red or colors.white },
+            label = { color = selected and colors.white or colors.grey }
+        })
+        -- Load window icons for each space
+        update_space_icons(workspace_name)
+    end
+
+    -- Update bracket
+    spaces_bracket:set({
+        background = {
+            border_color = (focused ~= "") and colors.grey or colors.bg2
+        }
+    })
 end)
 
 return {

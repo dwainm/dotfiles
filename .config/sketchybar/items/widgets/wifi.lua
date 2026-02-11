@@ -4,7 +4,7 @@ local settings = require("settings")
 
 -- Execute the event provider binary which provides the event "network_update"
 -- for the network interface "en0", which is fired every 2.0 seconds.
-sbar.exec("killall network_load >/dev/null; $CONFIG_DIR/helpers/event_providers/network_load/bin/network_load en0 network_update 2.0")
+sbar.exec("pkill -x network_load 2>/dev/null; sleep 0.1; exec $CONFIG_DIR/helpers/event_providers/network_load/bin/network_load en0 network_update 2.0")
 
 local popup_width = 250
 
@@ -173,7 +173,7 @@ wifi_up:subscribe("network_update", function(env)
   })
 end)
 
-wifi:subscribe({"wifi_change", "system_woke"}, function(env)
+wifi:subscribe({"wifi_change", "system_woke"}, function(_)
   sbar.exec("ipconfig getifaddr en0", function(ip)
     local connected = not (ip == "")
     wifi:set({
