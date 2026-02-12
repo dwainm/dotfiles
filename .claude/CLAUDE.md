@@ -85,6 +85,10 @@ Common paths tracked:
 - `~/.config/` - app configs
 - `~/.zshrc`, `~/.gitconfig`, etc.
 
+## Plan Mode Behavior
+
+When in plan mode, **don't reprint the entire plan on every change**. Track changes mentally and only show the full plan when explicitly asked. Incremental updates should be brief summaries, not text walls.
+
 ## Global Agents
 
 | Agent | File | Use For |
