@@ -169,6 +169,7 @@ launcher < c : open -a "Calendar" && skhd -k "return"
 # Writing mode bindings - distraction-free writing mode
 writing < escape ; default  # Exit writing mode
 writing < cmd - space ; launcher  # Switch to launcher mode
+writing < shift + ctrl + alt + cmd - b ; break  # hyper+b - enter break mode (from writing mode)
 
 # Mux mode bindings - tmux operations
 mux < escape ; default

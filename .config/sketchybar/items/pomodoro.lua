@@ -56,21 +56,36 @@ end
 
 -- Update pomodoro status
 pomodoro:subscribe({ "routine", "forced" }, function(env)
-  sbar.exec("~/.local/bin/pomodoro status 2>/dev/null", function(result)
-    local output = result:gsub("^%s*(.-)%s*$", "%1") -- trim whitespace
+  sbar.exec("~/.local/bin/pomodoro mode 2>/dev/null", function(mode_result)
+    local mode = mode_result:gsub("^%s*(.-)%s*$", "%1")
 
-    if output == "" then
-      -- Not running - grey icon, "OFF" label
-      pomodoro:set({
-        icon = { string = "⏱", color = colors.grey },
-        label = { string = "OFF", color = colors.grey },
-      })
+    if mode == "break" then
+      -- Break mode - hide icon, show elapsed time counting up
+      sbar.exec("~/.local/bin/pomodoro break-elapsed 2>/dev/null", function(elapsed)
+        local elapsed_time = elapsed:gsub("^%s*(.-)%s*$", "%1")
+        pomodoro:set({
+          icon = { string = "", color = colors.transparent },
+          label = { string = elapsed_time, color = colors.yellow },
+        })
+      end)
     else
-      -- Running - green icon, time remaining
-      pomodoro:set({
-        icon = { string = "⏱", color = colors.green },
-        label = { string = output, color = colors.white },
-      })
+      sbar.exec("~/.local/bin/pomodoro status 2>/dev/null", function(result)
+        local output = result:gsub("^%s*(.-)%s*$", "%1")
+
+        if output == "" then
+          -- Not running - grey icon, "OFF" label
+          pomodoro:set({
+            icon = { string = "⏱", color = colors.grey },
+            label = { string = "OFF", color = colors.grey },
+          })
+        else
+          -- Running - green icon, time remaining
+          pomodoro:set({
+            icon = { string = "⏱", color = colors.green },
+            label = { string = output, color = colors.white },
+          })
+        end
+      end)
     end
   end)
 end)

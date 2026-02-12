@@ -89,11 +89,11 @@ get_status() {
         echo ""
         return
     fi
-    
+
     read -r end mode < "$STATE_FILE"
     now=$(date +%s)
     remaining=$((end - now))
-    
+
     if [[ $remaining -le 0 ]]; then
         echo "0:00"
     else
@@ -101,6 +101,37 @@ get_status() {
         secs=$((remaining % 60))
         printf "%d:%02d\n" $mins $secs
     fi
+}
+
+get_mode() {
+    if [[ ! -f "$STATE_FILE" ]]; then
+        echo ""
+        return
+    fi
+    read -r end mode < "$STATE_FILE"
+    echo "$mode"
+}
+
+get_break_elapsed() {
+    if [[ ! -f "$STATE_FILE" ]]; then
+        echo ""
+        return
+    fi
+
+    read -r end mode < "$STATE_FILE"
+    if [[ "$mode" != "break" ]]; then
+        echo ""
+        return
+    fi
+
+    # Break is 5 minutes, so start_time = end - 300
+    start_time=$((end - 300))
+    now=$(date +%s)
+    elapsed=$((now - start_time))
+
+    mins=$((elapsed / 60))
+    secs=$((elapsed % 60))
+    printf "%d:%02d\n" $mins $secs
 }
 
 case "$1" in
@@ -119,8 +150,14 @@ case "$1" in
     status)
         get_status
         ;;
+    mode)
+        get_mode
+        ;;
+    break-elapsed)
+        get_break_elapsed
+        ;;
     *)
-        echo "Usage: pomodoro {start [mins] [work|break]|stop|reset|break|status}"
+        echo "Usage: pomodoro {start [mins] [work|break]|stop|reset|break|status|mode|break-elapsed}"
         exit 1
         ;;
 esac
