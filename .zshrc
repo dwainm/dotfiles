@@ -62,7 +62,8 @@ fi
 #######
 # TMUX
 #######
-if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+# Skip tmux inside Conductor (it adds com.conductor.app to PATH)
+if command -v tmux &> /dev/null && [ -z "$TMUX" ] && [[ "$PATH" != *"com.conductor.app"* ]]; then
   tmux new-session
 fi
 
