@@ -20,8 +20,10 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 start-at-login = true
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
+# flatten-containers = true prevents deep nesting, keeps things simple
 enable-normalization-flatten-containers = true
-enable-normalization-opposite-orientation-for-nested-containers = true
+# This one can cause confusing auto-orientation changes - disable for predictable behavior
+enable-normalization-opposite-orientation-for-nested-containers = false
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
 accordion-padding = 80

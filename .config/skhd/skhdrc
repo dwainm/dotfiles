@@ -88,32 +88,51 @@ service < r : aerospace reload-config ; default
 
 # Workspace mode bindings - layout changes and window management
 workspace < escape ; default
-# Layout changes (with alt modifier)
-workspace < alt - t : aerospace layout tiles ; default           # tiles layout
-workspace < alt - a : aerospace layout accordion ; default       # accordion layout
-workspace < alt - h : aerospace layout accordion horizontal ; default  # accordion horizontal only
-workspace < alt - v : aerospace layout accordion vertical ; default    # accordion vertical only  
-workspace < alt - space : aerospace layout floating tiling ; default  # toggle floating/tiling
-workspace < 0 : aerospace macos-native-fullscreen off && aerospace macos-native-minimize off && aerospace list-windows --workspace focused --format "%{window-id}" | xargs -I{} aerospace layout --window-id {} floating ; default  # float all windows - "old way"
-# Resize windows (no modifier needed in workspace mode)
-workspace < 0x1B : aerospace resize smart -50 ; default  # minus key (-) - normal speed  
-workspace < 0x18 : aerospace resize smart +50 ; default  # equal key (=) - normal speed
-workspace < shift - 0x1B : aerospace resize smart -100 ; default  # shift + minus key (-) - double speed
-workspace < shift - 0x18 : aerospace resize smart +100 ; default  # shift + equal key (=) - double speed
-# Move windows (swap places) - clean hjkl for frequent use
-workspace < h : aerospace move left ; default
-workspace < j : aerospace move down ; default
-workspace < k : aerospace move up ; default
-workspace < l : aerospace move right ; default
-# Split current container (breaks joins for focused window)
-workspace < s : aerospace split horizontal ; default
-workspace < shift - s : aerospace split vertical ; default
-# Join with adjacent windows
-workspace < shift - h : aerospace join-with left ; default
-workspace < shift - j : aerospace join-with down ; default
-workspace < shift - k : aerospace join-with up ; default
-workspace < shift - l : aerospace join-with right ; default
-# Workspace switching
+
+# ============ LAYOUT CHANGES ============
+# Simple mental model:
+#   h = horizontal (side by side)  |W1|W2|W3|
+#   v = vertical (stacked)         W1/W2/W3
+#   a = accordion (tabs, one visible)
+#   f = floating (free drag)
+#   space = toggle current window float/tile
+
+# Tiles: windows split evenly
+workspace < h : aerospace flatten-workspace-tree && aerospace layout h_tiles ; default  # horizontal tiles |W1|W2|
+workspace < v : aerospace flatten-workspace-tree && aerospace layout v_tiles ; default    # vertical tiles W1/W2
+
+# Accordion: one window fills space, others are tabs
+workspace < a : aerospace flatten-workspace-tree && aerospace layout h_accordion ; default  # accordion (horizontal tabs)
+workspace < shift - a : aerospace flatten-workspace-tree && aerospace layout v_accordion ; default  # accordion (vertical tabs)
+
+# Floating
+workspace < space : aerospace layout floating tiling ; default  # toggle ALL windows float/tile
+
+# Current window only: toggle between floating and tiling
+workspace < t : aerospace layout floating tiling ; default  # toggle focused window
+
+# Reset: flatten everything and go back to default tiles
+workspace < r : aerospace list-windows --workspace focused --format '%{window-id}' | xargs -I {} aerospace layout --window-id {} tiling && aerospace flatten-workspace-tree && aerospace layout h_tiles ; default
+
+# ============ RESIZE ============
+workspace < 0x1B : aerospace resize smart -50  # minus key (-) - shrink
+workspace < 0x18 : aerospace resize smart +50  # equal key (=) - grow
+workspace < shift - 0x1B : aerospace resize smart -100  # shift+minus - shrink fast
+workspace < shift - 0x18 : aerospace resize smart +100  # shift+equal - grow fast
+
+# ============ MOVE WINDOWS ============
+# Move/swap focused window in direction (shift+hjkl)
+workspace < shift - h : aerospace move left ; default
+workspace < shift - j : aerospace move down ; default
+workspace < shift - k : aerospace move up ; default
+workspace < shift - l : aerospace move right ; default
+
+# Join with adjacent window (alt+hjkl)
+workspace < alt - h : aerospace join-with left ; default
+workspace < alt - j : aerospace join-with down ; default
+workspace < alt - k : aerospace join-with up ; default
+workspace < alt - l : aerospace join-with right ; default
+# Workspace switching (qwfpg - matches actual workspace names)
 workspace < q : aerospace workspace q ; default
 workspace < w : aerospace workspace w ; default
 workspace < f : aerospace workspace f ; default
@@ -125,8 +144,6 @@ workspace < shift - w : aerospace move-node-to-workspace w && aerospace workspac
 workspace < shift - f : aerospace move-node-to-workspace f && aerospace workspace f ; default
 workspace < shift - p : aerospace move-node-to-workspace p && aerospace workspace p ; default
 workspace < shift - g : aerospace move-node-to-workspace g && aerospace workspace g ; default
-# Close all windows but current (with alt modifier for safety)
-workspace < alt - backspace : aerospace close-all-windows-but-current ; default
 
 # Link mode bindings - quick access to commonly visited links
 link < escape ; default
