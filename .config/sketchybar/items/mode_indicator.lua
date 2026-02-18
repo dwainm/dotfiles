@@ -114,6 +114,7 @@ local mode_shortcuts = {
       { key = "i", desc = "Writing mode" },
       { key = "[/]", desc = "Prev/next workspace" },
       { key = "\\", desc = "Focus back and forth" },
+      { key = "z", desc = "Toggle keyboard layout" },
       { key = "a", desc = "AI tmux window" },
       { key = "o", desc = "Obsidian" },
       { key = "r", desc = "Raycast" },

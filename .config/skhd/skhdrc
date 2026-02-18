@@ -182,6 +182,7 @@ launcher < k : /usr/bin/osascript -e 'tell application "kitty" to activate' || o
 launcher < v : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2) && WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1) && tmux select-window -t $SESSION:$WINDOW' && skhd -k "return"
 launcher < t : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2) && WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "zsh|bash" | head -1 | cut -d" " -f1) && tmux select-window -t $SESSION:$WINDOW' && skhd -k "return"
 launcher < c : open -a "Calendar" && skhd -k "return"
+launcher < z : echo "[$(date '+%Y-%m-%d %H:%M:%S')] KB_SWITCH triggered from launcher mode" >> /tmp/skhd_debug.log && ~/.config/sketchybar/helpers/keyboard_layout.sh switch && skhd -k "return"  # toggle keyboard layout (ABC/Colemak)
 
 # Writing mode bindings - distraction-free writing mode
 writing < escape ; default  # Exit writing mode

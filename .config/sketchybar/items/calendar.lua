@@ -45,5 +45,16 @@ sbar.add("bracket", { cal.name }, {
 sbar.add("item", { position = "right", width = settings.group_paddings })
 
 cal:subscribe({ "forced", "routine", "system_woke" }, function(env)
-  cal:set({ icon = os.date("%a. %d %b."), label = os.date("%H:%M") })
+  -- Format: "Wed 18th" with proper suffix
+  local day = tonumber(os.date("%d"))
+  local suffix = "th"
+  if day % 10 == 1 and day ~= 11 then
+    suffix = "st"
+  elseif day % 10 == 2 and day ~= 12 then
+    suffix = "nd"
+  elseif day % 10 == 3 and day ~= 13 then
+    suffix = "rd"
+  end
+  local date_str = os.date("%a ") .. day .. suffix
+  cal:set({ icon = date_str, label = os.date("%H:%M") })
 end)
