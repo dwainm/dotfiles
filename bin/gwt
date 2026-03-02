@@ -25,6 +25,7 @@ Arguments:
   <new-branch-name>  The name of the new branch to create (required)
 
 Options:
+  -s                Interactive switcher - fuzzy find and switch between worktrees
   -l                List all git worktrees
   -d                Delete the worktree and tmux session for the specified branch
   -f                Force delete (skip unpushed commits check)
@@ -35,6 +36,7 @@ Options:
   -h, --help        Show this help message
 
 Examples:
+  gwt -s                        # Interactive worktree/session switcher
   gwt feature-name              # Create 'feature-name' from trunk/master/main
   gwt feature-name -b develop   # Create 'feature-name' from 'develop'
   gwt feature-name -c           # Create 'feature-name' from current branch
@@ -54,6 +56,7 @@ USE_CURRENT=false
 DELETE_MODE=false
 FORCE_DELETE=false
 LIST_MODE=false
+SWITCH_MODE=false
 FORCE_EXISTING=false
 
 while [[ $# -gt 0 ]]; do
@@ -64,6 +67,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -l)
       LIST_MODE=true
+      shift
+      ;;
+    -s)
+      SWITCH_MODE=true
       shift
       ;;
     -d)
@@ -114,6 +121,141 @@ if [[ "$LIST_MODE" = true ]]; then
 
   echo -e "${BLUE}Git worktrees:${NC}"
   git worktree list
+  exit 0
+fi
+
+# Handle switch mode - interactive worktree/session switcher
+if [[ "$SWITCH_MODE" = true ]]; then
+  # Check if we're in a git repository
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo -e "${RED}Error: Not in a git repository${NC}"
+    exit 1
+  fi
+
+  # Check if fzf is installed
+  if ! command -v fzf > /dev/null 2>&1; then
+    echo -e "${RED}Error: fzf is required for switch mode${NC}"
+    echo "Install with: brew install fzf"
+    exit 1
+  fi
+
+  # Get current worktree path for marking
+  CURRENT_PATH=$(git rev-parse --show-toplevel)
+
+  # Get all worktrees with their branches
+  # Format: path | branch
+  worktrees=$(git worktree list --porcelain | awk '
+    /^worktree / { path = substr($0, 10) }
+    /^branch /   {
+      branch = substr($0, 8)
+      gsub(/refs\/heads\//, "", branch)
+      print path "|" branch
+    }
+    /^HEAD /     {
+      # Detached HEAD - use commit hash
+      print path "|" substr($0, 6, 7) "(detached)"
+    }
+  ')
+
+  # Check if we have any worktrees
+  if [[ -z "$worktrees" ]]; then
+    echo -e "${YELLOW}No worktrees found.${NC}"
+    echo ""
+    echo "Create one with: gwt <branch-name>"
+    exit 0
+  fi
+
+  # Build display lines with session status
+  display_lines=""
+  while IFS='|' read -r path branch; do
+    [[ -z "$path" ]] && continue
+    session_name=$(basename "$path")
+
+    # Check if tmux session exists
+    if tmux has-session -t "$session_name" 2>/dev/null; then
+      status="●"  # Session exists
+    else
+      status="○"  # No session
+    fi
+
+    # Mark current worktree
+    if [[ "$path" == "$CURRENT_PATH" ]]; then
+      marker="* "
+    else
+      marker="  "
+    fi
+
+    display_lines+="${marker}${status} ${branch}|${path}|${session_name}"$'\n'
+  done <<< "$worktrees"
+
+  # Remove trailing newline and run fzf
+  selected=$(echo -n "$display_lines" | fzf \
+    --header="enter=switch | alt-n=new branch | alt-k=delete worktree+session" \
+    --delimiter='|' \
+    --with-nth=1 \
+    --preview='echo -e "\033[1;34mPath:\033[0m {2}" && echo "" && git -C {2} log --oneline -10 2>/dev/null && echo "" && echo -e "\033[1;34mRecent changes:\033[0m" && git -C {2} diff --stat HEAD~3..HEAD 2>/dev/null | tail -15' \
+    --preview-window=right:40% \
+    --expect=alt-n,alt-k)
+
+  [[ -z "$selected" ]] && exit 0
+
+  # Parse fzf output (first line is the key pressed, second is selection)
+  key=$(echo "$selected" | head -1)
+  selection=$(echo "$selected" | tail -1)
+
+  [[ -z "$selection" ]] && exit 0
+
+  # Extract path and session name
+  path=$(echo "$selection" | cut -d'|' -f2)
+  session_name=$(echo "$selection" | cut -d'|' -f3)
+  branch_name=$(basename "$path" | sed "s/^[^-]*-//")
+
+  case "$key" in
+    alt-k)
+      # Delete worktree and session
+      echo -e "${YELLOW}Deleting worktree: $path${NC}"
+      gwt -d "$branch_name"
+      echo -e "${GREEN}Done. Press any key to continue...${NC}"
+      read -n 1
+      exec gwt -s  # Re-run switcher
+      ;;
+    alt-n)
+      # Create new branch off the highlighted worktree
+      echo -e "${BLUE}New branch name (branching from $branch_name):${NC}"
+      read -r new_branch
+      if [[ -n "$new_branch" ]]; then
+        cd "$path" && gwt "$new_branch" -c
+      fi
+      ;;
+    *)
+      # Default: switch or create session
+      if tmux has-session -t "$session_name" 2>/dev/null; then
+        tmux switch-client -t "$session_name"
+      else
+        # Create new session in that worktree (same setup as gwt create)
+        tmux new-session -d -s "$session_name" -n "AI" -c "$path"
+
+        # Set up AI window
+        if command -v claude > /dev/null 2>&1; then
+          tmux send-keys -t "$session_name:AI" "cc" C-m
+        fi
+
+        # Create shell window
+        tmux new-window -t "$session_name" -n "shell" -c "$path"
+
+        # Create nvim window
+        tmux new-window -t "$session_name" -n "nvim" -c "$path"
+        if command -v nvim > /dev/null 2>&1; then
+          tmux send-keys -t "$session_name:nvim" "nvim" C-m
+        fi
+
+        # Select first window and switch
+        tmux select-window -t "$session_name:AI"
+        tmux switch-client -t "$session_name"
+      fi
+      ;;
+  esac
+
   exit 0
 fi
 
