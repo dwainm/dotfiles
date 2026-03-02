@@ -67,7 +67,6 @@ cmd + ctrl - g : aerospace workspace g
 :: default : ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL
 :: service : ~/.config/sketchybar/helpers/mode_notifier.sh SERVICE
 :: workspace : ~/.config/sketchybar/helpers/mode_notifier.sh WORKSPACE
-:: link : ~/.config/sketchybar/helpers/mode_notifier.sh LINK
 :: launcher : ~/.config/sketchybar/helpers/mode_notifier.sh LAUNCHER
 :: writing : ~/.config/sketchybar/helpers/mode_notifier.sh INSERT
 :: mux : ~/.config/sketchybar/helpers/mode_notifier.sh MUX
@@ -145,23 +144,13 @@ workspace < shift - f : aerospace move-node-to-workspace f && aerospace workspac
 workspace < shift - p : aerospace move-node-to-workspace p && aerospace workspace p ; default
 workspace < shift - g : aerospace move-node-to-workspace g && aerospace workspace g ; default
 
-# Link mode bindings - quick access to commonly visited links
-link < escape ; default
-# Link shortcuts
-link < x : open "https://x.com" && skhd -k "escape"           # X/Twitter
-link < shift - x : open "https://x.com/dwainm" && skhd -k "escape" # Your X profile
-link < p : open "https://github.com/dwainm/Klop/pulls" && skhd -k "escape"  # Klop PRs
-link < i : open "https://github.com/dwainm/Klop/issues" && skhd -k "escape" # Klop Issues
-link < g : open -a "Safari" "https://gmail.com" && skhd -k "escape"       # Gmail in Safari
-link < shift - k : open "https://app.klop.finance" && skhd -k "escape" # Klop production
-link < y : open "https://news.ycombinator.com" && skhd -k "escape" # Y Combinator News
-link < shift - g : open -a "Safari" "https://x.com/i/grok" && skhd -k "escape" # Grok in Safari on workspace g
 
 # Launcher mode bindings - quick app launching
 launcher < escape ; default
 launcher < return ; default
 # Mode switching from launcher
-launcher < l ; link
+launcher < l : open "raycast://extensions/raycast/raycast/search-quicklinks" && skhd -k "return"  # Raycast quicklinks
+launcher < shift - l : open "raycast://extensions/raycast/raycast/create-quicklink" && skhd -k "return"  # Add new quicklink
 launcher < w ; workspace
 launcher < i ; writing
 # Next/previous workspace
