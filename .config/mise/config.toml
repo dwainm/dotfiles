@@ -1,0 +1,9 @@
+[settings]
+# Trust all config files in home directory and projects
+trusted_config_paths = [
+  "/Users/dwain",
+  "/Users/dwain/projects/*"
+]
+
+[tools]
+node = "23.11.0"
