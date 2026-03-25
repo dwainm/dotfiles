@@ -1,0 +1,182 @@
+#!/usr/bin/env bash
+# Git Worktree + Tmux Session Creator
+# Simple: gwt <branch-name> ["<purpose>"]
+
+set -e
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+show_help() {
+  cat << EOF
+Usage: gwt [options] <branch-name> [purpose]
+
+Creates git worktree + tmux session. Purpose sets PURPOSE env var.
+
+Options:
+  gwt <branch> [purpose]    Create worktree
+  gwt -l                    List worktrees
+  gwt -d <branch>           Delete worktree
+  gwt -b <base> <branch>    Create from base branch
+  gwt -c <branch>           Create from current branch
+  gwt -B <branch>           Checkout existing branch
+
+Examples:
+  gwt feature "Add auth #42"
+  gwt hotfix
+  gwt -d feature
+EOF
+}
+
+BRANCH_NAME=""
+PURPOSE=""
+BASE_BRANCH=""
+USE_CURRENT=false
+DELETE_MODE=false
+LIST_MODE=false
+CHECKOUT_EXISTING=false
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help) show_help; exit 0 ;;
+    -l) LIST_MODE=true; shift ;;
+    -d) DELETE_MODE=true; shift ;;
+    -b) BASE_BRANCH="$2"; shift 2 ;;
+    -c) USE_CURRENT=true; shift ;;
+    -B) CHECKOUT_EXISTING=true; shift ;;
+    -*)
+      echo -e "${RED}Unknown: $1${NC}" >&2
+      exit 1
+      ;;
+    *)
+      if [[ -z "$BRANCH_NAME" ]]; then
+        BRANCH_NAME="$1"
+      elif [[ -z "$PURPOSE" ]]; then
+        PURPOSE="$1"
+      else
+        echo -e "${RED}Too many args${NC}" >&2
+        exit 1
+      fi
+      shift
+      ;;
+  esac
+done
+
+git rev-parse --git-dir > /dev/null 2>&1 || {
+  echo -e "${RED}Not a git repo${NC}" >&2
+  exit 1
+}
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_NAME=$(basename "$REPO_ROOT")
+SAFE_NAME=$(echo "$REPO_NAME" | sed 's/\./_/g')
+
+# List
+if [[ "$LIST_MODE" = true ]]; then
+  git worktree list
+  exit 0
+fi
+
+# Delete
+if [[ "$DELETE_MODE" = true ]]; then
+  [[ -z "$BRANCH_NAME" ]] && { echo -e "${RED}Need branch name${NC}" >&2; exit 1; }
+  
+  WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${BRANCH_NAME}"
+  
+  # 1. Kill tmux session (matches either original or renamed format)
+  SESSION=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | grep -E "(^| )${BRANCH_NAME}( |\||$)" | head -1)
+  if [[ -n "$SESSION" ]]; then
+    echo -e "${YELLOW}Kill session: $SESSION${NC}"
+    tmux kill-session -t "$SESSION" 2>/dev/null || true
+  fi
+  
+  # 2. Remove worktree
+  if git worktree list | grep -q "$WORKTREE_PATH"; then
+    echo -e "${YELLOW}Remove worktree: $WORKTREE_PATH${NC}"
+    git worktree remove "$WORKTREE_PATH" 2>/dev/null || \
+      git worktree remove --force "$WORKTREE_PATH" 2>/dev/null || true
+  fi
+  
+  # 3. Delete local branch (NEW - was missing!)
+  if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME" 2>/dev/null; then
+    echo -e "${YELLOW}Delete branch: $BRANCH_NAME${NC}"
+    git branch -D "$BRANCH_NAME" 2>/dev/null || true
+  fi
+  
+  # 4. Remove directory if it still exists (NEW - was missing!)
+  if [[ -d "$WORKTREE_PATH" ]]; then
+    echo -e "${YELLOW}Remove directory: $WORKTREE_PATH${NC}"
+    rm -rf "$WORKTREE_PATH" 2>/dev/null || true
+  fi
+  
+  echo -e "${GREEN}✓ Cleanup complete${NC}"
+  exit 0
+fi
+
+# Create mode
+[[ -z "$BRANCH_NAME" ]] && { echo -e "${RED}Need branch name${NC}" >&2; show_help; exit 1; }
+
+# Detect base branch
+if [[ "$USE_CURRENT" = true ]]; then
+  BASE_BRANCH=$(git branch --show-current)
+elif [[ -z "$BASE_BRANCH" ]]; then
+  for b in main trunk master; do
+    git show-ref --verify --quiet refs/heads/$b 2>/dev/null && { BASE_BRANCH=$b; break; }
+  done
+fi
+[[ -z "$BASE_BRANCH" ]] && { echo -e "${RED}No base branch${NC}" >&2; exit 1; }
+
+WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${BRANCH_NAME}"
+[[ -d "$WORKTREE_PATH" ]] && { echo -e "${RED}Exists: $WORKTREE_PATH${NC}" >&2; exit 1; }
+
+# Create worktree
+echo -e "${BLUE}From: $BASE_BRANCH${NC}"
+echo -e "${GREEN}Create: $WORKTREE_PATH${NC}"
+
+if [[ "$CHECKOUT_EXISTING" = true ]]; then
+  if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME" 2>/dev/null; then
+    git worktree add "$WORKTREE_PATH" "$BRANCH_NAME"
+  elif git show-ref --verify --quiet "refs/remotes/origin/$BRANCH_NAME" 2>/dev/null; then
+    git worktree add --track -b "$BRANCH_NAME" "$WORKTREE_PATH" "origin/$BRANCH_NAME"
+  else
+    echo -e "${RED}Branch not found: $BRANCH_NAME${NC}" >&2
+    exit 1
+  fi
+else
+  git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" "$BASE_BRANCH"
+fi
+
+# Rails setup
+if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then
+  echo -e "${BLUE}Rails setup${NC}"
+  [[ -d "$REPO_ROOT/storage" ]] && {
+    rm -rf "$WORKTREE_PATH/storage"
+    cp -r "$REPO_ROOT/storage" "$WORKTREE_PATH/storage"
+    echo -e "${GREEN}✓ DB copied${NC}"
+  }
+  [[ -f "$WORKTREE_PATH/.dev-port" ]] && rm "$WORKTREE_PATH/.dev-port"
+fi
+
+# Create session
+ISSUE=$(echo "$PURPOSE" | grep -oE '#[0-9]+' | head -1 || echo "")
+SESSION_NAME="${SAFE_NAME}-${BRANCH_NAME} | pending | ${ISSUE} | ${REPO_NAME}"
+
+echo -e "${GREEN}Session: $SESSION_NAME${NC}"
+SESSION_ID=$(tmux new-session -d -P -F "#{session_id}" -s "$SESSION_NAME" -c "$WORKTREE_PATH" -e "PURPOSE=${PURPOSE}")
+
+# Store branch name for gwt -d (even after session rename)
+tmux set-option -t "$SESSION_ID" gwt-branch "$BRANCH_NAME" 2>/dev/null || true
+
+# Start pi
+tmux send-keys -t "$SESSION_ID" "pi -e .pi/extensions/purpose-gate.ts" C-m
+sleep 2
+
+[[ -n "$PURPOSE" ]] && tmux send-keys -t "$SESSION_ID" "$PURPOSE" C-m
+
+echo -e "${GREEN}✓ Done${NC}"
+echo -e "${BLUE}Attach: tmux attach -t '$SESSION_NAME'${NC}"
+
+[[ -z "$TMUX" ]] && tmux attach-session -t "$SESSION_ID"
