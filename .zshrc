@@ -10,6 +10,9 @@ export KEYTIMEOUT=1
 bindkey "^?" backward-delete-char
 bindkey "^H" backward-delete-char
 
+### XDG
+export XDG_CONFIG_HOME="$HOME/.config"
+
 ### Completion
 # Uncomment the following line to display red dots whilst waiting for completion.
 # COMPLETION_WAITING_DOTS="true"
