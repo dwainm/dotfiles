@@ -80,7 +80,16 @@ async function fetchModelPricing(): Promise<PricingData> {
 
 async function fetchAccountCredit(): Promise<number | null> {
   try {
-    return 100.00;
+    const { execSync } = await import("node:child_process");
+    const firectlPath = "/opt/homebrew/bin/firectl";
+    const output = execSync(`${firectlPath} account get`, { encoding: "utf-8" });
+    
+    const match = output.match(/Balance:\s*USD\s*([0-9]+\.?[0-9]*)/);
+    if (match && match[1]) {
+      return parseFloat(match[1]);
+    }
+    
+    return null;
   } catch (error) {
     console.error("Failed to fetch account credit:", error);
     return null;
@@ -113,7 +122,7 @@ export default function (pi: ExtensionAPI) {
     });
   });
 
-  pi.on("tool_execution_end", async (event, ctx) => {
+  pi.on("turn_end", async (event, ctx) => {
     const m = event.message;
     if (!m || m.role !== "assistant" || !m.usage) {
       return;
