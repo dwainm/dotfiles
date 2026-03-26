@@ -138,7 +138,7 @@ export default function (pi: ExtensionAPI) {
     let cost = 0;
     if (state.pricing?.models[m.model]) {
       const p = state.pricing.models[m.model];
-      cost = (m.usage.input * p.input + m.usage.output * p.output + (m.usage.cacheRead || 0) * (p.cacheRead || 0)) / 1_000_000;
+      cost = (m.usage.input * p.input + m.usage.output * p.output + (m.usage.cacheRead || 0) * p.input * 0.5) / 1_000_000;
     }
     
     state.messageCosts[messageId] = {
