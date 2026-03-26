@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.62.0",
   "defaultProvider": "fireworks",
-  "defaultModel": "accounts/fireworks/models/minimax-m2p5",
+  "defaultModel": "accounts/fireworks/models/kimi-k2-thinking",
   "defaultThinkingLevel": "off",
   "theme": "catppuccin-mocha",
   "skills": [
@@ -9,6 +9,7 @@
   ],
   "packages": [
     "pi-web-access",
-    "npm:pi-web-access"
+    "npm:pi-web-access",
+    "/Users/dwain/.pi/agent/extensions/pi-tau-mux"
   ]
 }
