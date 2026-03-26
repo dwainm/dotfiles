@@ -155,7 +155,7 @@ export default function (pi: ExtensionAPI) {
     let creditDisplay = "";
     if (state.startingCredit !== null) {
       const remaining = Math.max(0, state.startingCredit - totalCost);
-      creditDisplay = ` [$${state.startingCredit.toFixed(2)} → $${remaining.toFixed(2)}]`;
+      creditDisplay = ` [$${state.startingCredit.toFixed(2)} -> $${remaining.toFixed(2)}]`;
     }
 
     const display = `${costDisplay} ${tokensDisplay}${creditDisplay}`;

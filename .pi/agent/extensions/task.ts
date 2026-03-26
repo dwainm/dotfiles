@@ -20,7 +20,7 @@ import type { ExtensionAPI, ExtensionContext, Theme } from "@mariozechner/pi-cod
 import { DynamicBorder } from "@mariozechner/pi-coding-agent";
 import { Container, matchesKey, Text, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
 import { Type } from "@sinclair/typebox";
-import { registerPanel, requestRender } from "./footer-registry";
+import { registerPanel, requestRender } from "./lib/footer-registry";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
