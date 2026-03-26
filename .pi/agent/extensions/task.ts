@@ -20,6 +20,7 @@ import type { ExtensionAPI, ExtensionContext, Theme } from "@mariozechner/pi-cod
 import { DynamicBorder } from "@mariozechner/pi-coding-agent";
 import { Container, matchesKey, Text, truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
 import { Type } from "@sinclair/typebox";
+import { registerPanel, requestRender } from "./footer-registry";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -208,6 +209,67 @@ export default function (pi: ExtensionAPI) {
 		}, { placement: "belowEditor" });
 	};
 
+	// Panel renderer for footer-manager
+	const renderFooterPanel = (width: number, theme: Theme, _ctx: ExtensionContext) => {
+		const done = tasks.filter((t) => t.status === "done").length;
+		const active = tasks.filter((t) => t.status === "inprogress").length;
+		const idle = tasks.filter((t) => t.status === "idle").length;
+		const total = tasks.length;
+
+		// ── Line 1: list title + progress (left), counts (right) ──
+		const titleDisplay = listTitle
+			? theme.fg("accent", ` ${listTitle} `)
+			: theme.fg("dim", " Task ");
+
+		const l1Left = total === 0
+			? titleDisplay + theme.fg("muted", "no tasks")
+			: titleDisplay +
+				theme.fg("warning", "[") +
+				theme.fg("success", `${done}`) +
+				theme.fg("dim", "/") +
+				theme.fg("success", `${total}`) +
+				theme.fg("warning", "]");
+
+		const l1Right = total === 0
+			? ""
+			: theme.fg("dim", STATUS_ICON.idle + " ") + theme.fg("muted", `${idle}`) +
+				theme.fg("dim", "  ") +
+				theme.fg("accent", STATUS_ICON.inprogress + " ") + theme.fg("accent", `${active}`) +
+				theme.fg("dim", "  ") +
+				theme.fg("success", STATUS_ICON.done + " ") + theme.fg("success", `${done}`) +
+				theme.fg("dim", " ");
+
+		const pad1 = " ".repeat(Math.max(1, width - visibleWidth(l1Left) - visibleWidth(l1Right)));
+		const line1 = truncateToWidth(l1Left + pad1 + l1Right, width, "");
+
+		if (total === 0) return { lines: [line1], priority: 10 };
+
+		// ── Rows: inprogress first, then most recent done, max 5 ──
+		const activeTasks = tasks.filter((t) => t.status === "inprogress");
+		const doneTasks = tasks.filter((t) => t.status === "done").reverse();
+		const visible = [...activeTasks, ...doneTasks].slice(0, 5);
+		const remaining = total - visible.length;
+
+		const rows = visible.map((t) => {
+			const icon = t.status === "done"
+				? theme.fg("success", STATUS_ICON.done)
+				: theme.fg("accent", STATUS_ICON.inprogress);
+			const text = t.status === "done"
+				? theme.fg("dim", t.text)
+				: theme.fg("success", t.text);
+			return truncateToWidth(` ${icon} ${text}`, width, "");
+		});
+
+		if (remaining > 0) {
+			rows.push(truncateToWidth(
+				` ${theme.fg("dim", `  +${remaining} more`)}`,
+				width, "",
+			));
+		}
+
+		return { lines: [line1, ...rows], priority: 10 };
+	};
+
 	const refreshUI = (ctx: ExtensionContext) => {
 		if (tasks.length === 0) {
 			ctx.ui.setStatus("📋 Task: no tasks", "task");
@@ -218,6 +280,7 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		refreshWidget(ctx);
+		requestRender();
 	};
 
 	// ── State reconstruction from session ──────────────────────────────
@@ -246,6 +309,8 @@ export default function (pi: ExtensionAPI) {
 	};
 
 	pi.on("session_start", async (_event, ctx) => {
+		// Register footer panel
+		registerPanel("task", renderFooterPanel);
 		reconstructState(ctx);
 	});
 	pi.on("session_switch", async (_event, ctx) => reconstructState(ctx));

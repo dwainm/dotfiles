@@ -18,6 +18,7 @@ Creates git worktree + tmux session. Purpose sets PURPOSE env var.
 
 Options:
   gwt <branch> [purpose]    Create worktree
+  gwt -i "<instruction>"    Smart mode: use AI to determine branch & purpose
   gwt -l                    List worktrees
   gwt -d <branch>           Delete worktree
   gwt -b <base> <branch>    Create from base branch
@@ -26,6 +27,7 @@ Options:
 
 Examples:
   gwt feature "Add auth #42"
+  gwt -i "fix login bug from issue #42"
   gwt hotfix
   gwt -d feature
 EOF
@@ -38,6 +40,8 @@ USE_CURRENT=false
 DELETE_MODE=false
 LIST_MODE=false
 CHECKOUT_EXISTING=false
+INSTRUCTION_MODE=false
+INSTRUCTION=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -47,6 +51,11 @@ while [[ $# -gt 0 ]]; do
     -b) BASE_BRANCH="$2"; shift 2 ;;
     -c) USE_CURRENT=true; shift ;;
     -B) CHECKOUT_EXISTING=true; shift ;;
+    -i)
+      INSTRUCTION_MODE=true
+      INSTRUCTION="$2"
+      shift 2
+      ;;
     -*)
       echo -e "${RED}Unknown: $1${NC}" >&2
       exit 1
@@ -73,6 +82,28 @@ git rev-parse --git-dir > /dev/null 2>&1 || {
 REPO_ROOT=$(git rev-parse --show-toplevel)
 REPO_NAME=$(basename "$REPO_ROOT")
 SAFE_NAME=$(echo "$REPO_NAME" | sed 's/\./_/g')
+
+# Instruction mode - call pi to figure out branch and purpose
+if [[ "$INSTRUCTION_MODE" = true ]]; then
+  echo -e "${BLUE}Interpret: $INSTRUCTION${NC}"
+  
+  RESPONSE=$(pi --mode text --no-extensions -p "Given this instruction: \"$INSTRUCTION\", respond with ONLY this format (no other text):
+BRANCH: <kebab-case-branch-name>
+PURPOSE: <human readable purpose>" 2>&1 | tail -5)
+  
+  # Parse the response
+  BRANCH_NAME=$(echo "$RESPONSE" | grep "^BRANCH:" | sed 's/^BRANCH: *//' | tr -d '\n')
+  PURPOSE=$(echo "$RESPONSE" | grep "^PURPOSE:" | sed 's/^PURPOSE: *//' | tr -d '\n')
+  
+  if [[ -z "$BRANCH_NAME" ]]; then
+    echo -e "${RED}Failed to parse branch from pi response${NC}" >&2
+    echo "$RESPONSE" >&2
+    exit 1
+  fi
+  
+  echo -e "${GREEN}Branch: $BRANCH_NAME${NC}"
+  echo -e "${GREEN}Purpose: $PURPOSE${NC}"
+fi
 
 # List
 if [[ "$LIST_MODE" = true ]]; then
@@ -170,8 +201,8 @@ SESSION_ID=$(tmux new-session -d -P -F "#{session_id}" -s "$SESSION_NAME" -c "$W
 # Store branch name for gwt -d (even after session rename)
 tmux set-option -t "$SESSION_ID" gwt-branch "$BRANCH_NAME" 2>/dev/null || true
 
-# Start pi
-tmux send-keys -t "$SESSION_ID" "pi -e .pi/extensions/purpose-gate.ts" C-m
+# Start pi - extensions auto-loaded from ~/.pi/agent/extensions/
+tmux send-keys -t "$SESSION_ID" "pi" C-m
 sleep 2
 
 [[ -n "$PURPOSE" ]] && tmux send-keys -t "$SESSION_ID" "$PURPOSE" C-m
