@@ -6,6 +6,8 @@ import { join } from "node:path";
 interface MessageCost {
   input: number;
   output: number;
+  cacheRead: number;
+  cacheWrite: number;
   model: string;
   cost: number;
 }
@@ -136,12 +138,14 @@ export default function (pi: ExtensionAPI) {
     let cost = 0;
     if (state.pricing?.models[m.model]) {
       const p = state.pricing.models[m.model];
-      cost = (m.usage.input * p.input + m.usage.output * p.output) / 1_000_000;
+      cost = (m.usage.input * p.input + m.usage.output * p.output + (m.usage.cacheRead || 0) * (p.cacheRead || 0)) / 1_000_000;
     }
     
     state.messageCosts[messageId] = {
       input: m.usage.input,
       output: m.usage.output,
+      cacheRead: m.usage.cacheRead || 0,
+      cacheWrite: m.usage.cacheWrite || 0,
       model: m.model,
       cost: cost
     };
@@ -157,12 +161,15 @@ export default function (pi: ExtensionAPI) {
     const totalCost = Object.values(state.messageCosts).reduce((sum, msg) => sum + msg.cost, 0);
     const totalInput = Object.values(state.messageCosts).reduce((sum, msg) => sum + msg.input, 0);
     const totalOutput = Object.values(state.messageCosts).reduce((sum, msg) => sum + msg.output, 0);
+    const totalCacheRead = Object.values(state.messageCosts).reduce((sum, msg) => sum + (msg.cacheRead || 0), 0);
+    const totalCacheWrite = Object.values(state.messageCosts).reduce((sum, msg) => sum + (msg.cacheWrite || 0), 0);
+    const totalTokens = totalInput + totalOutput + totalCacheRead + totalCacheWrite;
 
     const fmt = (n: number) => (n < 1000 ? `${n}` : `${(n / 1000).toFixed(1)}k`);
     const fmtCost = (n: number) => (n < 0.01 ? `$${n.toFixed(4)}` : `$${n.toFixed(3)}`);
     
     const costDisplay = state.pricingLoading ? " $?" : ` ${fmtCost(totalCost)}`;
-    const tokensDisplay = `${fmt(totalInput)}/${fmt(totalOutput)}`;
+    const tokensDisplay = `${fmt(totalTokens)}(${fmt(totalInput)}/${fmt(totalOutput)}|${fmt(totalCacheRead)})`;
     
     let creditDisplay = "";
     if (state.startingCredit !== null) {
