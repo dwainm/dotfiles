@@ -80,11 +80,14 @@ async function fetchModelPricing(): Promise<PricingData> {
 
 async function fetchAccountCredit(): Promise<number | null> {
   try {
-    const { execSync } = await import("node:child_process");
-    const firectlPath = "/opt/homebrew/bin/firectl";
-    const output = execSync(`${firectlPath} account get`, { encoding: "utf-8" });
+    const { exec } = await import("node:child_process");
+    const util = await import("node:util");
+    const execAsync = util.promisify(exec);
     
-    const match = output.match(/Balance:\s*USD\s*([0-9]+\.?[0-9]*)/);
+    const firectlPath = "/opt/homebrew/bin/firectl";
+    const { stdout } = await execAsync(`${firectlPath} account get`);
+    
+    const match = stdout.match(/Balance:\s*USD\s*([0-9]+\.?[0-9]*)/);
     if (match && match[1]) {
       return parseFloat(match[1]);
     }
