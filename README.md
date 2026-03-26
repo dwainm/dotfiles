@@ -46,20 +46,30 @@ https://guides.rubyonrails.org/install_ruby_on_rails.html
 # dotfiles
 How to use
 
-Clone into $HOME/dotfiles and CD into it
-`git clone git@github.com:dwainm/dotfiles.git && cd dotfiles`
+## Installation (via yadm)
 
-Rename .git to .myconf
-`mv .git .myconf`
+```bash
+# Install yadm
+brew install yadm
 
-Mv all from dotfiles to $HOME
-`cd ~ && mv dotfiles/.* .`
+# Clone dotfiles (yadm will clone to ~/.local/share/yadm/repo.git)
+yadm clone git@github.com:dwainm/dotfiles.git
 
-Add aliases:
+# Yadm will checkout files to your home directory automatically
+```
 
-`alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
+## Managing dotfiles
 
-now you can manage your dotfiles with config(git alias) command.
+```bash
+yadm status         # See changes
+yadm add <file>     # Stage files
+yadm commit -m ".." # Commit
+yadm push           # Push to remote
+yadm pull           # Pull latest
+```
+
+## Git data location
+Yadm stores its git repo at `~/.local/share/yadm/repo.git` (XDG_DATA_HOME compliant).
 
 # Terminal
 
@@ -76,8 +86,7 @@ Makes sur zpresto is loaded below. The plugins should all work.
 Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
 
 - `rm -rf ~/.zprezto && git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}"/.zprezto`
-- Add back alias as we removed it: `alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'`
-- Make sure we do not overwrite the save zshrc file with all important functions and aliases: `config checkout -- .zprezto/runcoms/zshrc`
+- Make sure we do not overwrite the saved zshrc file with all important functions and aliases: `yadm checkout -- .zprezto/runcoms/zshrc`
 
 Generate your configuration files (copy/paste this as one command):
 

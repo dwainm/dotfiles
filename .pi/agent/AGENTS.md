@@ -4,7 +4,7 @@ This directory contains my pi coding agent harness configuration at `~/.pi`.
 
 ## Principles
 
-- **Version controlled via `config` alias**: All harness files tracked in dotfiles repo
+- **Version controlled via yadm**: All config files tracked in dotfiles repo at `~/.local/share/yadm/repo.git`
 - **Secrets excluded**: `auth.json`, sessions/ never committed
 - **Config as code**: Changes via settings.json
 
@@ -15,11 +15,13 @@ This directory contains my pi coding agent harness configuration at `~/.pi`.
 
 ## Version Control
 
+Yadm stores its git data at `~/.local/share/yadm/repo.git` (XDG_DATA_HOME location).
+
 ```bash
-config status         # Check changes
-config add -p         # Stage
-config commit -m "..."
-config push
+yadm status         # Check changes
+yadm add <file>     # Stage files
+yadm commit -m "..."# Commit
+yadm push           # Push to remote
 ```
 
 ---
@@ -93,7 +95,7 @@ Analyzes sessions. `/review-all-sessions`, `/review-session`
 **Session End:**
 - Check incomplete tasks
 - Update Recent Work Log below
-- `config add/commit` if harness modified
+- `yadm add/commit` if harness modified
 
 ---
 
@@ -199,14 +201,16 @@ The model does NOT have:
 - **Track progress** — Toggle tasks as you go
 - **Update this file** — Keep the Recent Work Log current
 
-### Git Workflow (via `config` alias)
-All harness changes are tracked in `~/.myconf/` (bare git repo):
+### Git Workflow (via yadm)
+All harness changes are tracked in yadm's dotfiles repo:
 ```
-config status     # See what's changed
-config add -p     # Stage selectively  
-config commit -m "..."
-config push       # Push to dotfiles repo
+yadm status       # See what's changed
+yadm add <file>   # Stage files
+yadm commit -m "..."
+yadm push         # Push to dotfiles repo
 ```
+
+Yadm git data lives at `~/.local/share/yadm/repo.git`.
 
 ### Session Lifecycle
 1. **Start** → Acknowledge purpose → `task list` → add tasks → toggle → work
