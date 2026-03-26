@@ -85,22 +85,11 @@ async function fetchAccountCredit(): Promise<number | null> {
     const execAsync = util.promisify(exec);
     
     const firectlPath = "/opt/homebrew/bin/firectl";
-    const { stdout } = await execAsync(`${firectlPath} quota list`);
+    const { stdout } = await execAsync(`${firectlPath} account get`);
     
-    // Parse monthly spend quota: "monthly-spend-usd  500  500  20"
-    // where format is: NAME VALUE MAX USAGE
-    const match = stdout.match(/monthly-spend-usd\s+(\d+)\s+(\d+)\s+(\d+)/);
-    if (match && match.length >= 4) {
-      const limit = parseFloat(match[2]);
-      const used = parseFloat(match[3]);
-      return Math.max(0, limit - used);
-    }
-    
-    // Fallback to pre-paid balance if quota not found
-    const accountOutput = await execAsync(`${firectlPath} account get`);
-    const balanceMatch = accountOutput.stdout.match(/Balance:\s*USD\s*([0-9]+\.?[0-9]*)/);
-    if (balanceMatch && balanceMatch[1]) {
-      return parseFloat(balanceMatch[1]);
+    const match = stdout.match(/Balance:\s*USD\s*([0-9]+\.?[0-9]*)/);
+    if (match && match[1]) {
+      return parseFloat(match[1]);
     }
     
     return null;
