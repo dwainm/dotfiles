@@ -208,76 +208,6 @@ export default function (pi: ExtensionAPI) {
 		}, { placement: "belowEditor" });
 	};
 
-	const refreshFooter = (ctx: ExtensionContext) => {
-		ctx.ui.setFooter((tui, theme, footerData) => {
-			const unsub = footerData.onBranchChange(() => tui.requestRender());
-
-			return {
-				dispose: unsub,
-				invalidate() {},
-				render(width: number): string[] {
-					const done = tasks.filter((t) => t.status === "done").length;
-					const active = tasks.filter((t) => t.status === "inprogress").length;
-					const idle = tasks.filter((t) => t.status === "idle").length;
-					const total = tasks.length;
-
-					// ── Line 1: list title + progress (left), counts (right) ──
-					const titleDisplay = listTitle
-						? theme.fg("accent", ` ${listTitle} `)
-						: theme.fg("dim", " Task ");
-
-					const l1Left = total === 0
-						? titleDisplay + theme.fg("muted", "no tasks")
-						: titleDisplay +
-							theme.fg("warning", "[") +
-							theme.fg("success", `${done}`) +
-							theme.fg("dim", "/") +
-							theme.fg("success", `${total}`) +
-							theme.fg("warning", "]");
-
-					const l1Right = total === 0
-						? ""
-						: theme.fg("dim", STATUS_ICON.idle + " ") + theme.fg("muted", `${idle}`) +
-							theme.fg("dim", "  ") +
-							theme.fg("accent", STATUS_ICON.inprogress + " ") + theme.fg("accent", `${active}`) +
-							theme.fg("dim", "  ") +
-							theme.fg("success", STATUS_ICON.done + " ") + theme.fg("success", `${done}`) +
-							theme.fg("dim", " ");
-
-					const pad1 = " ".repeat(Math.max(1, width - visibleWidth(l1Left) - visibleWidth(l1Right)));
-					const line1 = truncateToWidth(l1Left + pad1 + l1Right, width, "");
-
-					if (total === 0) return [line1];
-
-					// ── Rows: inprogress first, then most recent done, max 5 ──
-					const activeTasks = tasks.filter((t) => t.status === "inprogress");
-					const doneTasks = tasks.filter((t) => t.status === "done").reverse();
-					const visible = [...activeTasks, ...doneTasks].slice(0, 5);
-					const remaining = total - visible.length;
-
-					const rows = visible.map((t) => {
-						const icon = t.status === "done"
-							? theme.fg("success", STATUS_ICON.done)
-							: theme.fg("accent", STATUS_ICON.inprogress);
-						const text = t.status === "done"
-							? theme.fg("dim", t.text)
-							: theme.fg("success", t.text);
-						return truncateToWidth(` ${icon} ${text}`, width, "");
-					});
-
-					if (remaining > 0) {
-						rows.push(truncateToWidth(
-							` ${theme.fg("dim", `  +${remaining} more`)}`,
-							width, "",
-						));
-					}
-
-					return [line1, ...rows];
-				},
-			};
-		});
-	};
-
 	const refreshUI = (ctx: ExtensionContext) => {
 		if (tasks.length === 0) {
 			ctx.ui.setStatus("📋 Task: no tasks", "task");
@@ -288,7 +218,6 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		refreshWidget(ctx);
-		refreshFooter(ctx);
 	};
 
 	// ── State reconstruction from session ──────────────────────────────

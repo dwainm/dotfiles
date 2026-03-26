@@ -16,9 +16,6 @@ bindkey "^H" backward-delete-char
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
-# j CLI tool completion
-eval "$(j completion)"
-
 # Up and Down arrow keys now shows related history based on what is entered on the current prompt
 
 if [[ -s "/opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
