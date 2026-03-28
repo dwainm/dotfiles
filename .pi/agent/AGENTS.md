@@ -104,6 +104,7 @@ Analyzes sessions. `/review-all-sessions`, `/review-session`
 <!-- Add completed work here as you go -->
 <!-- Format: - YYYY-MM-DD: Brief description of what was done -->
 
+- 2025-03-28: Enhanced tool-counter footer to show compact model badge with per-token pricing (e.g., "K2.5-Turbo($0.60/$2.5/M)")
 - 2025-03-26: Migrated from `.myconf`/config alias to yadm for dotfiles; documented yadm git location (~/.local/share/yadm/repo.git); updated AGENTS.md and README.md; removed old .myconf
 - 2025-03-25: Fixed tool-counter extension - non-blocking pricing fetch with disk cache; removed broken theme application (THEME_MAP referenced non-existent themes)
 - 2025-03-19: Renamed tilldone extension to task, removed blocking behavior, updated AGENTS.md docs
