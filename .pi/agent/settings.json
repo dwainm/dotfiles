@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.62.0",
   "defaultProvider": "fireworks",
-  "defaultModel": "accounts/fireworks/models/kimi-k2-thinking",
+  "defaultModel": "accounts/fireworks/routers/kimi-k2p5-turbo",
   "defaultThinkingLevel": "off",
   "theme": "catppuccin-mocha",
   "skills": [
