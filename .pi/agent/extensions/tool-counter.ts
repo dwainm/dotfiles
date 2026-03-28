@@ -101,6 +101,61 @@ async function fetchAccountCredit(): Promise<number | null> {
   }
 }
 
+function getShortModelName(modelId: string): string {
+  // Extract the model name from the full ID
+  const parts = modelId.split('/');
+  const name = parts[parts.length - 1] || modelId;
+  
+  // Common model name mappings
+  const mappings: Record<string, string> = {
+    'kimi-k2p5-turbo': 'K2.5-Turbo',
+    'kimi-k2p5': 'K2.5',
+    'kimi-k2-thinking': 'K2-Thinking',
+    'kimi-k2': 'K2',
+    'deepseek-v3p2': 'DS-V3.2',
+    'deepseek-v3p1': 'DS-V3.1',
+    'deepseek-r1': 'DS-R1',
+    'minimax-m2p5': 'MiniMax',
+    'glm-5': 'GLM-5',
+    'glm-4p7': 'GLM-4.7',
+    'cogito-671b-v2-p1': 'Cogito-671B',
+    'gpt-oss-120b': 'GPT-OSS-120B',
+    'gpt-oss-20b': 'GPT-OSS-20B',
+    'qwen3-8b': 'Qwen3-8B',
+    'mixtral-8x22b-instruct': 'Mixtral',
+  };
+  
+  // Try to match the mapping
+  for (const [key, value] of Object.entries(mappings)) {
+    if (name.toLowerCase().includes(key.toLowerCase())) {
+      return value;
+    }
+  }
+  
+  // Fallback: truncate long names
+  return name.length > 12 ? name.slice(0, 10) + '..' : name;
+}
+
+function getModelPricing(modelId: string, pricing: PricingData | null): { input: number; output: number } | null {
+  if (!pricing?.models[modelId]) {
+    // Try to infer from model name patterns
+    if (modelId.includes('kimi-k2p5')) return { input: 0.6, output: 2.5 };
+    if (modelId.includes('kimi-k2')) return { input: 0.6, output: 2.5 };
+    if (modelId.includes('deepseek-v3')) return { input: 0.56, output: 2.5 };
+    if (modelId.includes('deepseek-r1')) return { input: 0.75, output: 2.5 };
+    if (modelId.includes('minimax')) return { input: 0.3, output: 1.0 };
+    if (modelId.includes('glm-5')) return { input: 1.0, output: 3.2 };
+    if (modelId.includes('glm-4')) return { input: 0.6, output: 1.8 };
+    if (modelId.includes('cogito')) return { input: 1.2, output: 3.0 };
+    if (modelId.includes('gpt-oss-120b')) return { input: 0.15, output: 0.5 };
+    if (modelId.includes('gpt-oss-20b')) return { input: 0.07, output: 0.25 };
+    if (modelId.includes('qwen3')) return { input: 0.2, output: 0.6 };
+    if (modelId.includes('mixtral')) return { input: 0.9, output: 0.9 };
+    return null;
+  }
+  return pricing.models[modelId];
+}
+
 export default function (pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
     requestRender();
@@ -158,6 +213,12 @@ export default function (pi: ExtensionAPI) {
       return { lines: ["$? 0/0"], priority: 100 };
     }
 
+    // Get current model info
+    const currentModel = ctx.model;
+    const modelId = currentModel?.id || "unknown";
+    const shortName = getShortModelName(modelId);
+    const pricing = getModelPricing(modelId, state.pricing);
+    
     const totalCost = Object.values(state.messageCosts).reduce((sum, msg) => sum + msg.cost, 0);
     const totalInput = Object.values(state.messageCosts).reduce((sum, msg) => sum + msg.input, 0);
     const totalOutput = Object.values(state.messageCosts).reduce((sum, msg) => sum + msg.output, 0);
@@ -168,16 +229,22 @@ export default function (pi: ExtensionAPI) {
     const fmt = (n: number) => (n < 1000 ? `${n}` : `${(n / 1000).toFixed(1)}k`);
     const fmtCost = (n: number) => (n < 0.01 ? `$${n.toFixed(4)}` : `$${n.toFixed(3)}`);
     
-    const costDisplay = state.pricingLoading ? " $?" : ` ${fmtCost(totalCost)}`;
+    // Build model badge with pricing
+    let modelBadge = shortName;
+    if (pricing) {
+      modelBadge = `${shortName}($${pricing.input.toFixed(2)}/$${pricing.output.toFixed(1)}/M)`;
+    }
+    
+    const costDisplay = state.pricingLoading ? "$?" : fmtCost(totalCost);
     const tokensDisplay = `${fmt(totalTokens)}(${fmt(totalInput)}/${fmt(totalOutput)}|${fmt(totalCacheRead)})`;
     
     let creditDisplay = "";
     if (state.startingCredit !== null) {
       const remaining = Math.max(0, state.startingCredit - totalCost);
-      creditDisplay = ` [$${state.startingCredit.toFixed(2)} -> $${remaining.toFixed(2)}]`;
+      creditDisplay = ` [$${state.startingCredit.toFixed(2)}->$${remaining.toFixed(2)}]`;
     }
 
-    const display = `${costDisplay} ${tokensDisplay}${creditDisplay}`;
+    const display = `${modelBadge} ${costDisplay} ${tokensDisplay}${creditDisplay}`;
     return { lines: [display], priority: 100 };
   });
 }
