@@ -1,0 +1,10 @@
+{
+  "name": "skill-gatekeeper",
+  "version": "1.0.0",
+  "description": "Prevents skills from auto-loading into context. Requires explicit /skill:name to activate skills.",
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
