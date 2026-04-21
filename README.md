@@ -1,64 +1,24 @@
-
-# Macos 
-### Set capslock to be control.
-- In systems preference go to keyboard.
-- Click on the bottom right "modifier keys"
-- Change capslock to be control.
-
-### Turn off shortcuts to change input sources
-Keyboard > Shortctus > Input Sources
-
-
-
-### Mac Apps
-- Install PasteNow
-
-### Mouse changes
-Turn on tap to click on trackpad settings
-### Cloud 
-Change iCloud settings to use Desktop and Documents folder. So cloud documents and desktop is not seperate from device documents and desktop.
-
-### Spaces and Desktop setting's
-1. Go to keyboard shortcuts and make sure CTR - [1-9] shortcuts are enabled for moving between spaces.
-2. Go to mission controll (settings > Desktop and dock ) and turn off automatticial re-arrange spaces by recent use.
-3. Go to accesability > display and turn off reduce motion (this will remove the slideshow effect when switching spaces).
-
-# Brew
-
-`[brew](brew) install git` 
-`sudo mv /usr/bin/git /usr/bin/git-apple`
-
-Install all brew packages with `brew bundle`
-
-### Setup Diffmerge
-`git config --global merge.tool diffmerge` 
-
-#### Mise
-https://mise.jdx.dev
-
-
-### Ruby and Rails
-https://guides.rubyonrails.org/install_ruby_on_rails.html
-
-## Apps
-1. Setup apple calender accounts
-
 # dotfiles
-How to use
 
-## Installation (via yadm)
+Managed with [yadm](https://yadm.io/). No symlinks, no Stow — yadm tracks dotfiles directly in `$HOME` using a bare git repo.
+
+## Installation
 
 ```bash
 # Install yadm
-brew install yadm
+sudo pacman -S yadm   # Arch
+brew install yadm     # macOS
 
-# Clone dotfiles (yadm will clone to ~/.local/share/yadm/repo.git)
+# Clone dotfiles
 yadm clone git@github.com:dwainm/dotfiles.git
 
-# Yadm will checkout files to your home directory automatically
+# If local files differ from the repo, overwrite them:
+yadm checkout --force
 ```
 
 ## Managing dotfiles
+
+Edit files directly in `~` — they are the real tracked files, not symlinks.
 
 ```bash
 yadm status         # See changes
@@ -68,46 +28,40 @@ yadm push           # Push to remote
 yadm pull           # Pull latest
 ```
 
+## OS-specific files
+
+Yadm uses **alternates** — files with `##os.Darwin##` or `##os.Linux##` suffixes. On checkout, yadm detects your OS and deploys the matching version.
+
+| macOS-only | Linux-only | Cross-platform |
+|---|---|---|
+| `aerospace` | `hypr` | `git`, `gh`, `nvim` |
+| `sketchybar` | `waybar` | `tmux`, `kitty` |
+| `skhd` | `walker` | `zshrc`, `vimrc` |
+| `karabiner` | `mako` | `mise`, `bin` |
+| `kanata` | `omarchy` | |
+
 ## Git data location
-Yadm stores its git repo at `~/.local/share/yadm/repo.git` (XDG_DATA_HOME compliant).
 
-# Terminal
+`~/.local/share/yadm/repo.git` (XDG_DATA_HOME compliant).
 
-Set brew ZSH as you shell:
-`sudo sh -c "echo $(which zsh) >> /etc/shells"`
-`chsh -s $(which zsh)`
+## Setup notes
 
-Makes sur zpresto is loaded below. The plugins should all work.
+### macOS
+- Set capslock to control in System Preferences > Keyboard > Modifier Keys
+- Turn off input source shortcuts: Keyboard > Shortcuts > Input Sources
+- Enable tap-to-click in Trackpad settings
+- Spaces: enable Ctrl-[1-9] for switching, disable auto-rearrange, turn off reduce motion
 
+### Terminal
+- Set ZSH as your shell: `chsh -s $(which zsh)`
+- Prezto: `git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}"/.zprezto`
+- Generate prezto runcoms, then restore your zshrc: `yadm checkout -- .zprezto/runcoms/zshrc`
 
-
-### Setup Zshell Presto:
-
-Remember Prezto overrides ~/zshrc and symlink it into the prezto one.
-
-- `rm -rf ~/.zprezto && git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}"/.zprezto`
-- Make sure we do not overwrite the saved zshrc file with all important functions and aliases: `yadm checkout -- .zprezto/runcoms/zshrc`
-
-Generate your configuration files (copy/paste this as one command):
-
+### tmux plugins
+```bash
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 ```
-$ setopt EXTENDED_GLOB
-for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
- ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
-done
-chsh -s $(which zsh)
-```
+Then in tmux: `<prefix> + I` to install plugins.
 
-### Set up path
-Check: ` echo $PATH`
-Make sure your paths are configured so that home brew ( `/usr/local/bin` ) 
-is before `/bin` and `/usr/bin/`
-
-#tmux
-```
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-```
-
-Open tmux and then:
-<prefix> I to install plugins.
-
+### Mise
+https://mise.jdx.dev
