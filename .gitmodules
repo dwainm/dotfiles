@@ -1,3 +1,0 @@
-[submodule ".pi/agent/extensions/pi-tau-mux"]
-	path = .pi/agent/extensions/pi-tau-mux
-	url = https://github.com/dwainm/pi-tau-mux.git
