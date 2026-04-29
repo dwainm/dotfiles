@@ -83,20 +83,24 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 REPO_NAME=$(basename "$REPO_ROOT")
 SAFE_NAME=$(echo "$REPO_NAME" | sed 's/\./_/g')
 
-# Instruction mode - call pi to figure out branch and purpose
+# Instruction mode - call opencode to figure out branch and purpose
 if [[ "$INSTRUCTION_MODE" = true ]]; then
   echo -e "${BLUE}Interpret: $INSTRUCTION${NC}"
   
-  RESPONSE=$(pi --mode text --no-extensions -p "Given this instruction: \"$INSTRUCTION\", respond with ONLY this format (no other text):
+  GWT_MODEL="opencode-go/kimi-k2.6"
+  echo -e "${BLUE}Model: $GWT_MODEL${NC}"
+  
+  # Use opencode with a one-shot prompt to get branch and purpose
+  RESPONSE=$(timeout 30 opencode run --model "$GWT_MODEL" "Given this instruction: \"$INSTRUCTION\", respond with ONLY this format (no other text):
 BRANCH: <kebab-case-branch-name>
-PURPOSE: <human readable purpose>" 2>&1 | tail -5)
+PURPOSE: <human readable purpose>" 2>/dev/null | tail -10)
   
   # Parse the response
   BRANCH_NAME=$(echo "$RESPONSE" | grep "^BRANCH:" | sed 's/^BRANCH: *//' | tr -d '\n')
   PURPOSE=$(echo "$RESPONSE" | grep "^PURPOSE:" | sed 's/^PURPOSE: *//' | tr -d '\n')
   
   if [[ -z "$BRANCH_NAME" ]]; then
-    echo -e "${RED}Failed to parse branch from pi response${NC}" >&2
+    echo -e "${RED}Failed to parse branch from opencode response${NC}" >&2
     echo "$RESPONSE" >&2
     exit 1
   fi
@@ -117,8 +121,11 @@ if [[ "$DELETE_MODE" = true ]]; then
   
   WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${BRANCH_NAME}"
   
-  # 1. Kill tmux session (matches either original or renamed format)
-  SESSION=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | grep -E "(^| )${BRANCH_NAME}( |\||$)" | head -1)
+  # 1. Kill tmux session (match by gwt-branch option or fallback to name)
+  SESSION=$(tmux list-sessions -F "#{session_name}:#{@gwt-branch}" 2>/dev/null | grep ":${BRANCH_NAME}$" | head -1 | cut -d: -f1)
+  if [[ -z "$SESSION" ]]; then
+    SESSION=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | grep "${BRANCH_NAME}" | head -1)
+  fi
   if [[ -n "$SESSION" ]]; then
     echo -e "${YELLOW}Kill session: $SESSION${NC}"
     tmux kill-session -t "$SESSION" 2>/dev/null || true
@@ -201,11 +208,12 @@ SESSION_ID=$(tmux new-session -d -P -F "#{session_id}" -s "$SESSION_NAME" -c "$W
 # Store branch name for gwt -d (even after session rename)
 tmux set-option -t "$SESSION_ID" gwt-branch "$BRANCH_NAME" 2>/dev/null || true
 
-# Start pi - extensions auto-loaded from ~/.pi/agent/extensions/
-tmux send-keys -t "$SESSION_ID" "pi" C-m
-sleep 2
-
-[[ -n "$PURPOSE" ]] && tmux send-keys -t "$SESSION_ID" "$PURPOSE" C-m
+# Start opencode with prompt pre-loaded
+if [[ -n "$PURPOSE" ]]; then
+  tmux send-keys -t "$SESSION_ID" "opencode --prompt \"$PURPOSE\"" C-m
+else
+  tmux send-keys -t "$SESSION_ID" "opencode" C-m
+fi
 
 echo -e "${GREEN}✓ Done${NC}"
 echo -e "${BLUE}Attach: tmux attach -t '$SESSION_NAME'${NC}"
