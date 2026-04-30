@@ -5,7 +5,7 @@
 cd "${1:-.}" || exit 1
 
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || {
-  echo "Not in a git repo" >&2
+  tmux display-message "Not in a git repo: $(pwd)"
   exit 1
 }
 
@@ -31,7 +31,7 @@ while IFS= read -r line; do
 done < <(git worktree list --porcelain 2>/dev/null)
 
 FZF_INPUT="${FZF_ACTIVE}${FZF_PENDING}"
-[[ -z "$FZF_INPUT" ]] && { echo "No worktrees found" >&2; exit 1; }
+[[ -z "$FZF_INPUT" ]] && { tmux display-message "No worktrees found"; exit 1; }
 
 SELECTION=$(echo "$FZF_INPUT" | fzf-tmux -p -w 70% -h 60% --layout=reverse \
   --prompt="Worktree > " \
