@@ -3,6 +3,7 @@
 import { exec } from "node:child_process";
 
 const FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+const COLORS = ["#f38ba8","#eba0ac","#fab387","#f9e2af","#a6e3a1","#94e2d5","#89b4fa","#b4befe","#cba6f7","#f5c2e7"];
 
 const sh = (cmd) => new Promise((ok) => {
   exec(cmd, { timeout: 5000 }, () => ok());
@@ -49,6 +50,13 @@ export const TmuxAgentIndicator = async () => {
     await sh(`tmux rename-window -t ${wid} "${text}" 2>/dev/null`);
   };
 
+  const resetStyle = async () => {
+    const wid = await getWindowId();
+    if (!wid) return;
+    await sh(`tmux set-window-option -qu ${wid} window-status-style 2>/dev/null`);
+    await sh(`tmux set-window-option -qu ${wid} window-status-current-style 2>/dev/null`);
+  };
+
   const stopSpinner = () => { spinnerActive = false; };
 
   const startSpinner = async () => {
@@ -59,6 +67,10 @@ export const TmuxAgentIndicator = async () => {
     let idx = 0;
     const tick = async () => {
       if (!spinnerActive) return;
+      const wid = await getWindowId();
+      if (!wid) return;
+      await sh(`tmux set-window-option -qt ${wid} window-status-style "fg=${COLORS[idx]},bold"`);
+      await sh(`tmux set-window-option -qt ${wid} window-status-current-style "fg=${COLORS[idx]},bold"`);
       await rename(`${FRAMES[idx]} ${name}`);
       idx = (idx + 1) % FRAMES.length;
       setTimeout(tick, 120);
@@ -76,14 +88,17 @@ export const TmuxAgentIndicator = async () => {
         break;
       case "needs-input":
         stopSpinner();
+        await resetStyle();
         rename(`❓ ${await getOriginalName()}`);
         break;
       case "done":
         stopSpinner();
+        await resetStyle();
         rename(`💤 ${await getOriginalName()}`);
         setTimeout(async () => {
           if (lastState !== "done") return;
           stopSpinner();
+          await resetStyle();
           rename(originalName || await getOriginalName());
           lastState = "off";
         }, 3000);
