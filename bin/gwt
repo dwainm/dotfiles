@@ -87,13 +87,13 @@ SAFE_NAME=$(echo "$REPO_NAME" | sed 's/\./_/g')
 if [[ "$INSTRUCTION_MODE" = true ]]; then
   echo -e "${BLUE}Interpret: $INSTRUCTION${NC}"
   
-  GWT_MODEL="opencode-go/kimi-k2.6"
+  GWT_MODEL="opencode-go/kimi-k2.5"
   echo -e "${BLUE}Model: $GWT_MODEL${NC}"
   
-  # Use opencode with a one-shot prompt to get branch and purpose
-  RESPONSE=$(timeout 30 opencode run --model "$GWT_MODEL" "Given this instruction: \"$INSTRUCTION\", respond with ONLY this format (no other text):
+  # Use opencode with a one-shot prompt to get branch and purpose (--pure skips plugin loading)
+  RESPONSE=$(timeout 15 opencode run --pure --model "$GWT_MODEL" "Given this instruction: \"$INSTRUCTION\", respond with ONLY this format (no other text):
 BRANCH: <kebab-case-branch-name>
-PURPOSE: <human readable purpose>" 2>/dev/null | tail -10)
+PURPOSE: <human readable purpose>" 2>/dev/null | grep -v "^>" | tail -5)
   
   # Parse the response
   BRANCH_NAME=$(echo "$RESPONSE" | grep "^BRANCH:" | sed 's/^BRANCH: *//' | tr -d '\n')
