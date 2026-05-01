@@ -93,7 +93,7 @@ if [[ "$INSTRUCTION_MODE" = true ]]; then
   # Use opencode with a one-shot prompt to get branch and purpose (--pure skips plugin loading)
   RESPONSE=$(timeout 15 opencode run --pure --model "$GWT_MODEL" "Given this instruction: \"$INSTRUCTION\", respond with ONLY this format (no other text):
 BRANCH: <kebab-case-branch-name>
-PURPOSE: <human readable purpose>" 2>/dev/null | grep -v "^>" | tail -5)
+PURPOSE: <human readable purpose>" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | tail -5)
   
   # Parse the response
   BRANCH_NAME=$(echo "$RESPONSE" | grep "^BRANCH:" | sed 's/^BRANCH: *//' | tr -d '\n')
