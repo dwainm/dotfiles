@@ -3,18 +3,15 @@
 
 import { execSync } from "node:child_process";
 
-const FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-
 export const TmuxAgentIndicator = async () => {
   if (!process.env.TMUX) return {};
   const PANE = process.env.TMUX_PANE;
   if (!PANE) return {};
 
   let lastState = "off";
-  let windowId = null;
+  let windowId = run(`tmux display-message -p -t ${PANE} '#{window_id}'`);
   let originalName = null;
   let doneTimer = null;
-  let spinnerInterval = null;
 
   const run = (cmd) => {
     try { return execSync(cmd, { encoding: "utf-8", timeout: 5000 }).trim(); } catch { return ""; }
@@ -31,43 +28,24 @@ export const TmuxAgentIndicator = async () => {
 
   const rename = (text) => {
     if (!windowId) return;
-    execSync(`tmux rename-window -t ${windowId} '${text}' 2>/dev/null`, { timeout: 1000 });
-  };
-
-  const stopSpinner = () => {
-    if (spinnerInterval) { clearInterval(spinnerInterval); spinnerInterval = null; }
-  };
-
-  const startSpinner = () => {
-    stopSpinner();
-    const name = getOriginalName();
-    if (!name) return;
-    let idx = 0;
-    spinnerInterval = setInterval(() => {
-      rename(`${FRAMES[idx]} ${name}`);
-      idx = (idx + 1) % FRAMES.length;
-    }, 120);
+    execSync(`tmux rename-window -t ${windowId} "${text}" 2>/dev/null`, { timeout: 1000 });
   };
 
   const setState = (state) => {
     if (state === lastState) return;
     lastState = state;
-    if (!windowId) windowId = run(`tmux display-message -p -t ${PANE} '#{window_id}'`);
 
     switch (state) {
       case "running":
-        startSpinner();
+        rename(`⚡ ${getOriginalName()}`);
         break;
       case "needs-input":
-        stopSpinner();
         rename(`❓ ${getOriginalName()}`);
         break;
       case "done":
-        stopSpinner();
         rename(`💤 ${getOriginalName()}`);
         setTimeout(() => {
           if (lastState !== "done") return;
-          stopSpinner();
           rename(originalName || getOriginalName());
           lastState = "off";
         }, 3000);
