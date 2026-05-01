@@ -1,117 +1,55 @@
 #!/usr/bin/env bash
 # Window name animator for opencode running state.
-# Cycles a braille spinner while any pane in the window is in "running" state.
-# Restores the original window name when no running panes remain or window is closed.
-#
 # Usage: opencode-window-animator.sh <window_id> <session_name>
-
 set -euo pipefail
 
 WINDOW_ID="${1:-}"
 SESSION="${2:-}"
+[ -z "$WINDOW_ID" ] || [ -z "$SESSION" ] && exit 1
 
-if [ -z "$WINDOW_ID" ] || [ -z "$SESSION" ]; then
-    echo "Usage: $0 <window_id> <session_name>" >&2
-    exit 1
-fi
+INDEX=$(tmux display-message -p -t "$WINDOW_ID" '#I' 2>/dev/null || echo "0")
+NAMEFILE="${TMPDIR:-/tmp}/opencode-orig-WIN${INDEX}.txt"
 
-WINDOW_INDEX=$(tmux display-message -p -t "$WINDOW_ID" '#I')
-ANIM_KEY="TMUX_AGENT_ANIM_WIN${WINDOW_INDEX}_PID"
-ORIG_KEY="TMUX_AGENT_ORIG_NAME_WIN${WINDOW_INDEX}"
-
-# Cleanup on exit: kill tracking env vars, restore original name if still running
-cleanup() {
-    tmux set-environment -gu "$ANIM_KEY" 2>/dev/null || true
-    tmux set-environment -gu "$ORIG_KEY" 2>/dev/null || true
-}
+cleanup() { rm -f "$NAMEFILE" 2>/dev/null || true; }
 trap cleanup EXIT
 
-# Self-terminate if tmux server is gone
-if ! command -v tmux >/dev/null 2>&1; then
-    exit 0
-fi
-if ! tmux list-sessions >/dev/null 2>&1; then
-    exit 0
-fi
+command -v tmux >/dev/null 2>&1 || exit 0
+tmux list-sessions >/dev/null 2>&1 || exit 0
 
-# Store our PID
-tmux set-environment -g "$ANIM_KEY" "$$"
-
-# Braille spinner frames (10 frames, smooth loop)
 FRAMES=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
-FRAME_COUNT=${#FRAMES[@]}
 IDX=0
 
-# Sleep interval in seconds (120ms)
-SLEEP="0.120"
-
-# Check if any pane in this window has opencode running state
-any_pane_running() {
-    local pane_id state
-    while IFS= read -r pane_id; do
-        [ -z "$pane_id" ] && continue
-        state=$(tmux show-environment -g "TMUX_AGENT_PANE_${pane_id}_STATE" 2>/dev/null | sed 's/^[^=]*=//' || true)
-        if [ "$state" = "running" ]; then
-            return 0
-        fi
+any_running() {
+    while IFS= read -r pid; do
+        [ -z "$pid" ] && continue
+        s=$(tmux show-option -pqv -t "$pid" @opencode_status 2>/dev/null || true)
+        [ "$s" = "running" ] && return 0
     done < <(tmux list-panes -t "$WINDOW_ID" -F '#{pane_id}' 2>/dev/null || true)
     return 1
 }
 
-# Check if window still exists
 window_exists() {
     tmux list-windows -t "$SESSION" -F '#{window_id}' 2>/dev/null | grep -qx "$WINDOW_ID"
 }
 
-# Get current window name
-current_window_name() {
-    tmux display-message -p -t "$WINDOW_ID" '#{window_name}' 2>/dev/null || true
-}
-
-# Get original saved name
-get_original_name() {
-    tmux show-environment -g "$ORIG_KEY" 2>/dev/null | sed 's/^[^=]*=//' || true
-}
-
 while true; do
-    # Self-terminate if tmux server gone
-    if ! tmux list-sessions >/dev/null 2>&1; then
+    tmux list-sessions >/dev/null 2>&1 || break
+    window_exists || break
+
+    if ! any_running; then
+        [ -f "$NAMEFILE" ] && tmux rename-window -t "$WINDOW_ID" "$(cat "$NAMEFILE")" 2>/dev/null || true
         break
     fi
 
-    # Self-terminate if window closed
-    if ! window_exists; then
-        break
+    if [ ! -f "$NAMEFILE" ]; then
+        name=$(tmux display-message -p -t "$WINDOW_ID" '#W' 2>/dev/null || true)
+        [[ "$name" =~ ^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]\  ]] && name="${name:2}"
+        [[ "$name" =~ ^(💻|❓|💤)\  ]] && name="${name:2}"
+        echo "$name" > "$NAMEFILE"
     fi
 
-    # Self-terminate if no running panes in this window
-    if ! any_pane_running; then
-        # Restore original name before exiting
-        orig=$(get_original_name)
-        if [ -n "$orig" ]; then
-            tmux rename-window -t "$WINDOW_ID" "$orig" 2>/dev/null || true
-        fi
-        break
-    fi
-
-    # Get original name if not yet saved
-    saved_name=$(get_original_name)
-    if [ -z "$saved_name" ]; then
-        cur_name=$(current_window_name)
-        # If current name already has spinner prefix, strip it to avoid nesting
-        if [[ "$cur_name" =~ ^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]\  ]]; then
-            cur_name="${cur_name:2}"
-        elif [[ "$cur_name" =~ ^(💻|❓|💤)\  ]]; then
-            cur_name="${cur_name:2}"
-        fi
-        tmux set-environment -g "$ORIG_KEY" "$cur_name"
-        saved_name="$cur_name"
-    fi
-
-    # Rename window with current spinner frame
-    frame="${FRAMES[$IDX]}"
-    tmux rename-window -t "$WINDOW_ID" "${frame} ${saved_name}" 2>/dev/null || true
-
-    IDX=$(( (IDX + 1) % FRAME_COUNT ))
-    sleep "$SLEEP" 2>/dev/null || sleep 1
+    saved=$(cat "$NAMEFILE")
+    tmux rename-window -t "$WINDOW_ID" "${FRAMES[$IDX]} ${saved}" 2>/dev/null || true
+    IDX=$(( (IDX + 1) % ${#FRAMES[@]} ))
+    sleep 0.120 2>/dev/null || sleep 1
 done
