@@ -18,6 +18,7 @@ export const TmuxAgentIndicator = async () => {
   let lastState = "off";
   let originalName = null;
   let windowId = null;
+  let windowIndex = null;
   let sessionName = null;
   let doneTimer = null;
 
@@ -32,7 +33,8 @@ export const TmuxAgentIndicator = async () => {
   const getOriginalName = () => {
     if (originalName) return originalName;
     if (!windowId) return null;
-    const envKey = `TMUX_AGENT_ORIG_NAME_${windowId}`;
+    const wi = windowIndex || run(`tmux display-message -p -t ${PANE} '#I'`);
+    const envKey = `TMUX_AGENT_ORIG_NAME_WIN${wi}`;
     let val = run(`tmux show-environment -g ${envKey}`);
     if (val) {
       val = val.replace(/^[^=]*=/, "").trim();
@@ -51,7 +53,8 @@ export const TmuxAgentIndicator = async () => {
 
   const killAnimator = () => {
     if (!windowId) return;
-    const animKey = `TMUX_AGENT_ANIM_${windowId}_PID`;
+    const wi = windowIndex || run(`tmux display-message -p -t ${PANE} '#I'`);
+    const animKey = `TMUX_AGENT_ANIM_WIN${wi}_PID`;
     const pid = run(`tmux show-environment -g ${animKey}`).replace(/^[^=]*=/, "");
     if (pid) {
       try { process.kill(Number(pid), "SIGTERM"); } catch {}
@@ -61,7 +64,8 @@ export const TmuxAgentIndicator = async () => {
 
   const startAnimator = () => {
     if (!windowId || !sessionName) return;
-    const animKey = `TMUX_AGENT_ANIM_${windowId}_PID`;
+    const wi = windowIndex || run(`tmux display-message -p -t ${PANE} '#I'`);
+    const animKey = `TMUX_AGENT_ANIM_WIN${wi}_PID`;
     const pid = run(`tmux show-environment -g ${animKey}`).replace(/^[^=]*=/, "");
     if (pid) {
       try { process.kill(Number(pid), 0); return; } catch {}
@@ -81,7 +85,10 @@ export const TmuxAgentIndicator = async () => {
       execSync(`tmux rename-window -t ${windowId} '${name}'`, { timeout: 1000 });
     }
     killAnimator();
-    if (windowId) run(`tmux set-environment -gu TMUX_AGENT_ORIG_NAME_${windowId} >/dev/null 2>&1`);
+    if (windowId) {
+      const wi = windowIndex || run(`tmux display-message -p -t ${PANE} '#I'`);
+      run(`tmux set-environment -gu TMUX_AGENT_ORIG_NAME_WIN${wi} >/dev/null 2>&1`);
+    }
     originalName = null;
   };
 
@@ -90,6 +97,7 @@ export const TmuxAgentIndicator = async () => {
     lastState = state;
 
     if (!windowId) windowId = run(`tmux display-message -p -t ${PANE} '#{window_id}'`);
+    if (!windowIndex) windowIndex = run(`tmux display-message -p -t ${PANE} '#I'`);
     if (!sessionName) sessionName = run(`tmux display-message -p -t ${PANE} '#S'`);
 
     // Set env var so animator script knows the state

@@ -20,8 +20,9 @@ WINDOW_ID=$(tmux display-message -t "$PANE_ID" -p '#{window_id}' 2>/dev/null)
 tmux set-option -pu -t "$PANE_ID" @opencode_status 2>/dev/null || true
 
 # Restore original window name if we modified it
-ORIG_KEY="TMUX_AGENT_ORIG_NAME_${WINDOW_ID}"
-ANIM_KEY="TMUX_AGENT_ANIM_${WINDOW_ID}_PID"
+WINDOW_INDEX=$(tmux display-message -p -t "$WINDOW_ID" '#I')
+ORIG_KEY="TMUX_AGENT_ORIG_NAME_WIN${WINDOW_INDEX}"
+ANIM_KEY="TMUX_AGENT_ANIM_WIN${WINDOW_INDEX}_PID"
 
 orig=$(tmux show-environment -g "$ORIG_KEY" 2>/dev/null | sed 's/^[^=]*=//' || true)
 if [ -n "$orig" ]; then

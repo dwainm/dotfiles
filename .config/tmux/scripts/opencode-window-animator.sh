@@ -15,8 +15,9 @@ if [ -z "$WINDOW_ID" ] || [ -z "$SESSION" ]; then
     exit 1
 fi
 
-ANIM_KEY="TMUX_AGENT_ANIM_${WINDOW_ID}_PID"
-ORIG_KEY="TMUX_AGENT_ORIG_NAME_${WINDOW_ID}"
+WINDOW_INDEX=$(tmux display-message -p -t "$WINDOW_ID" '#I')
+ANIM_KEY="TMUX_AGENT_ANIM_WIN${WINDOW_INDEX}_PID"
+ORIG_KEY="TMUX_AGENT_ORIG_NAME_WIN${WINDOW_INDEX}"
 
 # Cleanup on exit: kill tracking env vars, restore original name if still running
 cleanup() {
