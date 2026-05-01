@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Git Worktree + Tmux Session Creator
+# Git Worktree + Tmux Window Creator
 # Simple: gwt <branch-name> ["<purpose>"]
 
 set -e
@@ -14,7 +14,7 @@ show_help() {
   cat << EOF
 Usage: gwt [options] <branch-name> [purpose]
 
-Creates git worktree + tmux session. Purpose sets PURPOSE env var.
+Creates git worktree + tmux window. Purpose sets PURPOSE env var.
 
 Options:
   gwt <branch> [purpose]    Create worktree
@@ -121,14 +121,16 @@ if [[ "$DELETE_MODE" = true ]]; then
   
   WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${BRANCH_NAME}"
   
-  # 1. Kill tmux session (match by gwt-branch option or fallback to name)
-  SESSION=$(tmux list-sessions -F "#{session_name}:#{@gwt-branch}" 2>/dev/null | grep ":${BRANCH_NAME}$" | head -1 | cut -d: -f1)
-  if [[ -z "$SESSION" ]]; then
-    SESSION=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | grep "${BRANCH_NAME}" | head -1)
+  # 1. Kill tmux window/session (match by gwt-branch option or fallback to name)
+  FOUND=$(tmux list-windows -a -F "#{window_id}:#{session_name}:#{@gwt-branch}:#{window_name}" 2>/dev/null | grep ":${BRANCH_NAME}:" | head -1)
+  if [[ -z "$FOUND" ]]; then
+    FOUND=$(tmux list-windows -a -F "#{window_id}:#{session_name}:#{window_name}" 2>/dev/null | grep "${BRANCH_NAME}" | head -1)
   fi
-  if [[ -n "$SESSION" ]]; then
-    echo -e "${YELLOW}Kill session: $SESSION${NC}"
-    tmux kill-session -t "$SESSION" 2>/dev/null || true
+  if [[ -n "$FOUND" ]]; then
+    WIN_ID=$(echo "$FOUND" | cut -d: -f1)
+    SESS=$(echo "$FOUND" | cut -d: -f2)
+    echo -e "${YELLOW}Kill window: $SESS:$WIN_ID${NC}"
+    tmux kill-window -t "$WIN_ID" 2>/dev/null || true
   fi
   
   # 2. Remove worktree
@@ -198,24 +200,41 @@ if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then
   [[ -f "$WORKTREE_PATH/.dev-port" ]] && rm "$WORKTREE_PATH/.dev-port"
 fi
 
-# Create session
+# Create window/session
 ISSUE=$(echo "$PURPOSE" | grep -oE '#[0-9]+' | head -1 || echo "")
-SESSION_NAME="${SAFE_NAME}-${BRANCH_NAME} | pending | ${ISSUE} | ${REPO_NAME}"
+WINDOW_NAME="${SAFE_NAME}-${BRANCH_NAME} | pending | ${ISSUE} | ${REPO_NAME}"
 
-echo -e "${GREEN}Session: $SESSION_NAME${NC}"
-SESSION_ID=$(tmux new-session -d -P -F "#{session_id}" -s "$SESSION_NAME" -c "$WORKTREE_PATH" -e "PURPOSE=${PURPOSE}")
+echo -e "${GREEN}Window: $WINDOW_NAME${NC}"
 
-# Store branch name for gwt -d (even after session rename)
-tmux set-option -t "$SESSION_ID" gwt-branch "$BRANCH_NAME" 2>/dev/null || true
-
-# Start opencode with prompt pre-loaded
-if [[ -n "$PURPOSE" ]]; then
-  tmux send-keys -t "$SESSION_ID" "opencode --prompt \"$PURPOSE\"" C-m
+if [[ -n "$TMUX" ]]; then
+  # Inside tmux: create a new window in current session
+  WINDOW_ID=$(tmux new-window -d -P -F "#{window_id}" -n "$WINDOW_NAME" -c "$WORKTREE_PATH" -e "PURPOSE=${PURPOSE}")
+  
+  # Store branch name for gwt -d
+  tmux set-window-option -t "$WINDOW_ID" gwt-branch "$BRANCH_NAME" 2>/dev/null || true
+  
+  # Start opencode with prompt pre-loaded
+  if [[ -n "$PURPOSE" ]]; then
+    tmux send-keys -t "$WINDOW_ID" "opencode --prompt \"$PURPOSE\"" C-m
+  else
+    tmux send-keys -t "$WINDOW_ID" "opencode" C-m
+  fi
+  
+  # Switch to the new window
+  tmux select-window -t "$WINDOW_ID"
 else
-  tmux send-keys -t "$SESSION_ID" "opencode" C-m
+  # Not in tmux: create a new session
+  SESSION_ID=$(tmux new-session -d -P -F "#{session_id}" -s "$WINDOW_NAME" -c "$WORKTREE_PATH" -e "PURPOSE=${PURPOSE}")
+  
+  tmux set-window-option -t "$SESSION_ID" gwt-branch "$BRANCH_NAME" 2>/dev/null || true
+  
+  if [[ -n "$PURPOSE" ]]; then
+    tmux send-keys -t "$SESSION_ID" "opencode --prompt \"$PURPOSE\"" C-m
+  else
+    tmux send-keys -t "$SESSION_ID" "opencode" C-m
+  fi
+  
+  tmux attach-session -t "$SESSION_ID"
 fi
 
 echo -e "${GREEN}✓ Done${NC}"
-echo -e "${BLUE}Attach: tmux attach -t '$SESSION_NAME'${NC}"
-
-[[ -z "$TMUX" ]] && tmux attach-session -t "$SESSION_ID"
