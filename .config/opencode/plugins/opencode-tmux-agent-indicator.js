@@ -11,7 +11,6 @@ export const TmuxAgentIndicator = async ({ $ }) => {
   const IN_TMUX = !!process.env.TMUX;
 
   let lastState = "off";
-  let idleAt = 0;
 
   const setPaneOption = async (val) => {
     if (!IN_TMUX || !PANE) return;
@@ -37,8 +36,6 @@ export const TmuxAgentIndicator = async ({ $ }) => {
     event: async ({ event }) => {
       if (event.type === "session.status"
           && event.properties.status.type === "busy") {
-        // Guard: don't override done/error if idle fired recently (race condition)
-        if (Date.now() - idleAt < 2000) return;
         await setState("running");
       }
 
@@ -48,12 +45,10 @@ export const TmuxAgentIndicator = async ({ $ }) => {
       }
 
       if (event.type === "session.idle") {
-        idleAt = Date.now();
         await setState("done");
       }
 
       if (event.type === "session.error") {
-        idleAt = Date.now();
         await setState("done");
       }
     },
