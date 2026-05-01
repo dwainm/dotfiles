@@ -8,7 +8,7 @@ const sh = (cmd) => new Promise((ok) => {
 
 const SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 const BLINK   = ["❓ ", "   "];
-const ZZZ     = ["💤  ", " 💤 ", "  💤"];
+const PULSE   = ["💤 ", "   "];
 
 export const TmuxAgentIndicator = async () => {
   if (!process.env.TMUX) return {};
@@ -82,13 +82,7 @@ export const TmuxAgentIndicator = async () => {
         await startAnim(BLINK, 500);
         break;
       case "done":
-        await startAnim(ZZZ, 350);
-        setTimeout(async () => {
-          if (lastState !== "done") return;
-          stopAnim();
-          rename(originalName || await getOriginalName());
-          lastState = "off";
-        }, 5000);
+        await startAnim(PULSE, 600);
         break;
     }
   };
