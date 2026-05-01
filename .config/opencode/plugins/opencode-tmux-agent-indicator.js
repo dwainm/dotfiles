@@ -1,7 +1,10 @@
 // opencode tmux window rename plugin.
-// Renames the tmux window tab to show opencode state.
 
-import { execSync } from "node:child_process";
+import { exec } from "node:child_process";
+
+const sh = (cmd) => new Promise((ok) => {
+  exec(cmd, { timeout: 5000 }, () => ok());
+});
 
 export const TmuxAgentIndicator = async () => {
   if (!process.env.TMUX) return {};
@@ -9,44 +12,57 @@ export const TmuxAgentIndicator = async () => {
   if (!PANE) return {};
 
   let lastState = "off";
-  let windowId = run(`tmux display-message -p -t ${PANE} '#{window_id}'`);
+  let windowId = null;
   let originalName = null;
   let doneTimer = null;
 
-  const run = (cmd) => {
-    try { return execSync(cmd, { encoding: "utf-8", timeout: 5000 }).trim(); } catch { return ""; }
+  const getWindowId = async () => {
+    if (windowId) return windowId;
+    windowId = await new Promise((ok) => {
+      exec(`tmux display-message -p -t ${PANE} '#{window_id}'`, { timeout: 3000 }, (err, stdout) => {
+        ok(err ? "" : (stdout || "").trim());
+      });
+    });
+    return windowId;
   };
 
-  const getOriginalName = () => {
+  const getOriginalName = async () => {
     if (originalName) return originalName;
-    if (!windowId) return "";
-    let name = run(`tmux display-message -p -t ${PANE} '#W'`);
-    if (/^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏❓💤] /.test(name)) name = name.slice(2);
-    originalName = name;
-    return name;
+    const wid = await getWindowId();
+    if (!wid) return "";
+    const name = await new Promise((ok) => {
+      exec(`tmux display-message -p -t ${PANE} '#W'`, { timeout: 3000 }, (err, stdout) => {
+        ok(err ? "" : (stdout || "").trim());
+      });
+    });
+    let n = name || "";
+    if (/^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏❓💤⚡] /.test(n)) n = n.slice(2);
+    originalName = n;
+    return n;
   };
 
-  const rename = (text) => {
-    if (!windowId) return;
-    execSync(`tmux rename-window -t ${windowId} "${text}" 2>/dev/null`, { timeout: 1000 });
+  const rename = async (text) => {
+    const wid = await getWindowId();
+    if (!wid) return;
+    await sh(`tmux rename-window -t ${wid} "${text}" 2>/dev/null`);
   };
 
-  const setState = (state) => {
+  const setState = async (state) => {
     if (state === lastState) return;
     lastState = state;
 
     switch (state) {
       case "running":
-        rename(`⚡ ${getOriginalName()}`);
+        rename(`⚡ ${await getOriginalName()}`);
         break;
       case "needs-input":
-        rename(`❓ ${getOriginalName()}`);
+        rename(`❓ ${await getOriginalName()}`);
         break;
       case "done":
-        rename(`💤 ${getOriginalName()}`);
-        setTimeout(() => {
+        rename(`💤 ${await getOriginalName()}`);
+        setTimeout(async () => {
           if (lastState !== "done") return;
-          rename(originalName || getOriginalName());
+          rename(originalName || await getOriginalName());
           lastState = "off";
         }, 3000);
         break;
@@ -54,18 +70,18 @@ export const TmuxAgentIndicator = async () => {
   };
 
   return {
-    "tool.execute.before": () => {
+    "tool.execute.before": async () => {
       if (doneTimer) { clearTimeout(doneTimer); doneTimer = null; }
-      setState("running");
+      await setState("running");
     },
-    "tool.execute.after": () => {
+    "tool.execute.after": async () => {
       if (doneTimer) clearTimeout(doneTimer);
-      doneTimer = setTimeout(() => { doneTimer = null; setState("done"); }, 2000);
+      doneTimer = setTimeout(async () => { doneTimer = null; await setState("done"); }, 2000);
     },
-    event: ({ event }) => {
+    event: async ({ event }) => {
       if (event.type === "session.idle") {
         if (doneTimer) { clearTimeout(doneTimer); doneTimer = null; }
-        setState("done");
+        await setState("done");
       }
     },
   };
