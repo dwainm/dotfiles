@@ -14,7 +14,6 @@ export const TmuxAgentIndicator = async () => {
   let lastState = "off";
   let windowId = null;
   let originalName = null;
-  let doneTimer = null;
 
   const getWindowId = async () => {
     if (windowId) return windowId;
@@ -69,33 +68,15 @@ export const TmuxAgentIndicator = async () => {
     }
   };
 
-  const log = (msg) => {
-    try { require("fs").appendFileSync("/tmp/opencode-debug.log", `${new Date().toISOString()} ${msg}\n`); } catch {}
-  };
-
-  log("PLUGIN LOADED");
-
   return {
     "tool.execute.before": async () => {
-      log("tool.execute.before FIRED");
-      if (doneTimer) { clearTimeout(doneTimer); doneTimer = null; }
       await setState("running");
     },
-    "tool.execute.after": async () => {
-      log("tool.execute.after FIRED");
-      if (doneTimer) clearTimeout(doneTimer);
-      doneTimer = setTimeout(async () => { doneTimer = null; await setState("done"); }, 2000);
-    },
     event: async ({ event }) => {
-      log(`event: ${event.type}`);
       if (event.type === "session.status" && event.properties?.status?.type === "busy") {
-        log("session.status.busy -> running");
-        if (doneTimer) { clearTimeout(doneTimer); doneTimer = null; }
         await setState("running");
       }
       if (event.type === "session.idle") {
-        log("session.idle -> done");
-        if (doneTimer) { clearTimeout(doneTimer); doneTimer = null; }
         await setState("done");
       }
     },
