@@ -201,8 +201,7 @@ if [[ -f "$WORKTREE_PATH/bin/rails" ]]; then
 fi
 
 # Create window/session
-ISSUE=$(echo "$PURPOSE" | grep -oE '#[0-9]+' | head -1 || echo "")
-WINDOW_NAME="${SAFE_NAME}-${BRANCH_NAME} | pending | ${ISSUE} | ${REPO_NAME}"
+WINDOW_NAME="${BRANCH_NAME}"
 
 echo -e "${GREEN}Window: $WINDOW_NAME${NC}"
 
