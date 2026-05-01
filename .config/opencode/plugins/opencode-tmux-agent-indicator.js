@@ -110,9 +110,19 @@ export const TmuxAgentIndicator = async () => {
     "tool.execute.before": async () => {
       await setState("running");
     },
+    "permission.ask": async () => {
+      await setState("needs-input");
+    },
+    "tool.execute.before": async (input) => {
+      if (input?.tool === "question") await setState("needs-input");
+      else await setState("running");
+    },
     event: async ({ event }) => {
       if (event.type === "session.status" && event.properties?.status?.type === "busy") {
         await setState("running");
+      }
+      if (event.type === "permission.asked") {
+        await setState("needs-input");
       }
       if (event.type === "session.idle") {
         await setState("done");
