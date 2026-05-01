@@ -18,7 +18,7 @@ export const TmuxAgentIndicator = async () => {
   let lastState = "off";
   let windowId = null;
   let originalName = null;
-  let animActive = false;
+  let animId = 0;
 
   const getWindowId = async () => {
     if (windowId) return windowId;
@@ -53,16 +53,16 @@ export const TmuxAgentIndicator = async () => {
     await sh(`tmux rename-window -t ${wid} "${text}" 2>/dev/null`);
   };
 
-  const stopAnim = () => { animActive = false; };
+  const stopAnim = () => { animId++; };
 
   const startAnim = async (frames, speed, name) => {
     stopAnim();
-    animActive = true;
+    const myId = ++animId;
     if (!name) name = await getOriginalName();
     if (!name) return;
     let idx = 0;
     const tick = async () => {
-      if (!animActive) return;
+      if (animId !== myId) return;
       await rename(`${frames[idx]} ${name}`);
       idx = (idx + 1) % frames.length;
       setTimeout(tick, speed);
