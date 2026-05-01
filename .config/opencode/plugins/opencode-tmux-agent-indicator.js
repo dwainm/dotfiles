@@ -105,6 +105,9 @@ export const TmuxAgentIndicator = async () => {
       if (event.type === "session.idle") {
         await setState("done");
       }
+      if (event.type === "message.updated" && lastState === "done") {
+        await setState("running");
+      }
     },
   };
 };
