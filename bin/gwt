@@ -219,8 +219,6 @@ if [[ -n "$TMUX" ]]; then
     tmux send-keys -t "$WINDOW_ID" "opencode" C-m
   fi
   
-  # Switch to the new window
-  tmux select-window -t "$WINDOW_ID"
 else
   # Not in tmux: create a new session
   SESSION_ID=$(tmux new-session -d -P -F "#{session_id}" -s "$WINDOW_NAME" -c "$WORKTREE_PATH" -e "PURPOSE=${PURPOSE}")
@@ -233,7 +231,7 @@ else
     tmux send-keys -t "$SESSION_ID" "opencode" C-m
   fi
   
-  tmux attach-session -t "$SESSION_ID"
+  echo -e "${BLUE}Attach: tmux attach -t '$WINDOW_NAME'${NC}"
 fi
 
 echo -e "${GREEN}✓ Done${NC}"
