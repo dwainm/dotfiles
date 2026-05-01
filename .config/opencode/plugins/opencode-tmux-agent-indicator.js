@@ -8,7 +8,6 @@ const sh = (cmd) => new Promise((ok) => {
 
 const SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 const BLINK   = ["❓ ", "   "];
-const PULSE   = ["💤 ", "   "];
 
 export const TmuxAgentIndicator = async () => {
   if (!process.env.TMUX) return {};
@@ -82,7 +81,13 @@ export const TmuxAgentIndicator = async () => {
         await startAnim(BLINK, 500);
         break;
       case "done":
-        await startAnim(PULSE, 600);
+        stopAnim();
+        rename(`💤 ${await getOriginalName()}`);
+        setTimeout(async () => {
+          if (lastState !== "done") return;
+          rename(originalName || await getOriginalName());
+          lastState = "off";
+        }, 5000);
         break;
     }
   };
@@ -104,9 +109,6 @@ export const TmuxAgentIndicator = async () => {
       }
       if (event.type === "session.idle") {
         await setState("done");
-      }
-      if (event.type === "message.updated" && lastState === "done") {
-        await setState("running");
       }
     },
   };
