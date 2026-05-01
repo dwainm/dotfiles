@@ -2,11 +2,13 @@
 
 import { exec } from "node:child_process";
 
-const FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-
 const sh = (cmd) => new Promise((ok) => {
   exec(cmd, { timeout: 5000 }, () => ok());
 });
+
+const SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+const BLINK   = ["❓ ", "   "];
+const ZZZ     = ["💤  ", " 💤 ", "  💤"];
 
 export const TmuxAgentIndicator = async () => {
   if (!process.env.TMUX) return {};
@@ -16,7 +18,7 @@ export const TmuxAgentIndicator = async () => {
   let lastState = "off";
   let windowId = null;
   let originalName = null;
-  let spinnerActive = false;
+  let animActive = false;
 
   const getWindowId = async () => {
     if (windowId) return windowId;
@@ -39,6 +41,8 @@ export const TmuxAgentIndicator = async () => {
     });
     let n = name || "";
     if (/^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏❓💤⚡] /.test(n)) n = n.slice(2);
+    // also strip blink/zzz patterns that might have extra spaces
+    n = n.replace(/^[❓💤\s]+ /, "").trim() || n;
     originalName = n;
     return n;
   };
@@ -49,19 +53,19 @@ export const TmuxAgentIndicator = async () => {
     await sh(`tmux rename-window -t ${wid} "${text}" 2>/dev/null`);
   };
 
-  const stopSpinner = () => { spinnerActive = false; };
+  const stopAnim = () => { animActive = false; };
 
-  const startSpinner = async () => {
-    stopSpinner();
-    spinnerActive = true;
-    const name = await getOriginalName();
+  const startAnim = async (frames, speed, name) => {
+    stopAnim();
+    animActive = true;
+    if (!name) name = await getOriginalName();
     if (!name) return;
     let idx = 0;
     const tick = async () => {
-      if (!spinnerActive) return;
-      await rename(`${FRAMES[idx]} ${name}`);
-      idx = (idx + 1) % FRAMES.length;
-      setTimeout(tick, 120);
+      if (!animActive) return;
+      await rename(`${frames[idx]} ${name}`);
+      idx = (idx + 1) % frames.length;
+      setTimeout(tick, speed);
     };
     tick();
   };
@@ -72,21 +76,19 @@ export const TmuxAgentIndicator = async () => {
 
     switch (state) {
       case "running":
-        await startSpinner();
+        await startAnim(SPINNER, 120);
         break;
       case "needs-input":
-        stopSpinner();
-        rename(`❓ ${await getOriginalName()}`);
+        await startAnim(BLINK, 500);
         break;
       case "done":
-        stopSpinner();
-        rename(`💤 ${await getOriginalName()}`);
+        await startAnim(ZZZ, 350);
         setTimeout(async () => {
           if (lastState !== "done") return;
-          stopSpinner();
+          stopAnim();
           rename(originalName || await getOriginalName());
           lastState = "off";
-        }, 3000);
+        }, 5000);
         break;
     }
   };
