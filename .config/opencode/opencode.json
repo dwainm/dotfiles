@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "go/kimi-k2.5",
+  "instructions": ["AGENTS.md"],
+  "plugin": ["plugins/opencode-tmux-agent-indicator.js"],
+  "permission": {
+    "*": {
+          "*": "allow"
+        }
+  },
+}
