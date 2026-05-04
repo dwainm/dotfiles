@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+set -o pipefail
+
+PORT="${OPENCODE_PORT:-4096}"
+PIDFILE="$HOME/.opencode/oc.pid"
+
+# ── tailscale detection ───────────────────────────────────
+
+TS_AVAILABLE=false
+TS_HOSTNAME=""
+TS_URL=""
+TAILNET_DOMAIN=""
+
+if command -v tailscale &>/dev/null; then
+  if TS_SELF=$(tailscale status --self --json 2>/dev/null); then
+    TS_AVAILABLE=true
+    TS_HOSTNAME=$(echo "$TS_SELF" | python3 -c "import sys,json; print(json.load(sys.stdin)['Self']['DNSName'].rstrip('.'))" 2>/dev/null || true)
+    [ -n "$TS_HOSTNAME" ] && TS_URL="https://${TS_HOSTNAME}"
+    TAILNET_DOMAIN=$(tailscale status --json 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('MagicDNSSuffix',''))" 2>/dev/null || true)
+  fi
+fi
+
+# CORS: if Tailscale, auto-allow entire tailnet; override with OPENCODE_CORS
+if [ -n "${OPENCODE_CORS:-}" ]; then
+  CORS="$OPENCODE_CORS"
+elif [ -n "$TAILNET_DOMAIN" ]; then
+  CORS="https://*.${TAILNET_DOMAIN}"
+fi
+
+# Internal bind (always localhost — Tailscale handles external routing)
+BIND_HOST="127.0.0.1"
+LOCAL_URL="http://${BIND_HOST}:${PORT}"
+ATTACH_URL="${TS_URL:-${LOCAL_URL}}"
+
+# ── helpers ──────────────────────────────────────────────
+
+is_running() {
+  [ -f "$PIDFILE" ] || return 1
+  local pid
+  pid=$(cat "$PIDFILE" 2>/dev/null) || return 1
+  kill -0 "$pid" 2>/dev/null
+}
+
+health() {
+  curl -sf --max-time 2 "${LOCAL_URL}/global/health" >/dev/null 2>&1
+}
+
+session_count() {
+  curl -sf --max-time 2 "${LOCAL_URL}/session" 2>/dev/null | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "?"
+}
+
+ts_serve_up() {
+  $TS_AVAILABLE || return 0
+  tailscale serve --bg --yes --https 443 "${LOCAL_URL}" 2>/dev/null || true
+}
+
+ts_serve_down() {
+  $TS_AVAILABLE || return 0
+  tailscale serve --https 443 off 2>/dev/null || true
+}
+
+# ── commands ─────────────────────────────────────────────
+
+cmd_status() {
+  if is_running && health; then
+    local pid count
+    pid=$(cat "$PIDFILE")
+    count=$(session_count)
+    echo "  server:   running"
+    echo "  url:      ${LOCAL_URL}"
+    $TS_AVAILABLE && echo "  tailscale: ${TS_URL}"
+    echo "  pid:      ${pid}"
+    echo "  sessions: ${count}"
+  else
+    echo "  server:   stopped"
+    [ -f "$PIDFILE" ] && rm -f "$PIDFILE"
+    $TS_AVAILABLE && ts_serve_down
+  fi
+}
+
+cmd_start() {
+  if is_running && health; then
+    echo "oc: already running on ${ATTACH_URL} (pid $(cat "$PIDFILE"))"
+    return 0
+  fi
+
+  if lsof -i ":${PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "oc: port ${PORT} already in use" >&2
+    return 1
+  fi
+
+  rm -f "$PIDFILE"
+  $TS_AVAILABLE && ts_serve_down
+
+  local cors_args=()
+  [ -n "$CORS" ] && for origin in $CORS; do cors_args+=(--cors "$origin"); done
+
+  (cd "$HOME" && opencode serve --port "$PORT" --hostname "$BIND_HOST" --mdns "${cors_args[@]}") &
+  echo $! > "$PIDFILE"
+
+  for i in $(seq 1 10); do
+    sleep 0.5
+    if health; then
+      echo "oc: started on ${LOCAL_URL} (pid $(cat "$PIDFILE"))"
+      if $TS_AVAILABLE; then
+        ts_serve_up && echo "oc: tailscale: ${TS_URL}"
+      fi
+      return 0
+    fi
+    kill -0 "$(cat "$PIDFILE")" 2>/dev/null || break
+  done
+
+  echo "oc: failed to start" >&2
+  rm -f "$PIDFILE"
+  return 1
+}
+
+cmd_stop() {
+  $TS_AVAILABLE && ts_serve_down
+
+  if ! is_running; then
+    echo "oc: not running"
+    [ -f "$PIDFILE" ] && rm -f "$PIDFILE"
+    return 0
+  fi
+
+  local pid
+  pid=$(cat "$PIDFILE")
+  kill "$pid" 2>/dev/null || true
+  sleep 1
+  kill -0 "$pid" 2>/dev/null && kill -9 "$pid" 2>/dev/null || true
+  rm -f "$PIDFILE"
+  echo "oc: stopped (was pid ${pid})"
+}
+
+cmd_restart() {
+  cmd_stop
+  sleep 1
+  cmd_start
+}
+
+cmd_attach() {
+  if ! is_running || ! health; then
+    echo "oc: server not running, starting..." >&2
+    cmd_start || return 1
+  fi
+
+  # Auto-pass --dir with current working directory, unless user already specified it
+  local dir_args=()
+  local has_dir=false
+  for arg; do
+    [ "$arg" = "--dir" ] && has_dir=true && break
+  done
+  if ! $has_dir; then
+    dir_args=(--dir "$PWD")
+  fi
+
+  exec opencode attach "${ATTACH_URL}" "${dir_args[@]}" "$@"
+}
+
+cmd_web() {
+  local cors_args=()
+  [ -n "$CORS" ] && for origin in $CORS; do cors_args+=(--cors "$origin"); done
+
+  if is_running && health; then
+    echo "oc: server already running. Attaching web..." >&2
+  fi
+  exec opencode web --port "$PORT" --hostname "$BIND_HOST" "${cors_args[@]}"
+}
+
+cmd_help() {
+  cat <<'EOF'
+oc - opencode launcher / server manager
+
+  oc            attach to server (auto-starts if needed)
+  oc start      start server + tailscale serve (auto-detected)
+  oc stop       stop server + tear down tailscale
+  oc restart    stop + start
+  oc status     show server & tailscale status
+  oc web        start server + open web interface
+  oc help       this message
+
+Envs:
+  OPENCODE_PORT   server port (default 4096)
+EOF
+}
+
+# ── dispatch ─────────────────────────────────────────────
+
+case "${1:-}" in
+  start)    cmd_start ;;
+  stop)     cmd_stop ;;
+  restart)  cmd_restart ;;
+  status)   cmd_status ;;
+  web)      cmd_web ;;
+  help|-h|--help)
+            cmd_help ;;
+  "")       shift; cmd_attach "$@" ;;
+  -*)       cmd_attach "$@" ;;
+  *)        echo "oc: unknown command '${1}'. Try 'oc help'." >&2; exit 1 ;;
+esac
