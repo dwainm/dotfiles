@@ -198,7 +198,7 @@ if [[ "$DELETE_MODE" = true ]]; then
   # Find worktree by branch (try direct match, then strip repo prefix)
   ACTUAL_BRANCH="$BRANCH_NAME"
   WORKTREE_PATH=""
-  while IFS= read -r wt_path _branch; do
+  while read -r wt_path _branch; do
     _branch="${_branch##refs/heads/}"
     if [[ "$_branch" = "$BRANCH_NAME" ]]; then
       WORKTREE_PATH="$wt_path"
@@ -209,7 +209,7 @@ if [[ "$DELETE_MODE" = true ]]; then
   # Try stripping REPO_NAME prefix if not found
   if [[ -z "$WORKTREE_PATH" && "$BRANCH_NAME" = "${REPO_NAME}-"* ]]; then
     ACTUAL_BRANCH="${BRANCH_NAME#${REPO_NAME}-}"
-    while IFS= read -r wt_path _branch; do
+    while read -r wt_path _branch; do
       _branch="${_branch##refs/heads/}"
       if [[ "$_branch" = "$ACTUAL_BRANCH" ]]; then
         WORKTREE_PATH="$wt_path"
