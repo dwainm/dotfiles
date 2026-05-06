@@ -1,4 +1,4 @@
-// opencode tmux window rename plugin.
+// opencode tmux window rename plugin
 
 import { exec } from "node:child_process";
 
@@ -9,10 +9,17 @@ const sh = (cmd) => new Promise((ok) => {
 const SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 const BLINK   = ["❓ ", "   "];
 
-export const TmuxAgentIndicator = async () => {
+export const TmuxIndicator = async () => {
   if (!process.env.TMUX) return {};
   const PANE = process.env.TMUX_PANE;
   if (!PANE) return {};
+
+  const { writeFileSync } = await import("node:fs");
+  const LOG = "/tmp/opencode-notifier.log";
+  const log = (msg) => { try { writeFileSync(LOG, `${new Date().toISOString()} ${msg}\n`, { flag: "a" }); } catch {} };
+
+  await sh(`tmux rename-window -t ${PANE} "IT works!" 2>/dev/null`);
+  log("plugin init ok");
 
   let lastState = "off";
   let windowId = null;
@@ -40,7 +47,6 @@ export const TmuxAgentIndicator = async () => {
     });
     let n = name || "";
     if (/^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏❓💤⚡] /.test(n)) n = n.slice(2);
-    // also strip blink/zzz patterns that might have extra spaces
     n = n.replace(/^[❓💤\s]+ /, "").trim() || n;
     originalName = n;
     return n;
@@ -93,14 +99,17 @@ export const TmuxAgentIndicator = async () => {
   };
 
   return {
-    "tool.execute.before": async (input) => {
-      if (input?.tool === "question") await setState("needs-input");
+    "tool.execute.before": async (input, output) => {
+      log(`hook: before ${input.tool}`);
+      if (input.tool === "question") await setState("needs-input");
       else await setState("running");
     },
-    "permission.ask": async () => {
+    "permission.ask": async (input, output) => {
+      log("hook: perm.ask");
       await setState("needs-input");
     },
     event: async ({ event }) => {
+      log(`hook: event ${event.type}`);
       if (event.type === "session.status" && event.properties?.status?.type === "busy") {
         await setState("running");
       }

@@ -112,7 +112,7 @@ set -g @catppuccin_status_load_text_fg "#cdd6f4"
 set -g @catppuccin_status_middle_separator ''
 set -g @catppuccin_status_module_text_bg "#{?@catppuccin_status_module_bg_color,#{E:@catppuccin_status_module_bg_color},#{@thm_surface_0}}"
 set -g @catppuccin_status_modules_left session
-set -g @catppuccin_status_modules_right "application uptime"
+set -g @catppuccin_status_modules_right ""
 set -g @catppuccin_status_pomodoro_plus "#[fg=]#[fg=#11111b,bg=] #[fg=#cdd6f4,bg=#313244]#{E:@catppuccin_pomodoro_plus_text}#[fg=#313244] "
 set -g @catppuccin_status_pomodoro_plus_icon_bg ''
 set -g @catppuccin_status_pomodoro_plus_icon_fg "#11111b"
@@ -252,7 +252,7 @@ set -g status-left "#{E:@catppuccin_status_session}#[default] 󰁪 #{continuum_s
 set -g status-left-length 200
 set -g status-left-style default
 set -g status-position top
-set -g status-right "#{E:@catppuccin_status_application}#{E:@catppuccin_status_uptime}"
+set -g status-right ""
 set -g status-right-length 100
 set -g status-right-style default
 set -g status-style "bg=#181825,fg=#cdd6f4"
