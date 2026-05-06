@@ -6,6 +6,7 @@ metadata:
 triggers:
   - "dotfiles"
   - "config"
+  - "yadm"
   - ".zshrc"
   - ".tmux.conf"
   - "my config"
@@ -70,17 +71,19 @@ yadm clone <repo-url>
 
 Dwain's current dotfiles:
 - `~/.zshrc` - Shell configuration
-- `~/.tmux.conf` - Tmux configuration
+- `~/.tmux.conf` - Tmux configuration (via `~/.config/tmux/tmux.conf##os.Darwin`)
+- `~/.agents/skills/` - Claude/opencode agent skills and references
 - `~/bin/gwt` - Git worktree helper
 - `~/.pi/agent/settings.json` - Pi settings
 - `~/.pi/agent/extensions/harness-review.ts` - Pi extension
 
 ## Best practices
 
-1. **Always commit** after making config changes
+1. **Commit after config changes** — including skill updates
 2. **Push** after commits to sync to remote
 3. **Pull** before making changes on a new machine
 4. **Use aliases**: ystat, yadd, ycom, ypush, ypull
+5. **When editing skills**: the skill files are tracked — commit after creating or modifying any `SKILL.md` or references
 
 ## Example workflow
 
