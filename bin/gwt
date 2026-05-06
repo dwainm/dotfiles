@@ -20,6 +20,7 @@ Options:
   gwt <branch> [purpose]    Create worktree
   gwt -i "<instruction>"    Smart mode: use AI to determine branch & purpose
   gwt -l                    List worktrees
+  gwt -s                    List gwt-created tmux windows/sessions
   gwt -d <branch>           Delete worktree
   gwt -b <base> <branch>    Create from base branch
   gwt -c <branch>           Create from current branch
@@ -39,6 +40,7 @@ BASE_BRANCH=""
 USE_CURRENT=false
 DELETE_MODE=false
 LIST_MODE=false
+SHOW_MODE=false
 CHECKOUT_EXISTING=false
 INSTRUCTION_MODE=false
 INSTRUCTION=""
@@ -47,6 +49,7 @@ while [[ $# -gt 0 ]]; do
   case $1 in
     -h|--help) show_help; exit 0 ;;
     -l) LIST_MODE=true; shift ;;
+    -s) SHOW_MODE=true; shift ;;
     -d) DELETE_MODE=true; shift ;;
     -b) BASE_BRANCH="$2"; shift 2 ;;
     -c) USE_CURRENT=true; shift ;;
@@ -74,6 +77,28 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Show gwt-created tmux windows/sessions (no git repo needed)
+if [[ "$SHOW_MODE" = true ]]; then
+  echo -e "${BLUE}GWT Windows/Sessions:${NC}"
+  echo ""
+  found=0
+  while IFS=: read -r sess win_idx win_name branch; do
+    if [[ -n "$branch" ]]; then
+      echo -e "  ${GREEN}$sess${NC}:${win_idx} ${win_name}  (branch: $branch)"
+      found=1
+    fi
+  done < <(tmux list-windows -a -F "#{session_name}:#{window_index}:#{window_name}:#{@gwt-branch}" 2>/dev/null)
+  if [[ "$found" -eq 0 ]]; then
+    echo "  No gwt-created windows found."
+    echo ""
+    echo "  Create one with: gwt <branch-name>"
+  fi
+  echo ""
+  echo "Press Enter to close..."
+  read
+  exit 0
+fi
+
 git rev-parse --git-dir > /dev/null 2>&1 || {
   echo -e "${RED}Not a git repo${NC}" >&2
   exit 1
@@ -83,31 +108,80 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 REPO_NAME=$(basename "$REPO_ROOT")
 SAFE_NAME=$(echo "$REPO_NAME" | sed 's/\./_/g')
 
-# Instruction mode - call opencode to figure out branch and purpose
+# Instruction mode - call AI to figure out branch and purpose
 if [[ "$INSTRUCTION_MODE" = true ]]; then
   echo -e "${BLUE}Interpret: $INSTRUCTION${NC}"
   
-  GWT_MODEL="opencode-go/kimi-k2.5"
+  GWT_MODEL="opencode/minimax-m2.5-free"
   echo -e "${BLUE}Model: $GWT_MODEL${NC}"
   
-  # Use opencode with a one-shot prompt to get branch and purpose (--pure skips plugin loading)
-  RESPONSE=$(timeout 15 opencode run --pure --model "$GWT_MODEL" "Given this instruction: \"$INSTRUCTION\", respond with ONLY this format (no other text):
-BRANCH: <kebab-case-branch-name>
-PURPOSE: <human readable purpose>" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | tail -5)
+  # Detect issue number vs free-text instruction
+  TMPFILE=$(mktemp /tmp/gwt-output.XXXXXX.json)
+  AI_PROMPT=""
+  if [[ "$INSTRUCTION" =~ ^[0-9]+$ ]]; then
+    # ── Issue mode: fetch context via gh ──
+    ISSUE_NUM="$INSTRUCTION"
+    echo -e "${BLUE}Fetching issue #$ISSUE_NUM...${NC}"
+    
+    if ! command -v gh &>/dev/null; then
+      echo -e "${RED}gh CLI not found. Install: brew install gh${NC}" >&2
+      exit 1
+    fi
+    
+    ISSUE_JSON=$(gh issue view "$ISSUE_NUM" --json number,title,body,labels,state 2>/dev/null)
+    if [[ -z "$ISSUE_JSON" ]]; then
+      echo -e "${RED}Failed to fetch issue #$ISSUE_NUM${NC}" >&2
+      exit 1
+    fi
+    
+    ISSUE_TITLE=$(echo "$ISSUE_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['title'])" 2>/dev/null)
+    ISSUE_BODY=$(echo "$ISSUE_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['body'][:300])" 2>/dev/null)
+    ISSUE_LABELS=$(echo "$ISSUE_JSON" | python3 -c "import sys,json; print(', '.join(l['name'] for l in json.load(sys.stdin).get('labels',[])))" 2>/dev/null)
+    ISSUE_STATE=$(echo "$ISSUE_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['state'])" 2>/dev/null)
+    
+    echo -e "${BLUE}#$ISSUE_NUM [$ISSUE_STATE] $ISSUE_TITLE${NC}"
+    [[ -n "$ISSUE_LABELS" ]] && echo -e "${BLUE}Labels: $ISSUE_LABELS${NC}"
+    
+    AI_PROMPT="GitHub Issue #$ISSUE_NUM: $ISSUE_TITLE
+Labels: $ISSUE_LABELS
+State: $ISSUE_STATE
+Body: $ISSUE_BODY
+
+Write this exact JSON to $TMPFILE (nothing else in the file):
+{\"branch\": \"kebab-case-branch\", \"purpose\": \"brief purpose from issue title\"}
+Use labels to determine branch prefix (bug→fix/, feature→feat/, etc). Only write the JSON."
+  else
+    # ── Text mode: use instruction as-is ──
+    AI_PROMPT="Instruction: $INSTRUCTION
+
+Write this exact JSON to $TMPFILE (nothing else in the file):
+{\"branch\": \"kebab-case-branch\", \"purpose\": \"brief summary of the task\"}
+Only write the JSON."
+  fi
   
-  # Parse the response
-  BRANCH_NAME=$(echo "$RESPONSE" | grep "^BRANCH:" | sed 's/^BRANCH: *//' | tr -d '\n')
-  PURPOSE=$(echo "$RESPONSE" | grep "^PURPOSE:" | sed 's/^PURPOSE: *//' | tr -d '\n')
+  timeout 30 opencode run --pure --model "$GWT_MODEL" "$AI_PROMPT" 2>/dev/null
+  
+  if [[ -f "$TMPFILE" && -s "$TMPFILE" ]]; then
+    BRANCH_NAME=$(python3 -c "import json; print(json.load(open('$TMPFILE')).get('branch',''))" 2>/dev/null)
+    PURPOSE=$(python3 -c "import json; print(json.load(open('$TMPFILE')).get('purpose',''))" 2>/dev/null)
+    rm -f "$TMPFILE"
+  else
+    rm -f "$TMPFILE"
+    BRANCH_NAME=""
+    PURPOSE=""
+  fi
   
   if [[ -z "$BRANCH_NAME" ]]; then
-    echo -e "${RED}Failed to parse branch from opencode response${NC}" >&2
-    echo "$RESPONSE" >&2
+    echo -e "${RED}Failed to get branch name from AI${NC}" >&2
     exit 1
   fi
   
   echo -e "${GREEN}Branch: $BRANCH_NAME${NC}"
   echo -e "${GREEN}Purpose: $PURPOSE${NC}"
 fi
+
+# Compute safe name for worktree directory paths (replace / with -)
+SAFE_NAME=$(echo "$BRANCH_NAME" | tr '/' '-')
 
 # List
 if [[ "$LIST_MODE" = true ]]; then
@@ -117,9 +191,9 @@ fi
 
 # Delete
 if [[ "$DELETE_MODE" = true ]]; then
-  [[ -z "$BRANCH_NAME" ]] && { echo -e "${RED}Need branch name${NC}" >&2; exit 1; }
+[[ -z "$BRANCH_NAME" ]] && { echo -e "${RED}Need branch name${NC}" >&2; exit 1; }
   
-  WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${BRANCH_NAME}"
+  WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-$(echo "$BRANCH_NAME" | tr '/' '-')"
   
   # 1. Kill tmux window/session (match by gwt-branch option or fallback to name)
   FOUND=$(tmux list-windows -a -F "#{window_id}:#{session_name}:#{@gwt-branch}:#{window_name}" 2>/dev/null | grep ":${BRANCH_NAME}:" | head -1)
@@ -169,7 +243,7 @@ elif [[ -z "$BASE_BRANCH" ]]; then
 fi
 [[ -z "$BASE_BRANCH" ]] && { echo -e "${RED}No base branch${NC}" >&2; exit 1; }
 
-WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${BRANCH_NAME}"
+WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${SAFE_NAME}"
 [[ -d "$WORKTREE_PATH" ]] && { echo -e "${RED}Exists: $WORKTREE_PATH${NC}" >&2; exit 1; }
 
 # Create worktree

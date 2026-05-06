@@ -211,7 +211,7 @@ set -g @thm_surface_1 "#45475a"
 set -g @thm_surface_2 "#585b70"
 set -g @thm_teal "#94e2d5"
 set -g @thm_yellow "#f9e2af"
-set -g @tmux-fzf-options "-p -w 80% -h 80% --layout=reverse --preview-window=down:50%"
+
 set -g activity-action other
 set -g assume-paste-time 1
 set -g base-index 1
@@ -274,7 +274,7 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-pomodoro-plus'
-set -g @plugin 'samoshkin/tmux-fzf'
+set -g @plugin 'omerxx/tmux-sessionx'
 set -g @plugin 'olimorris/tmux-pomodoro-plus'
 # ===== WINDOW OPTIONS (from running session) =====
 set -g cursor-colour "#ff7db3"
@@ -487,13 +487,13 @@ bind-key    -T prefix        ?                      display-popup -E -h "60%" -w
 bind-key    -T prefix        C                      customize-mode -Z
 bind-key    -T prefix        D                      choose-client -Z
 bind-key    -T prefix        E                      select-layout -E
-bind-key    -T prefix        F                      run-shell -b /Users/dwain/.config/tmux/plugins/tmux-fzf/main.sh
+bind-key    -T prefix        F                      run-shell -b "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T prefix        G                      run-shell "tmux switch-client -t gh-dash || tmux new-session -d -s gh-dash -c '/Users/dwain/code/dlvhdr/gh-dash' gh dash && tmux switch-client -t gh-dash"
 bind-key    -T prefix        I                      run-shell /Users/dwain/.config/tmux/plugins/tpm/bindings/install_plugins
 bind-key    -T prefix        L                      switch-client -l
 bind-key    -T prefix        M                      select-pane -M
 bind-key    -T prefix        P                      run-shell "/Users/dwain/.config/tmux/plugins/tmux-pomodoro-plus/scripts/pomodoro.sh cancel"
-bind-key    -T prefix        T                      run-shell "cd ~/.config/tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session-with-current-inline.sh"
+bind-key    -T prefix        T                      run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T prefix        U                      run-shell /Users/dwain/.config/tmux/plugins/tpm/bindings/update_plugins
 bind-key    -T prefix        [                      previous-window
 bind-key    -T prefix        \\                     split-window -h -c "#{pane_current_path}"
@@ -512,7 +512,7 @@ bind-key    -T prefix        o                      select-pane -t :.+
 bind-key    -T prefix        p                      run-shell "/Users/dwain/.config/tmux/plugins/tmux-pomodoro-plus/scripts/pomodoro.sh toggle"
 bind-key    -T prefix        q                      display-panes
 bind-key    -T prefix        s                      choose-tree
-bind-key    -T prefix        t                      run-shell "cd ~/.config/tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session-with-current-inline.sh switch"
+bind-key    -T prefix        t                      run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T prefix        v                      copy-mode
 bind-key    -T prefix        w                      switch-client -T window-select \; run-shell /Users/dwain/.config/tmux/scripts/window-select-hint.sh
 bind-key    -T prefix        x                      confirm-before -p "kill-pane #P? (y/n)" kill-pane
@@ -572,15 +572,15 @@ bind-key    -T root          M--                    split-window -v -c "#{pane_c
 bind-key    -T root          M-<                    swap-pane -U
 bind-key    -T root          M->                    swap-pane -D
 bind-key    -T root          M-?                    display-popup -E -h "60%" -w "60%" "cat <<'EOF'\n\nTMUX CUSTOM KEYBINDINGS\n=======================\n\nAlt-based (no prefix):\nalt + [        Previous window\nalt + ]        Next window\nctrl + shift + [  Swap pane left\nctrl + shift + ]  Swap pane right\nalt + c        New window (current dir)\nalt + x        Kill window\nalt + z        Zoom pane\nalt + v        Copy mode\nalt + s        Session manager menu (fzf)\nalt + t        Quick session switch (fzf)\nalt + S        Session manager menu (fzf)\nalt + ,        Rename window\nalt + -        Split pane horizontally\nalt +         Split pane vertically\nshift + alt + ?  Show this help\n\nPrefix-based (Ctrl-Space):\nprefix + ?     Show this help\nprefix + r     Reload config\nprefix + g     Lazygit\nprefix + t     Quick session switch\nprefix + T     Session manager menu\nprefix + w     Window select (home row)\nprefix + s     Session list\n\nPress any key to close...\nEOF\nread"
-bind-key    -T root          M-S                    run-shell "cd ~/.config/tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session-with-current-inline.sh"
+bind-key    -T root          M-S                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T root          M-[                    previous-window
 bind-key    -T root          M-\\                   split-window -h -c "#{pane_current_path}"
 bind-key    -T root          M-]                    next-window
 bind-key    -T root          M-c                    new-window -c "#{pane_current_path}"
 bind-key    -T root          M-o                    command-prompt
 bind-key    -T root          M-r                    source-file $XDG_CONFIG_HOME/tmux/tmux.conf \; display-message Reloaded!
-bind-key    -T root          M-s                    run-shell "cd ~/.config/tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session-with-current-inline.sh"
-bind-key    -T root          M-t                    run-shell "cd ~/.config/tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session-with-current-inline.sh switch"
+bind-key    -T root          M-s                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
+bind-key    -T root          M-t                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T root          M-v                    copy-mode
 bind-key    -T root          M-w                    display-popup -E -h "80%" -w "80%" "gwt -s"
 bind-key    -T root          M-x                    confirm-before -p "kill-window #W? (y/n)" kill-window

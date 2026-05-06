@@ -20,3 +20,5 @@
 	rebase = false
 [alias]
 	glo = log --oneline
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
