@@ -332,8 +332,6 @@ bind-key    -T prefix        C-s                    run-shell /Users/dwain/.conf
 # -- root table --
 bind-key    -T root          M-,                    command-prompt -I "#W" "rename-window '%%'"
 bind-key    -T root          M--                    split-window -v -c "#{pane_current_path}"
-bind-key    -T root          M-<                    swap-pane -U
-bind-key    -T root          M->                    swap-pane -D
 bind-key    -T root          M-?                    display-popup -E -h "60%" -w "60%" "cat <<'EOF'\n\nTMUX CUSTOM KEYBINDINGS\n=======================\n\nAlt-based (no prefix):\nalt + [        Previous window\nalt + ]        Next window\nctrl + shift + [  Swap pane left\nctrl + shift + ]  Swap pane right\nalt + c        New window (current dir)\nalt + x        Kill window\nalt + z        Zoom pane\nalt + v        Copy mode\nalt + s        Session manager menu (fzf)\nalt + t        Quick session switch (fzf)\nalt + S        Session manager menu (fzf)\nalt + ,        Rename window\nalt + -        Split pane horizontally\nalt +         Split pane vertically\nshift + alt + ?  Show this help\n\nPrefix-based (Ctrl-Space):\nprefix + ?     Show this help\nprefix + r     Reload config\nprefix + g     Lazygit\nprefix + t     Quick session switch\nprefix + T     Session manager menu\nprefix + w     Window select (home row)\nprefix + s     Session list\n\nPress any key to close...\nEOF\nread"
 bind-key    -T root          M-S                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T root          M-[                    previous-window
@@ -360,8 +358,8 @@ bind-key    -T root          M-S-Up                 resize-pane -U 5
 bind-key    -T root          M-S-Down               resize-pane -D 5
 bind-key    -T root          M-S-Left               resize-pane -L 5
 bind-key    -T root          M-S-Right              resize-pane -R 5
-bind-key    -T root          C-S-[                  swap-pane -s "{left-of}"
-bind-key    -T root          C-S-]                  swap-pane -s "{right-of}"
+bind-key    -T root          M-C-Left               run-shell "$XDG_CONFIG_HOME/tmux/scripts/move-window-rel.sh -1"
+bind-key    -T root          M-C-Right              run-shell "$XDG_CONFIG_HOME/tmux/scripts/move-window-rel.sh +1"
 bind-key    -T window-select a                      select-window -t 1
 bind-key    -T window-select d                      select-window -t 5
 bind-key    -T window-select e                      select-window -t 8
