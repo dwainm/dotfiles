@@ -105,7 +105,9 @@ git rev-parse --git-dir > /dev/null 2>&1 || {
 }
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-REPO_NAME=$(basename "$REPO_ROOT")
+MAIN_REPO_ROOT=$(git worktree list --porcelain 2>/dev/null | awk '/^worktree / {print $2; exit}')
+[[ -z "$MAIN_REPO_ROOT" ]] && MAIN_REPO_ROOT="$REPO_ROOT"
+REPO_NAME=$(basename "$MAIN_REPO_ROOT")
 SAFE_NAME=$(echo "$REPO_NAME" | sed 's/\./_/g')
 
 # Instruction mode - call AI to figure out branch and purpose
