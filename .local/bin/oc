@@ -118,24 +118,39 @@ cmd_start() {
 cmd_stop() {
   $TS_AVAILABLE && ts_serve_down
 
-  if ! is_running; then
+  # Find actual PIDs on the port (more reliable than PID file)
+  local pids
+  pids=$(lsof -ti "tcp:${PORT}" -sTCP:LISTEN 2>/dev/null || true)
+
+  if [ -z "$pids" ] && ! is_running && ! [ -f "$PIDFILE" ]; then
     echo "oc: not running"
-    [ -f "$PIDFILE" ] && rm -f "$PIDFILE"
     return 0
   fi
 
-  local pid
-  pid=$(cat "$PIDFILE")
-  kill "$pid" 2>/dev/null || true
-  sleep 1
-  kill -0 "$pid" 2>/dev/null && kill -9 "$pid" 2>/dev/null || true
+  for pid in $pids; do
+    echo "oc: killing process on port ${PORT} (pid ${pid})"
+    kill "$pid" 2>/dev/null || true
+  done
+
+  # Wait for processes to die
+  for i in $(seq 1 10); do
+    pids=$(lsof -ti "tcp:${PORT}" -sTCP:LISTEN 2>/dev/null || true)
+    [ -z "$pids" ] && break
+    sleep 0.3
+  done
+
+  # Force kill any remaining
+  pids=$(lsof -ti "tcp:${PORT}" -sTCP:LISTEN 2>/dev/null || true)
+  for pid in $pids; do
+    kill -9 "$pid" 2>/dev/null || true
+  done
+
   rm -f "$PIDFILE"
-  echo "oc: stopped (was pid ${pid})"
+  echo "oc: stopped"
 }
 
 cmd_restart() {
   cmd_stop
-  sleep 1
   cmd_start
 }
 
