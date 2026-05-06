@@ -18,7 +18,6 @@ export const TmuxIndicator = async () => {
   const LOG = "/tmp/opencode-notifier.log";
   const log = (msg) => { try { writeFileSync(LOG, `${new Date().toISOString()} ${msg}\n`, { flag: "a" }); } catch {} };
 
-  await sh(`tmux rename-window -t ${PANE} "IT works!" 2>/dev/null`);
   log("plugin init ok");
 
   let lastState = "off";
