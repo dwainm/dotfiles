@@ -1,5 +1,4 @@
 # Aerospace -- Config for managing my window management/KB shortcuts
-# There are also links to sketchybar for the custom mac os status bar.
 # Kudos to 
 # - https://github.com/linkarzu/dotfiles-latest/
 # - https://github.com/filipcujanovic/dotfiles
@@ -8,13 +7,11 @@
 after-login-command = []
 
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-after-startup-command = ['exec-and-forget sketchybar', 'layout tiles horizontal']
+after-startup-command = ['layout tiles horizontal']
 
-# Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE; aerospace list-windows --all | grep "Picture in Picture" | cut -d"|" -f1 | xargs aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE; aerospace list-windows --all | grep "zsh" | cut -d"|" -f1 | xargs aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE;',
+    'aerospace list-windows --all | grep "Picture in Picture" | cut -d"|" -f1 | xargs aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id',
+    'aerospace list-windows --all | grep "zsh" | cut -d"|" -f1 | xargs aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id',
 ]
 
 start-at-login = true
@@ -47,7 +44,7 @@ gaps.outer.right = 5
 gaps.outer.bottom = 5
 gaps.outer.top = [
     { monitor."built-in" = 10 },
-    { monitor.main = 47  }, # sketchybar height is 37 + 10 padding
+    { monitor.main = 20  },
     { monitor.secondary = 10 },
     20,
 ]
@@ -64,11 +61,11 @@ gaps.outer.top = [
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
-esc = ['exec-and-forget ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL', 'reload-config', 'mode main']
-r = ['exec-and-forget ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL', 'flatten-workspace-tree', 'mode main'] # reset layout
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main'] # reset layout
 #s = ['layout sticky tiling', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
-f = ['exec-and-forget ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL', 'layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
-backspace = ['exec-and-forget ~/.config/sketchybar/helpers/mode_notifier.sh NORMAL', 'close-all-windows-but-current', 'mode main']
+f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+backspace = ['close-all-windows-but-current', 'mode main']
 
 alt-shift-h = ['join-with left', 'mode main']
 alt-shift-j = ['join-with down', 'mode main']
