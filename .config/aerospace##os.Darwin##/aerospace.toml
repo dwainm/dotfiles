@@ -45,18 +45,9 @@ gaps.outer.bottom = 5
 gaps.outer.top = 0
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
+# All shortcuts handled by skhd - aerospace main mode has no bindings
 [mode.main.binding]
 
-# Unbind default resize keys from colemak preset
-alt-- = []
-alt-= = []
-
-# You can uncomment this line to open up terminal with alt + enter shortcut
-# See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
-# alt-enter = 'exec-and-forget open -n /System/Applications/Utilities/Terminal.app'
-
-# All shortcuts moved to skhd - AeroSpace only handles window management
-# See ~/.config/skhd/skhdrc for all keybindings and modes
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
