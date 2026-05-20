@@ -37,20 +37,19 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = ['move-mouse window-lazy-center']
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
-gaps.inner.horizontal = 10
-gaps.inner.vertical = 10
+gaps.inner.horizontal = 2
+gaps.inner.vertical = 2
 gaps.outer.left = 5
 gaps.outer.right = 5
 gaps.outer.bottom = 5
-gaps.outer.top = [
-    { monitor."built-in" = 10 },
-    { monitor.main = 20  },
-    { monitor.secondary = 10 },
-    20,
-]
+gaps.outer.top = 0
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.main.binding]
+
+# Unbind default resize keys from colemak preset
+alt-- = []
+alt-= = []
 
 # You can uncomment this line to open up terminal with alt + enter shortcut
 # See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
