@@ -73,6 +73,7 @@ shift + ctrl + alt + cmd - b ; break ;;info: [ hyper+b ] enter break mode
 shift + ctrl + alt + cmd - n ; default ;;info: [ hyper+n ] return to default mode
 shift + ctrl + alt + cmd - s ; service ;;info: [ hyper+s ] enter service mode
 cmd - space ; launcher ;;info: cmd+space - enter launcher mode
+cmd - k : open -g "raycast://extensions/dwain/skhd-keybindings/index" ;;info: open searchable keybindings popup
 
 # Break mode bindings - only escape works, starts new work session
 break < escape : pomodoro start 40 & skhd -k "return" ;;info: start new 40min work session
