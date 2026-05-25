@@ -34,23 +34,34 @@ resolve_key() {
   esac
 }
 
+echo_item() {
+  local key="$1"
+  local info="$2"
+  key=$(resolve_key "$key")
+  if [[ "$key" == -* ]]; then
+    echo "-- $key | $info"
+  else
+    echo "--$key | $info"
+  fi
+}
+
 if [ "$mode" != "default" ]; then
   grep "^$mode <" "$SKHD_RC" | grep ";;info:" | while IFS= read -r line; do
-    rest="${line#*< }"
+    rest="${line#*<}"
+    rest="${rest# }"
     key="${rest%% [;:]*}"
-    key=$(resolve_key "$key")
     info="${line#*;;info: }"
-    echo "--$key | $info"
+    echo_item "$key" "$info"
   done
 else
   grep -v -E "^(::|[a-z]+\s+<)" "$SKHD_RC" | grep ";;info:" | while IFS= read -r line; do
-    if [[ "$line" =~ \[.*;;info: ]]; then
+    if [[ "$line" == *" [ ;;"* ]]; then
       key="${line%% \[*}"
     else
       key="${line%% [;:]*}"
     fi
     info="${line#*;;info: }"
-    echo "--$key | $info"
+    echo_item "$key" "$info"
   done
 fi
 
