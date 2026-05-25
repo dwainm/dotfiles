@@ -38,10 +38,10 @@ echo_item() {
   local key="$1"
   local info="$2"
   key=$(resolve_key "$key")
-  if [[ "$key" == -* ]]; then
-    echo "-- $key | $info"
+  if [[ "$key" == "-" ]]; then
+    echo "-- minus  $info"
   else
-    echo "--$key | $info"
+    echo "--$key  $info"
   fi
 }
 
@@ -67,5 +67,5 @@ fi
 
 if [ "$mode" != "default" ]; then
   echo "---"
-  echo "--esc | Return to default mode | bash=\"skhd -k escape\" terminal=false refresh=true"
+  echo "--esc  return to default mode | bash=\"skhd -k escape\" terminal=false refresh=true"
 fi
