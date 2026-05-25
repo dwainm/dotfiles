@@ -1,11 +1,36 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "go/kimi-k2.5",
+  "model": "opencode/kimi-k2.6",
   "instructions": ["AGENTS.md"],
   "plugin": [],
   "permission": {
     "*": {
-          "*": "allow"
-        }
+      "*": "allow"
+    }
   },
+  "provider": {
+    "opencode": {
+      "whitelist": [
+        "claude-haiku-4-5",
+        "gpt-5.5",
+        "claude-opus-4-5",
+        "kimi-k2.6",
+        "qwen3.6-plus",
+        "deepseek-v4-flash-free"
+      ]
+    },
+    "opencode-go": {
+      "whitelist": [
+        "kimi-k2.6",
+        "qwen3.6-plus",
+        "deepseek-v4-pro"
+      ]
+    },
+    "fireworks-ai": {
+      "whitelist": [
+        "accounts/fireworks/models/qwen3p6-plus",
+        "accounts/fireworks/models/kimi-k2p6"
+      ]
+    }
+  }
 }
