@@ -24,14 +24,7 @@ echo "$emoji $name"
 echo "---"
 
 resolve_key() {
-  case "$1" in
-    "0x1B") echo "-" ;;
-    "0x18") echo "=" ;;
-    "0x1E") echo "]" ;;
-    "0x21") echo "[" ;;
-    "0x2A") echo "\\" ;;
-    *) echo "$1" ;;
-  esac
+  echo "$1" | sed 's/0x1B/-/g; s/0x18/=/g; s/0x1E/]/g; s/0x21/[/g; s/0x2A/\\/g'
 }
 
 echo_item() {
@@ -45,22 +38,90 @@ echo_item() {
   fi
 }
 
+# Parse skhdrc: track pending comments and associate them with bindings
+parse_bindings() {
+  local current_mode="default"
+  local pending_comment=""
+  local in_block=0
+
+  while IFS= read -r line; do
+    # Track mode declarations
+    if [[ "$line" =~ ^::[[:space:]]+([a-z]+) ]]; then
+      current_mode="${BASH_REMATCH[1]}"
+      pending_comment=""
+      continue
+    fi
+
+    # Empty line resets pending comment
+    if [[ -z "$line" ]]; then
+      pending_comment=""
+      continue
+    fi
+
+    # Capture comment lines (but not section headers)
+    if [[ "$line" =~ ^#[[:space:]]+(.+) ]]; then
+      local comment="${BASH_REMATCH[1]}"
+      if [[ ! "$comment" =~ ^[-=]+ ]] && [[ ! "$comment" =~ ^[0-9]+\. ]]; then
+        pending_comment="$comment"
+      fi
+      continue
+    fi
+
+    # Skip lines without a pending comment
+    [[ -z "$pending_comment" ]] && continue
+
+    # Skip lines that are just comments (no binding)
+    [[ "$line" =~ ^[[:space:]]*# ]] && { pending_comment=""; continue; }
+
+    local info="$pending_comment"
+
+    # Handle multi-line blocks
+    if [[ "$line" =~ ^[[:space:]]*\* ]] || [[ "$line" =~ ^\" ]] || [[ "$line" =~ ^\] ]]; then
+      if [[ "$line" =~ ^\] ]]; then
+        in_block=0
+      fi
+      pending_comment=""
+      continue
+    fi
+
+    # Mode-specific bindings: mode < key
+    if [[ "$line" =~ ^([a-z]+)[[:space:]]*\<[[:space:]]*(.+) ]]; then
+      local m="${BASH_REMATCH[1]}"
+      local rest="${BASH_REMATCH[2]}"
+      local key
+      key=$(echo "$rest" | sed 's/[[:space:]]*[:;].*//' | sed 's/[[:space:]]*$//')
+      echo "MODE:$m|$key|$info"
+      pending_comment=""
+      continue
+    fi
+
+    # Global bindings
+    local key_part
+    key_part=$(echo "$line" | sed 's/[[:space:]]*[:;].*//' | sed 's/[[:space:]]*\[.*//')
+    [[ -z "$key_part" ]] && { pending_comment=""; continue; }
+
+    local key
+    key=$(echo "$key_part" | awk '{print $NF}')
+    local modifiers
+    modifiers=$(echo "$key_part" | sed "s/[[:space:]]*${key}$//")
+    modifiers=$(echo "$modifiers" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+
+    if [[ -n "$modifiers" ]]; then
+      echo "MODE:default|$modifiers $key|$info"
+    else
+      echo "MODE:default|$key|$info"
+    fi
+
+    pending_comment=""
+  done < "$SKHD_RC"
+}
+
 if [ "$mode" != "default" ]; then
-  grep "^$mode <" "$SKHD_RC" | grep ";;info:" | while IFS= read -r line; do
-    rest="${line#*<}"
-    rest="${rest# }"
-    key="${rest%% [;:]*}"
-    info="${line#*;;info: }"
+  parse_bindings | grep "^MODE:$mode|" | while IFS='|' read -r _ key info; do
     echo_item "$key" "$info"
   done
 else
-  grep -v -E "^(::|[a-z]+\s+<)" "$SKHD_RC" | grep ";;info:" | while IFS= read -r line; do
-    if [[ "$line" == *" [ ;;"* ]]; then
-      key="${line%% \[*}"
-    else
-      key="${line%% [;:]*}"
-    fi
-    info="${line#*;;info: }"
+  parse_bindings | grep "^MODE:default|" | while IFS='|' read -r _ key info; do
     echo_item "$key" "$info"
   done
 fi

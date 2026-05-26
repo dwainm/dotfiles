@@ -15,50 +15,68 @@
 
 # Media Controls with Ctrl + Function Keys (F1-F12)
 # Brightness
-ctrl - f1 : skhd -k "0x91" # Brightness down
-ctrl - f2 : skhd -k "0x90" # Brightness up
+# Brightness down
+ctrl - f1 : skhd -k "0x91"
+# Brightness up
+ctrl - f2 : skhd -k "0x90"
 # Media playback
-ctrl - f7 : osascript -e 'tell application "Music" to previous track' # Previous Track
-ctrl - f8 : osascript -e 'tell application "Music" to playpause'      # Play/Pause
-ctrl - f9 : osascript -e 'tell application "Music" to next track'     # Next Track
+# Previous Track
+ctrl - f7 : osascript -e 'tell application "Music" to previous track'
+# Play/Pause
+ctrl - f8 : osascript -e 'tell application "Music" to playpause'
+# Next Track
+ctrl - f9 : osascript -e 'tell application "Music" to next track'
 # Volume
-ctrl - f10 : ~/.local/bin/mediakey mute    # Toggle Mute
-ctrl - f11 : ~/.local/bin/mediakey voldown # Volume Down
-ctrl - f12 : ~/.local/bin/mediakey volup   # Volume Up
+# Toggle Mute
+ctrl - f10 : ~/.local/bin/mediakey mute
+# Volume Down
+ctrl - f11 : ~/.local/bin/mediakey voldown
+# Volume Up
+ctrl - f12 : ~/.local/bin/mediakey volup
 
 # Toggle between layouts (simplified for AeroSpace) - removed, use workspace mode instead
 
 # Changing Window Focus with Ctrl+hjkl - Smart navigation for terminals
-ctrl - h [ ;;info: focus previous window (dfs)
+# focus previous window (dfs)
+ctrl - h [
 * : aerospace focus dfs-prev
 "kitty" ~
 "Alacritty" ~
 ]
-ctrl - j [ ;;info: focus down
+# focus down
+ctrl - j [
 * : aerospace focus down
 "kitty" ~
 "Alacritty" ~
 ]
-ctrl - k [ ;;info: focus up
+# focus up
+ctrl - k [
 * : aerospace focus up
 "kitty" ~
 "Alacritty" ~
 ]
-ctrl - l [ ;;info: focus next window (dfs)
+# focus next window (dfs)
+ctrl - l [
 * : aerospace focus dfs-next
 "kitty" ~
 "Alacritty" ~
 ]
 
 # Fullscreen toggle
-ctrl - f : aerospace fullscreen ;;info: toggle fullscreen
+# toggle fullscreen
+ctrl - f : aerospace fullscreen
 
 # Workspaces
-cmd + ctrl - q : aerospace workspace q ;;info: switch to workspace q
-cmd + ctrl - w : aerospace workspace w ;;info: switch to workspace w
-cmd + ctrl - f : aerospace workspace f ;;info: switch to workspace f
-cmd + ctrl - p : aerospace workspace p ;;info: switch to workspace p
-cmd + ctrl - g : aerospace workspace g ;;info: switch to workspace g
+# switch to workspace q
+cmd + ctrl - q : aerospace workspace q
+# switch to workspace w
+cmd + ctrl - w : aerospace workspace w
+# switch to workspace f
+cmd + ctrl - f : aerospace workspace f
+# switch to workspace p
+cmd + ctrl - p : aerospace workspace p
+# switch to workspace g
+cmd + ctrl - g : aerospace workspace g
 
 # Mode declarations (removed @ to avoid capturing all keypresses)
 :: default : echo "default" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
@@ -69,22 +87,32 @@ cmd + ctrl - g : aerospace workspace g ;;info: switch to workspace g
 :: break @: echo "break" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
 
 # Mode switching shortcuts
-shift + ctrl + alt + cmd - b ; break ;;info: [ hyper+b ] enter break mode
-shift + ctrl + alt + cmd - n ; default ;;info: [ hyper+n ] return to default mode
-shift + ctrl + alt + cmd - s ; service ;;info: [ hyper+s ] enter service mode
-cmd - space ; launcher ;;info: cmd+space - enter launcher mode
-shift + cmd - k : open -g "raycast://extensions/dwain/skhd-keybindings/index" ;;info: open searchable keybindings popup
+# [ hyper+b ] enter break mode
+shift + ctrl + alt + cmd - b ; break
+# [ hyper+n ] return to default mode
+shift + ctrl + alt + cmd - n ; default
+# [ hyper+s ] enter service mode
+shift + ctrl + alt + cmd - s ; service
+# cmd+space - enter launcher mode
+cmd - space ; launcher
+# open searchable keybindings popup
+shift + cmd - k : open "raycast://extensions/dwain/skhd-keybindings/index"
 
 # Break mode bindings - only escape works, starts new work session
-break < escape : pomodoro start 40 & skhd -k "return" ;;info: start new 40min work session
-break < return ; default ;;info: return to default mode
+# start new 40min work session
+break < escape : pomodoro start 40 & skhd -k "return"
+# return to default mode
+break < return ; default
 
 # Service mode bindings - only work when in service mode
-service < escape ; default ;;info: return to default mode
-service < r : aerospace reload-config ;;info: reload AeroSpace config
+# return to default mode
+service < escape ; default
+# reload AeroSpace config
+service < r : aerospace reload-config
 
 # Workspace mode bindings - layout changes and window management
-workspace < escape ; default ;;info: return to default mode
+# return to default mode
+workspace < escape ; default
 
 # ============ LAYOUT CHANGES ============
 # Simple mental model:
@@ -95,67 +123,121 @@ workspace < escape ; default ;;info: return to default mode
 #   space = toggle current window float/tile
 
 # Tiles: windows split evenly
-workspace < h : aerospace flatten-workspace-tree && aerospace layout h_tiles ; skhd -k "escape" ;;info: horizontal tiles (side by side)
-workspace < v : aerospace flatten-workspace-tree && aerospace layout v_tiles ; skhd -k "escape" ;;info: vertical tiles (stacked)
-workspace < a : aerospace flatten-workspace-tree && aerospace layout h_accordion ; skhd -k "escape" ;;info: accordion (tabs)
-workspace < shift - a : aerospace flatten-workspace-tree && aerospace layout v_accordion ; skhd -k "escape" ;;info: vertical accordion (tabs)
-workspace < space : aerospace layout floating tiling ; skhd -k "escape" ;;info: toggle all windows float/tile
-workspace < t : aerospace layout floating tiling ; skhd -k "escape" ;;info: toggle focused window float
+# horizontal tiles (side by side)
+workspace < h : aerospace flatten-workspace-tree && aerospace layout h_tiles ; skhd -k "escape"
+# vertical tiles (stacked)
+workspace < v : aerospace flatten-workspace-tree && aerospace layout v_tiles ; skhd -k "escape"
+# accordion (tabs)
+workspace < a : aerospace flatten-workspace-tree && aerospace layout h_accordion ; skhd -k "escape"
+# vertical accordion (tabs)
+workspace < shift - a : aerospace flatten-workspace-tree && aerospace layout v_accordion ; skhd -k "escape"
+# toggle all windows float/tile
+workspace < space : aerospace layout floating tiling ; skhd -k "escape"
+# toggle focused window float
+workspace < t : aerospace layout floating tiling ; skhd -k "escape"
 
 # Reset: flatten everything and go back to default tiles
-workspace < r : aerospace list-windows --workspace focused --format '%{window-id}' | xargs -I {} aerospace layout --window-id {} tiling && aerospace flatten-workspace-tree && aerospace layout h_tiles ; skhd -k "escape" ;;info: reset layout (flatten + tiles)
+# reset layout (flatten + tiles)
+workspace < r : aerospace list-windows --workspace focused --format '%{window-id}' | xargs -I {} aerospace layout --window-id {} tiling && aerospace flatten-workspace-tree && aerospace layout h_tiles ; skhd -k "escape"
 
 # ============ RESIZE ============
-workspace < 0x1B : aerospace resize smart -50          ;;info: [ - ] shrink window by 50
-workspace < 0x18 : aerospace resize smart +50          ;;info: [ = ] grow window by 50
-workspace < shift - 0x1B : aerospace resize smart -100 ;;info: [ shift - ] shrink fast by 100
-workspace < shift - 0x18 : aerospace resize smart +100 ;;info: [ shift = ] grow fast by 100
+# [ - ] shrink window by 50
+workspace < 0x1B : aerospace resize smart -50
+# [ = ] grow window by 50
+workspace < 0x18 : aerospace resize smart +50
+# [ shift - ] shrink fast by 100
+workspace < shift - 0x1B : aerospace resize smart -100
+# [ shift = ] grow fast by 100
+workspace < shift - 0x18 : aerospace resize smart +100
 
 # ============ MOVE WINDOWS ============
-workspace < shift - h : aerospace move left ; skhd -k "escape" ;;info: move window left
-workspace < shift - j : aerospace move down ; skhd -k "escape" ;;info: move window down
-workspace < shift - k : aerospace move up ; skhd -k "escape" ;;info: move window up
-workspace < shift - l : aerospace move right ; skhd -k "escape" ;;info: move window right
-workspace < alt - h : aerospace join-with left ; skhd -k "escape" ;;info: join with left
-workspace < alt - j : aerospace join-with down ; skhd -k "escape" ;;info: join with down
-workspace < alt - k : aerospace join-with up ; skhd -k "escape" ;;info: join with up
-workspace < alt - l : aerospace join-with right ; skhd -k "escape" ;;info: join with right
-workspace < q : aerospace workspace q ; skhd -k "escape" ;;info: switch to workspace q
-workspace < w : aerospace workspace w ; skhd -k "escape" ;;info: switch to workspace w
-workspace < f : aerospace workspace f ; skhd -k "escape" ;;info: switch to workspace f
-workspace < p : aerospace workspace p ; skhd -k "escape" ;;info: switch to workspace p
-workspace < g : aerospace workspace g ; skhd -k "escape" ;;info: switch to workspace g
-workspace < shift - q : aerospace move-node-to-workspace q && aerospace workspace q ; skhd -k "escape" ;;info: move window to workspace q
-workspace < shift - w : aerospace move-node-to-workspace w && aerospace workspace w ; skhd -k "escape" ;;info: move window to workspace w
-workspace < shift - f : aerospace move-node-to-workspace f && aerospace workspace f ; skhd -k "escape" ;;info: move window to workspace f
-workspace < shift - p : aerospace move-node-to-workspace p && aerospace workspace p ; skhd -k "escape" ;;info: move window to workspace p
-workspace < shift - g : aerospace move-node-to-workspace g && aerospace workspace g ; skhd -k "escape" ;;info: move window to workspace g
+# move window left
+workspace < shift - h : aerospace move left ; skhd -k "escape"
+# move window down
+workspace < shift - j : aerospace move down ; skhd -k "escape"
+# move window up
+workspace < shift - k : aerospace move up ; skhd -k "escape"
+# move window right
+workspace < shift - l : aerospace move right ; skhd -k "escape"
+# join with left
+workspace < alt - h : aerospace join-with left ; skhd -k "escape"
+# join with down
+workspace < alt - j : aerospace join-with down ; skhd -k "escape"
+# join with up
+workspace < alt - k : aerospace join-with up ; skhd -k "escape"
+# join with right
+workspace < alt - l : aerospace join-with right ; skhd -k "escape"
+# switch to workspace q
+workspace < q : aerospace workspace q ; skhd -k "escape"
+# switch to workspace w
+workspace < w : aerospace workspace w ; skhd -k "escape"
+# switch to workspace f
+workspace < f : aerospace workspace f ; skhd -k "escape"
+# switch to workspace p
+workspace < p : aerospace workspace p ; skhd -k "escape"
+# switch to workspace g
+workspace < g : aerospace workspace g ; skhd -k "escape"
+# move window to workspace q
+workspace < shift - q : aerospace move-node-to-workspace q && aerospace workspace q ; skhd -k "escape"
+# move window to workspace w
+workspace < shift - w : aerospace move-node-to-workspace w && aerospace workspace w ; skhd -k "escape"
+# move window to workspace f
+workspace < shift - f : aerospace move-node-to-workspace f && aerospace workspace f ; skhd -k "escape"
+# move window to workspace p
+workspace < shift - p : aerospace move-node-to-workspace p && aerospace workspace p ; skhd -k "escape"
+# move window to workspace g
+workspace < shift - g : aerospace move-node-to-workspace g && aerospace workspace g ; skhd -k "escape"
 
 # Launcher mode bindings - quick app launching
-launcher < escape ; default ;;info: return to default mode
-launcher < return ; default ;;info: return to default mode
-launcher < l : open "raycast://extensions/raycast/raycast/search-quicklinks" && skhd -k "return" ;;info: Raycast quicklinks
-launcher < shift - l : open "raycast://extensions/raycast/raycast/create-quicklink" && skhd -k "return" ;;info: add new quicklink
-launcher < w ; workspace ;;info: switch to workspace mode
-launcher < i ; writing ;;info: switch to writing mode
-launcher <0x1E : aerospace workspace --wrap-around next && skhd -k "return" ;;info: [ ] ] next workspace
-launcher <0x21 : aerospace workspace --wrap-around prev && skhd -k "return" ;;info: [ [ ] previous workspace
-launcher <0x2A : aerospace focus-back-and-forth && skhd -k "return" ;;info: [ \ ] switch to previous window
-launcher <a : osascript -e 'tell application "kitty" to activate' && tmux select-window -t $(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d' ' -f2):AI && skhd -k "return" ;;info: open Kitty + AI session
-launcher <o : open -a "Obsidian" && skhd -k "return" ;;info: open Obsidian
-launcher <r : open -a "Raycast" && skhd -k "return" ;;info: open Raycast
-launcher <b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1) && [ -n "$win" ] && aerospace focus --window-id $win || aerospace workspace q && open -a "Safari"' && skhd -k "return" ;;info: open Safari (workspace q)
-launcher <s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1) && [ -n "$win" ] && aerospace focus --window-id $win || aerospace workspace g && open -a "Safari"' && skhd -k "return" ;;info: open Safari (workspace g)
-launcher <m : open -a "Mail" && skhd -k "return" ;;info: open Mail
-launcher <n : pomodoro start 40 && skhd -k "return" ;;info: start 40min pomodoro
-launcher <d : open -a "System Settings" && skhd -k "return" ;;info: open System Settings
-launcher <k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty" && skhd -k "return" ;;info: open temporary Kitty
-launcher <v : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2) && WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1) && tmux select-window -t $SESSION:$WINDOW' && skhd -k "return" ;;info: open nvim
-launcher <t : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2) && WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "zsh|bash" | head -1 | cut -d" " -f1) && tmux select-window -t $SESSION:$WINDOW' && skhd -k "return" ;;info: open terminal
-launcher <c : open -a "Calendar" && skhd -k "return" ;;info: open Calendar
-launcher <z : skhd -k "return" ;;info: toggle keyboard layout (ABC/Colemak)
+# return to default mode
+launcher < escape ; default
+# return to default mode
+launcher < return ; default
+# Raycast quicklinks
+launcher < l : open "raycast://extensions/raycast/raycast/search-quicklinks" && skhd -k "return"
+# add new quicklink
+launcher < shift - l : open "raycast://extensions/raycast/raycast/create-quicklink" && skhd -k "return"
+# switch to workspace mode
+launcher < w ; workspace
+# switch to writing mode
+launcher < i ; writing
+# [ ] ] next workspace
+launcher <0x1E : aerospace workspace --wrap-around next && skhd -k "return"
+# [ [ ] previous workspace
+launcher <0x21 : aerospace workspace --wrap-around prev && skhd -k "return"
+# [ \ ] switch to previous window
+launcher <0x2A : aerospace focus-back-and-forth && skhd -k "return"
+# open Kitty + AI session
+launcher <a : osascript -e 'tell application "kitty" to activate' && tmux select-window -t $(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d' ' -f2):AI && skhd -k "return"
+# open Obsidian
+launcher <o : open -a "Obsidian" && skhd -k "return"
+# open Raycast
+launcher <r : open -a "Raycast" && skhd -k "return"
+# open Safari (workspace q)
+launcher <b : /bin/sh -c 'win=$(aerospace list-windows --workspace q --app-id com.apple.Safari --format "%{window-id}" | head -1) && [ -n "$win" ] && aerospace focus --window-id $win || aerospace workspace q && open -a "Safari"' && skhd -k "return"
+# open Safari (workspace g)
+launcher <s : /bin/sh -c 'win=$(aerospace list-windows --workspace g --app-id com.apple.Safari --format "%{window-id}" | head -1) && [ -n "$win" ] && aerospace focus --window-id $win || aerospace workspace g && open -a "Safari"' && skhd -k "return"
+# open Mail
+launcher <m : open -a "Mail" && skhd -k "return"
+# start 40min pomodoro
+launcher <n : pomodoro start 40 && skhd -k "return"
+# open System Settings
+launcher <d : open -a "System Settings" && skhd -k "return"
+# open temporary Kitty
+launcher <k : /usr/bin/osascript -e 'tell application "kitty" to activate' || open /Applications/kitty.app -n --args --single-instance --instance-group "QuickFullKitty" && skhd -k "return"
+# open nvim
+launcher <v : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2) && WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "nvim|vim" | head -1 | cut -d" " -f1) && tmux select-window -t $SESSION:$WINDOW' && skhd -k "return"
+# open terminal
+launcher <t : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 'SESSION=$(tmux list-clients -F "#{client_activity} #{session_name}" | sort -rn | head -1 | cut -d" " -f2) && WINDOW=$(tmux list-windows -t $SESSION -F "#{window_index} #{pane_current_command}" | grep -E "zsh|bash" | head -1 | cut -d" " -f1) && tmux select-window -t $SESSION:$WINDOW' && skhd -k "return"
+# open Calendar
+launcher <c : open -a "Calendar" && skhd -k "return"
+# toggle keyboard layout (ABC/Colemak)
+launcher <z : skhd -k "return"
 
 # Writing mode bindings - distraction-free writing mode
-writing < escape ; default ;;info: return to default mode
-writing < cmd - space ; launcher ;;info: switch to launcher mode
-writing < shift + ctrl + alt + cmd - b ; break ;;info: switch to break mode
+# return to default mode
+writing < escape ; default
+# switch to launcher mode
+writing < cmd - space ; launcher
+# switch to break mode
+writing < shift + ctrl + alt + cmd - b ; break
