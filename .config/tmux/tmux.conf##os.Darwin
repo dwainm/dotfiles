@@ -343,6 +343,7 @@ bind-key    -T root          M-r                    source-file $XDG_CONFIG_HOME
 bind-key    -T root          M-s                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T root          M-t                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T root          M-v                    copy-mode
+bind-key    -T root          M-g                    display-popup -E -d "#{pane_current_path}" -h "80%" -w "80%" -x C -y C lazygit
 bind-key    -T root          M-w                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/worktree-select.sh #{pane_current_path}"
 bind-key    -T root          M-x                    confirm-before -p "kill-window #W? (y/n)" kill-window
 bind-key    -T root          M-z                    resize-pane -Z
