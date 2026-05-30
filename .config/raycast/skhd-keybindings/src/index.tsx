@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { List, ActionPanel, Action, Icon, showToast, Toast } from "@raycast/api";
+import { List, ActionPanel, Action, Icon, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
+import { useState, useEffect } from "react";
 
 interface Binding {
   mode: string;
   key: string;
   description: string;
   isModeSwitch: boolean;
-  rawLine: string;
 }
 
 const MODE_EMOJIS: Record<string, string> = {
@@ -30,61 +29,83 @@ const MODE_NAMES: Record<string, string> = {
 };
 
 function resolveHexKey(key: string): string {
-  switch (key) {
-    case "0x1B": return "-";
-    case "0x18": return "=";
-    case "0x1E": return "]";
-    case "0x21": return "[";
-    case "0x2A": return "\\";
-    default: return key;
-  }
+  const hexMap: Record<string, string> = {
+    "0x1B": "-",
+    "0x18": "=",
+    "0x1E": "]",
+    "0x21": "[",
+    "0x2A": "\\",
+  };
+  return hexMap[key] || key;
 }
 
 function parseSkhdrc(path: string): Binding[] {
   const content = readFileSync(path, "utf-8");
   const lines = content.split("\n");
   const bindings: Binding[] = [];
+  let currentMode = "default";
+  let pendingComment = "";
 
   for (const line of lines) {
     const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    if (!trimmed.includes(";;info:")) continue;
 
-    const infoMatch = trimmed.match(/;;info:\s*(.+)$/);
-    if (!infoMatch) continue;
-    const description = infoMatch[1];
+    // Empty line resets pending comment
+    if (!trimmed) {
+      pendingComment = "";
+      continue;
+    }
 
-    // Check if it's a mode declaration line
-    if (trimmed.startsWith("::")) continue;
+    // Track mode declarations
+    const modeDeclMatch = trimmed.match(/^::\s+([a-z]+)/);
+    if (modeDeclMatch) {
+      currentMode = modeDeclMatch[1];
+      pendingComment = "";
+      continue;
+    }
 
-    // Mode-specific binding: mode < key : command or mode < key ; dest
+    // Capture comment lines (but not section headers)
+    if (trimmed.startsWith("#")) {
+      const commentContent = trimmed.replace(/^#\s*/, "");
+      if (commentContent && !commentContent.match(/^[-=]+/)) {
+        pendingComment = commentContent;
+      }
+      continue;
+    }
+
+    // Skip if no pending comment
+    if (!pendingComment) continue;
+
+    const description = pendingComment;
+    pendingComment = "";
+
+    // Skip lines inside multi-line blocks
+    if (trimmed.startsWith("*") || trimmed.startsWith('"') || trimmed.startsWith("]")) continue;
+
+    // Mode-specific bindings: mode < key
     const modeMatch = trimmed.match(/^([a-z]+)\s*<\s*(.+?)(?:\s*[:;]\s*)/);
     if (modeMatch) {
       const mode = modeMatch[1];
       let key = modeMatch[2].trim();
       key = resolveHexKey(key);
-      const isModeSwitch = trimmed.includes(";;info: switch to") || trimmed.includes(";;info: enter") || trimmed.includes(";;info: return to") || trimmed.includes(";;info: go to") || (trimmed.includes(" ; ") && !trimmed.includes(" : "));
-      bindings.push({ mode, key, description, isModeSwitch, rawLine: trimmed });
+      // Clean up key - remove everything after : or ;
+      key = key.replace(/\s*[:;].*$/, "").trim();
+      const isModeSwitch = description.includes("return to") || description.includes("enter") || description.includes("switch to");
+      bindings.push({ mode, key, description, isModeSwitch });
       continue;
     }
 
-    // Global binding (default mode)
-    // ctrl - h [ ;;info: desc
-    // ctrl - f : command ;;info: desc
-    // shift + ctrl + alt + cmd - b ; break ;;info: desc
-    const blockMatch = trimmed.match(/^(.+?)\s*\[\s*;;info:/);
-    if (blockMatch) {
-      const key = blockMatch[1].trim();
-      bindings.push({ mode: "default", key, description, isModeSwitch: false, rawLine: trimmed });
-      continue;
-    }
+    // Global bindings
+    const keyPart = trimmed.replace(/\s*[:;].*$/, "").replace(/\s*\[.*$/, "").trim();
+    if (!keyPart) continue;
 
-    const globalMatch = trimmed.match(/^(.+?)\s*(?:[:;])\s*/);
-    if (globalMatch) {
-      const key = globalMatch[1].trim();
-      const isModeSwitch = trimmed.includes(" ; ") && !trimmed.includes(" : ");
-      bindings.push({ mode: "default", key, description, isModeSwitch, rawLine: trimmed });
-    }
+    const words = keyPart.split(/\s+/);
+    const rawKey = words[words.length - 1];
+    const key = resolveHexKey(rawKey);
+    const modifiers = words.slice(0, -1).join(" ");
+
+    const displayKey = modifiers ? `${modifiers} ${key}` : key;
+    const isModeSwitch = description.includes("return to") || description.includes("enter") || description.includes("switch to");
+    bindings.push({ mode: currentMode, key: displayKey, description, isModeSwitch });
   }
 
   return bindings;
@@ -92,16 +113,18 @@ function parseSkhdrc(path: string): Binding[] {
 
 function executeBinding(binding: Binding) {
   try {
-    if (binding.isModeSwitch) {
-      // For mode switches, we need to trigger the key in the context of the mode
-      execSync(`skhd -k "${binding.key}"`, { timeout: 5000 });
-      showToast({ style: Toast.Style.Success, title: `Switched: ${binding.description}` });
-    } else {
-      execSync(`skhd -k "${binding.key}"`, { timeout: 5000 });
-      showToast({ style: Toast.Style.Success, title: `Executed: ${binding.description}` });
-    }
+    execSync(`skhd -k "${binding.key}"`, { timeout: 5000 });
+    showToast({
+      style: Toast.Style.Success,
+      title: "Executed",
+      message: binding.description,
+    });
   } catch (error) {
-    showToast({ style: Toast.Style.Failure, title: "Failed to execute binding", message: String(error) });
+    showToast({
+      style: Toast.Style.Failure,
+      title: "Failed to execute",
+      message: String(error),
+    });
   }
 }
 
@@ -124,7 +147,6 @@ export default function Command() {
     }
   }, []);
 
-  // Group bindings by mode
   const grouped = bindings.reduce((acc, binding) => {
     if (!acc[binding.mode]) acc[binding.mode] = [];
     acc[binding.mode].push(binding);
@@ -145,7 +167,7 @@ export default function Command() {
             {grouped[mode].map((binding, index) => (
               <List.Item
                 key={`${mode}-${index}`}
-                title={`${binding.key}`}
+                title={binding.key}
                 subtitle={binding.description}
                 icon={binding.isModeSwitch ? Icon.ArrowRight : Icon.Keyboard}
                 actions={

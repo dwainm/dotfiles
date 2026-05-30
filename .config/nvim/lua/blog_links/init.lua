@@ -13,7 +13,11 @@ function source:enabled()
   return vim.bo.filetype == "markdown"
 end
 
-function source:get_completions(_, callback)
+function source:get_completions(context, callback)
+  if not self:_inside_brackets(context) then
+    callback({ items = {} })
+    return
+  end
   if not self._items then
     self._items = self:_load_posts()
   end
@@ -22,6 +26,13 @@ function source:get_completions(_, callback)
     is_incomplete_forward = false,
     is_incomplete_backward = false,
   })
+end
+
+function source:_inside_brackets(context)
+  local before_cursor = context.line:sub(1, context.cursor[2])
+  local opens = select(2, before_cursor:gsub("%[", ""))
+  local closes = select(2, before_cursor:gsub("%]", ""))
+  return opens > closes
 end
 
 function source:_read_title(filepath)

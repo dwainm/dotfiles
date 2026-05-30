@@ -614,3 +614,6 @@ alias clear='clear && printf "[3J"'
 # opencode
 export PATH=/Users/dwain/.opencode/bin:$PATH
 export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+
+# Pi
+export PATH="/Users/dwain/.local/share/npm/bin:$PATH"

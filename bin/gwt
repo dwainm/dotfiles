@@ -235,23 +235,25 @@ if [[ "$DELETE_MODE" = true ]]; then
     tmux kill-window -t "$WIN_ID" 2>/dev/null || true
   fi
   
-  # 2. Remove worktree
+  # 2. Move directory to /tmp/gwt/ instead of deleting (do before worktree remove)
+  if [[ -d "$WORKTREE_PATH" ]]; then
+    GWT_TMP="/tmp/gwt"
+    mkdir -p "$GWT_TMP"
+    DEST_NAME=$(basename "$WORKTREE_PATH")
+    echo -e "${YELLOW}Move directory: $WORKTREE_PATH -> $GWT_TMP/$DEST_NAME${NC}"
+    mv "$WORKTREE_PATH" "$GWT_TMP/$DEST_NAME" 2>/dev/null || true
+  fi
+
+  # 3. Remove worktree registration (directory already moved)
   if git worktree list | grep -q "$WORKTREE_PATH"; then
-    echo -e "${YELLOW}Remove worktree: $WORKTREE_PATH${NC}"
-    git worktree remove "$WORKTREE_PATH" 2>/dev/null || \
-      git worktree remove --force "$WORKTREE_PATH" 2>/dev/null || true
+    echo -e "${YELLOW}Remove worktree registration: $WORKTREE_PATH${NC}"
+    git worktree remove --force "$WORKTREE_PATH" 2>/dev/null || true
   fi
   
-  # 3. Delete local branch
+  # 4. Delete local branch
   if git show-ref --verify --quiet "refs/heads/$ACTUAL_BRANCH" 2>/dev/null; then
     echo -e "${YELLOW}Delete branch: $ACTUAL_BRANCH${NC}"
     git branch -D "$ACTUAL_BRANCH" 2>/dev/null || true
-  fi
-  
-  # 4. Remove directory if it still exists
-  if [[ -d "$WORKTREE_PATH" ]]; then
-    echo -e "${YELLOW}Remove directory: $WORKTREE_PATH${NC}"
-    rm -rf "$WORKTREE_PATH" 2>/dev/null || true
   fi
   
   echo -e "${GREEN}✓ Cleanup complete${NC}"

@@ -42,7 +42,7 @@ gaps.inner.vertical = 2
 gaps.outer.left = 5
 gaps.outer.right = 5
 gaps.outer.bottom = 5
-gaps.outer.top = 0
+gaps.outer.top = 25
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 # All shortcuts handled by skhd - aerospace main mode has no bindings
