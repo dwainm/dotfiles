@@ -326,6 +326,17 @@ dev() {
   [[ -f "$dir/bin/rails" ]] || { echo "❌ Not a Rails root"; return 1; }
   cd "$dir"
 
+  # Parse -o flag to open browser later
+  local do_open=false
+  local args=()
+  for arg in "$@"; do
+    if [[ "$arg" == "-o" ]]; then
+      do_open=true
+    else
+      args+=("$arg")
+    fi
+  done
+
   local port_file="$dir/.dev-port"
   local http_port debug_port asset_port
 
@@ -356,6 +367,16 @@ dev() {
   echo "🚀 Starting Rails in $(basename "$PWD")"
   echo "   → http://localhost:$http_port  (debug: $debug_port)"
 
+  if $do_open; then
+    (
+      local url="http://localhost:$http_port"
+      until curl -sf -o /dev/null "$url" 2>/dev/null; do
+        sleep 0.2
+      done
+      open "$url"
+    ) &!
+  fi
+
   # Set ports via env vars. Your config/environments/development.rb must respect these!
   # RUBY_DEBUG_PORT is read by: DEBUGGER__.open_tcp(port: ENV["RUBY_DEBUG_PORT"].to_i)
   # See: config/environments/development.rb for debug port configuration
@@ -366,7 +387,7 @@ dev() {
   PIDFILE="$pid_file" \
   VITE_RUBY_PORT="$asset_port" \
   JS_DEV_SERVER_PORT="$asset_port" \
-    bin/dev "$@"
+    bin/dev "${args[@]}"
 }
 
 # ssh
