@@ -229,10 +229,9 @@ if [[ "$DELETE_MODE" = true ]]; then
     FOUND=$(tmux list-windows -a -F "#{window_id}:#{session_name}:#{window_name}" 2>/dev/null | grep "${ACTUAL_BRANCH}" | head -1)
   fi
   if [[ -n "$FOUND" ]]; then
-    WIN_ID=$(echo "$FOUND" | cut -d: -f1)
     SESS=$(echo "$FOUND" | cut -d: -f2)
-    echo -e "${YELLOW}Kill window: $SESS:$WIN_ID${NC}"
-    tmux kill-window -t "$WIN_ID" 2>/dev/null || true
+    echo -e "${YELLOW}Kill session: $SESS${NC}"
+    tmux kill-session -t "$SESS" 2>/dev/null || true
   fi
   
   # 2. Move directory to /tmp/gwt/ instead of deleting (do before worktree remove)
@@ -273,7 +272,7 @@ elif [[ -z "$BASE_BRANCH" ]]; then
 fi
 [[ -z "$BASE_BRANCH" ]] && { echo -e "${RED}No base branch${NC}" >&2; exit 1; }
 
-WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${REPO_NAME}-${SAFE_NAME}"
+WORKTREE_PATH="$(cd "$REPO_ROOT/.." && pwd)/${SAFE_NAME}"
 [[ -d "$WORKTREE_PATH" ]] && { echo -e "${RED}Exists: $WORKTREE_PATH${NC}" >&2; exit 1; }
 
 # Create worktree
