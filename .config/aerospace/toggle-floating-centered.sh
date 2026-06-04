@@ -5,6 +5,13 @@ set -o pipefail
 
 SCRIPT_DIR="$(dirname "$0")"
 BLUR_OVERLAY="$SCRIPT_DIR/blur-overlay"
+BLUR_SOURCE="$SCRIPT_DIR/blur-overlay.swift"
+
+# Compile blur-overlay if missing or outdated
+if [[ ! -x "$BLUR_OVERLAY" ]] || [[ "$BLUR_SOURCE" -nt "$BLUR_OVERLAY" ]]; then
+  echo "Compiling blur-overlay..." >&2
+  swiftc "$BLUR_SOURCE" -o "$BLUR_OVERLAY" 2>/dev/null || true
+fi
 
 BOUNDS=$(osascript -e 'tell application "Finder" to return bounds of window of desktop')
 MONITOR_W=$(echo "$BOUNDS" | awk -F', ' '{print $3}')
