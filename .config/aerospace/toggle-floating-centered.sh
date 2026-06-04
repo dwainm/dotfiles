@@ -3,6 +3,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+SCRIPT_DIR="$(dirname "$0")"
+BLUR_OVERLAY="$SCRIPT_DIR/blur-overlay"
+
 BOUNDS=$(osascript -e 'tell application "Finder" to return bounds of window of desktop')
 MONITOR_W=$(echo "$BOUNDS" | awk -F', ' '{print $3}')
 MONITOR_H=$(echo "$BOUNDS" | awk -F', ' '{print $4}')
@@ -20,13 +23,28 @@ H=$((MONITOR_H))
 X=$(( (MONITOR_W - W) / 2 ))
 Y=0
 
-aerospace layout floating && osascript -e "
-  tell application \"System Events\"
-    set _app to name of first application process whose frontmost is true
-    tell process _app
-      set _window to front window
-      set position of _window to {$X, $Y}
-      set size of _window to {$W, $H}
-      activate
-    end tell
-  end tell" || aerospace layout tiling
+if aerospace layout floating; then
+  # Save current app before any focus changes
+  CURRENT_APP=$(osascript -e 'tell application "System Events" to get name of first application process whose frontmost is true')
+  
+  # Center window
+  osascript -e "
+    tell application \"System Events\"
+      tell process \"$CURRENT_APP\"
+        set _window to front window
+        set position of _window to {$X, $Y}
+        set size of _window to {$W, $H}
+      end tell
+    end tell"
+  
+  # Start blur in background
+  "$BLUR_OVERLAY" on --material 2 --dim 50 &
+  
+  # Small delay then restore focus
+  sleep 0.1
+  osascript -e "tell application \"$CURRENT_APP\" to activate"
+else
+  # Already floating - tile and disable blur
+  aerospace layout tiling
+  "$BLUR_OVERLAY" off
+fi
