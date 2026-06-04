@@ -62,8 +62,8 @@ ctrl - l [
 "Alacritty" ~
 ]
 
-# Fullscreen toggle
-ctrl - f : aerospace fullscreen
+# Float center toggle (replaces fullscreen)
+ctrl - f : ~/.config/aerospace/toggle-floating-centered.sh
 
 # Workspaces
 # switch to workspace q
@@ -130,10 +130,10 @@ workspace < v : aerospace flatten-workspace-tree && aerospace layout v_tiles ; s
 workspace < a : aerospace flatten-workspace-tree && aerospace layout h_accordion ; skhd -k "escape"
 # vertical accordion (tabs)
 workspace < shift - a : aerospace flatten-workspace-tree && aerospace layout v_accordion ; skhd -k "escape"
-# toggle all windows float/tile
-workspace < space : aerospace layout floating tiling ; skhd -k "escape"
-# toggle focused window float
-workspace < t : aerospace layout floating tiling ; skhd -k "escape"
+# toggle focused window float + center at 60% width, full height
+workspace < space : ~/.config/aerospace/toggle-floating-centered.sh ; skhd -k "escape"
+# toggle focused window float + center at 60% width, full height
+workspace < t : ~/.config/aerospace/toggle-floating-centered.sh ; skhd -k "escape"
 
 # Reset: flatten everything and go back to default tiles
 # reset layout (flatten + tiles)
