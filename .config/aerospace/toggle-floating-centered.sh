@@ -6,6 +6,7 @@ set -o pipefail
 SCRIPT_DIR="$(dirname "$0")"
 BLUR_OVERLAY="$SCRIPT_DIR/blur-overlay"
 BLUR_SOURCE="$SCRIPT_DIR/blur-overlay.swift"
+STATE_FILE="/tmp/floating-window-state"
 
 # Compile blur-overlay if missing or outdated
 if [[ ! -x "$BLUR_OVERLAY" ]] || [[ "$BLUR_SOURCE" -nt "$BLUR_OVERLAY" ]]; then
@@ -34,6 +35,18 @@ if aerospace layout floating; then
   # Save current app before any focus changes
   CURRENT_APP=$(osascript -e 'tell application "System Events" to get name of first application process whose frontmost is true')
   
+  # Save current window position/size before centering
+  osascript -e "
+    tell application \"System Events\"
+      tell process \"$CURRENT_APP\"
+        set _window to front window
+        set {x, y} to position of _window
+        set {w, h} to size of _window
+        return (x as text) & \"|\" & (y as text) & \"|\" & (w as text) & \"|\" & (h as text)
+      end tell
+    end tell" > "$STATE_FILE"
+  echo "|$CURRENT_APP" >> "$STATE_FILE"
+  
   # Center window
   osascript -e "
     tell application \"System Events\"
@@ -54,4 +67,26 @@ else
   # Already floating - tile and disable blur
   aerospace layout tiling
   "$BLUR_OVERLAY" off
+  
+  # Restore original window position/size if state exists
+  if [[ -f "$STATE_FILE" ]]; then
+    STATE=$(cat "$STATE_FILE" | tr '\n' ' ')
+    SAVED_X=$(echo "$STATE" | cut -d'|' -f1)
+    SAVED_Y=$(echo "$STATE" | cut -d'|' -f2)
+    SAVED_W=$(echo "$STATE" | cut -d'|' -f3)
+    SAVED_H=$(echo "$STATE" | cut -d'|' -f4)
+    SAVED_APP=$(echo "$STATE" | cut -d'|' -f5 | xargs)
+    
+    if [[ -n "$SAVED_APP" ]]; then
+      osascript -e "
+        tell application \"System Events\"
+          tell process \"$SAVED_APP\"
+            set _window to front window
+            set position of _window to {$SAVED_X, $SAVED_Y}
+            set size of _window to {$SAVED_W, $SAVED_H}
+          end tell
+        end tell" 2>/dev/null || true
+    fi
+    rm -f "$STATE_FILE"
+  fi
 fi
