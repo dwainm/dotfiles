@@ -584,6 +584,7 @@ bind-key    -T root          M-c                    new-window -c "#{pane_curren
 bind-key    -T root          M-o                    command-prompt
 bind-key    -T root          M-r                    source-file ~/.config/tmux/tmux.conf \; display-message Reloaded!
 bind-key    -T root          M-s                    run-shell "cd ~/.config/tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session-with-current-inline.sh"
+bind-key    -T root          M-l                    switch-client -l
 bind-key    -T root          M-t                    run-shell "cd ~/.config/tmux/plugins/tmux-fzf && TMUX_FZF_OPTIONS='-p -w 80% -h 80% --layout=reverse --preview-window=down:50%' ./scripts/session-with-current-inline.sh switch"
 bind-key    -T root          M-v                    copy-mode
 bind-key    -T root          M-w                    display-popup -E -h "80%" -w "80%" "gwt -s"

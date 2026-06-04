@@ -341,6 +341,7 @@ bind-key    -T root          M-c                    new-window -c "#{pane_curren
 bind-key    -T root          M-o                    command-prompt
 bind-key    -T root          M-r                    source-file $XDG_CONFIG_HOME/tmux/tmux.conf \; display-message Reloaded!
 bind-key    -T root          M-s                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
+bind-key    -T root          M-l                    switch-client -l
 bind-key    -T root          M-t                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T root          M-v                    copy-mode
 bind-key    -T root          M-g                    display-popup -E -d "#{pane_current_path}" -h "80%" -w "80%" -x C -y C lazygit
