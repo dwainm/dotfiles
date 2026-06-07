@@ -7,3 +7,4 @@ trusted_config_paths = [
 
 [tools]
 node = "23.11.0"
+ruby = "3"

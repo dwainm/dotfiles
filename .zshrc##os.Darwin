@@ -358,19 +358,19 @@ function gcd() {
 	git clone $1 && cd "${REPONAME}"
 }
 
-# Update local main to exactly where you are right now (no merge commit, no push)
-gum() {
-  local current_branch=$(git rev-parse --abbrev-ref HEAD)
-  local pretty_commit=$(git log --oneline -1 HEAD)
-
-  echo "🔥 gum: making local main identical to $current_branch"
-  echo "   $pretty_commit"
-
-  git update-ref refs/heads/main HEAD
-
-  echo "✅ Done — local main is now everywhere at this commit"
-  echo "   When ready: git push origin main"
-}
+# # Update local main to exactly where you are right now (no merge commit, no push)
+# gum() {
+#   local current_branch=$(git rev-parse --abbrev-ref HEAD)
+#   local pretty_commit=$(git log --oneline -1 HEAD)
+#
+#   echo "🔥 gum: making local main identical to $current_branch"
+#   echo "   $pretty_commit"
+#
+#   git update-ref refs/heads/main HEAD
+#
+#   echo "✅ Done — local main is now everywhere at this commit"
+#   echo "   When ready: git push origin main"
+# }
 
 ###
 # Config repo management
@@ -507,9 +507,19 @@ export VISUAL='nvim'
 # Ruby
 ###########
 
-for cmd in rspec ruby rubocop rails jekyll; do
-  alias $cmd="bundle exec $cmd"
-done
+bundle_exec_if_needed() {
+  if [[ -f Gemfile || -f Gemfile.lock ]]; then
+    bundle exec "$@"
+  else
+    command "$@"
+  fi
+}
+
+alias rspec='bundle_exec_if_needed rspec'
+alias ruby='bundle_exec_if_needed ruby'
+alias rubocop='bundle_exec_if_needed rubocop'
+alias rails='bundle_exec_if_needed rails'
+alias jekyll='bundle_exec_if_needed jekyll'
 # export GEM_HOME="$HOME/.gem"
 
 ###########
