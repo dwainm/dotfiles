@@ -345,6 +345,9 @@ bind-key    -T root          M-l                    switch-client -l
 bind-key    -T root          M-t                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/sessionx-mode.sh"
 bind-key    -T root          M-v                    copy-mode
 bind-key    -T root          M-g                    display-popup -E -d "#{pane_current_path}" -h "80%" -w "80%" -x C -y C lazygit
+bind-key    -T root          M-f                    display-popup -E -d "#{pane_current_path}" -h "80%" -w "80%" -x C -y C yazi
+bind-key    -T root          M-e                    display-popup -E -d "#{pane_current_path}" -h "90%" -w "90%" -x C -y C nvim
+bind-key    -T root          M-E                    display-popup -E -d "#{pane_current_path}" -h "90%" -w "90%" -x C -y C 'nvim "$(yazi --choose-files)"'
 bind-key    -T root          M-w                    run-shell "$XDG_CONFIG_HOME/tmux/scripts/worktree-select.sh #{pane_current_path}"
 bind-key    -T root          M-x                    confirm-before -p "kill-window #W? (y/n)" kill-window
 bind-key    -T root          M-z                    resize-pane -Z

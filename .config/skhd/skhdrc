@@ -83,7 +83,7 @@ cmd + ctrl - g : aerospace workspace g
 :: workspace : echo "workspace" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
 :: launcher : echo "launcher" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
 :: writing : echo "writing" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
-:: break @: echo "break" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
+:: break @ : echo "break" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
 
 # Mode switching shortcuts
 # [ hyper+b ] enter break mode
