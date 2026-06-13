@@ -1,0 +1,37 @@
+# yazi.toml
+
+[opener]
+edit = [
+	{ run = 'nvim "$1"', desc = "Edit in nvim", block = true },
+]
+open = [
+	{ run = 'xdg-open "$1"', desc = "Open with default app" },
+]
+
+[open]
+prepend_rules = [
+	{ name = "*/", run = 'eza --color=always -la --group-directories-first "$1"', desc = "List directory" },
+]
+
+[manager]
+show_hidden = false
+sort_by = "alphabetical"
+sort_dir_first = true
+sort_reverse = false
+
+[preview]
+max_width = 800
+max_height = 600
+image_filter = ""
+ueberzug_scale = 1
+ueberzug_offset = "0,0"
+
+[[plugin.previewers]]
+name = "code"
+unix_only = true
+run = "bat --color=always --style=numbers --line-range=:500 {args}"
+
+[[plugin.prefetchers]]
+name = "git"
+unix_only = true
+run = "git -C {args} ls-files --others --exclude-standard"
