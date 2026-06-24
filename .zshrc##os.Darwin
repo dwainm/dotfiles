@@ -587,17 +587,48 @@ dev() {
     ) &!
   fi
 
-  # Set ports via env vars. Your config/environments/development.rb must respect these!
-  # RUBY_DEBUG_PORT is read by: DEBUGGER__.open_tcp(port: ENV["RUBY_DEBUG_PORT"].to_i)
-  # See: config/environments/development.rb for debug port configuration
+  # Ensure foreman is installed (same logic as bin/dev)
+  if ! gem list foreman -i --silent; then
+    echo "Installing foreman..."
+    gem install foreman
+  fi
+
+  export PORT="$http_port"
+  export RUBY_DEBUG_OPEN="true"
+  export RUBY_DEBUG_LAZY="true"
+
+  echo "🌐 Starting tailscale serve on port $http_port"
+  tailscale serve --bg "http://localhost:$http_port"
+
+  # Try to determine the Tailscale URL for this machine.
+  local tailscale_url
+  tailscale_url=$(tailscale status --json 2>/dev/null | ruby -rjson -e 'puts "https://" + JSON.parse(STDIN.read)["Self"]["DNSName"].to_s.sub(/\.$/, "")' 2>/dev/null)
+  [[ -z "$tailscale_url" || "$tailscale_url" == "https://" ]] && tailscale_url="(tailscale not available)"
+
+  # Draw a frozen header at the top of the terminal.
+  # The scroll region below the header scrolls; the header stays fixed.
+  local header_lines=6
+  printf "\033[2J\033[H"
+  printf "┌────────────────────────────────────────┐\n"
+  printf "│  Project: %-28s │\n" "$(basename "$PWD")"
+  printf "│  Local:   http://localhost:%-11s │\n" "$http_port"
+  printf "│  Debug:   %-29s │\n" "$debug_port"
+  printf "│  Tailscale: %-26s │\n" "$tailscale_url"
+  printf "└────────────────────────────────────────┘\n"
+  printf "\033[%s;9999r" "$((header_lines + 1))"
+  printf "\033[%s;1H" "$((header_lines + 1))"
+
+  # Stop tailscale serve and reset the terminal when the dev session ends
+  trap 'printf "\033[r\033[9999;1H\n"; echo "🛑 Stopping tailscale serve..."; tailscale serve --bg off' EXIT INT TERM
+
+  # Run dev server directly via foreman so this shell stays alive for the trap
   RUBY_DEBUG_PORT="$debug_port" \
   RB_DEBUGGER_PORT="$debug_port" \
   DEBUGGER_PORT="$debug_port" \
-  PORT="$http_port" \
   PIDFILE="$pid_file" \
   VITE_RUBY_PORT="$asset_port" \
   JS_DEV_SERVER_PORT="$asset_port" \
-    bin/dev "${args[@]}"
+    foreman start -f Procfile.dev "${args[@]}"
 }
 
 # ssh
