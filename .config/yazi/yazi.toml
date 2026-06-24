@@ -13,7 +13,7 @@ prepend_rules = [
 	{ name = "*/", run = 'eza --color=always -la --group-directories-first "$1"', desc = "List directory" },
 ]
 
-[manager]
+[mgr]
 show_hidden = false
 sort_by = "alphabetical"
 sort_dir_first = true
