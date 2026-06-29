@@ -618,8 +618,21 @@ dev() {
   printf "\033[%s;9999r" "$((header_lines + 1))"
   printf "\033[%s;1H" "$((header_lines + 1))"
 
-  # Stop tailscale serve and reset the terminal when the dev session ends
-  trap 'printf "\033[r\033[9999;1H\n"; echo "🛑 Stopping tailscale serve..."; tailscale serve --bg off' EXIT INT TERM
+  # Stop tailscale serve and reset the terminal when the dev session ends.
+  # Guard against re-entry so repeated Ctrl-C does not run cleanup twice.
+  typeset -gi _dev_cleanup_done=0
+  _dev_cleanup() {
+    (( _dev_cleanup_done )) && return
+    _dev_cleanup_done=1
+    # Block further interrupts while cleaning up and remove the other traps.
+    trap '' INT
+    trap - EXIT TERM
+    printf "\033[r\033[9999;1H\n"
+    echo "🛑 Stopping tailscale serve..."
+    tailscale serve --bg off
+    trap - INT
+  }
+  trap '_dev_cleanup' EXIT INT TERM
 
   # Run dev server directly via foreman so this shell stays alive for the trap
   RUBY_DEBUG_PORT="$debug_port" \
