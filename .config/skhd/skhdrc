@@ -81,8 +81,7 @@ cmd + ctrl - g : aerospace workspace g
 :: default : echo "default" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
 :: service : echo "service" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
 :: workspace : echo "workspace" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
-:: launcher : echo "launcher" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
-:: writing : echo "writing" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
+:: launcher : echo "launcher" >/tmp/skhd_mode; (pgrep -i swiftbar >/dev/null || open -a SwiftBar); open -g swiftbar://refreshplugin?name=skhd-mode 2>/dev/null || true
 :: break @ : echo "break" >/tmp/skhd_mode && open -g swiftbar://refreshplugin?name=skhd-mode
 
 # Mode switching shortcuts
@@ -198,8 +197,6 @@ launcher < l : open "raycast://extensions/raycast/raycast/search-quicklinks" && 
 launcher < shift - l : open "raycast://extensions/raycast/raycast/create-quicklink" && skhd -k "return"
 # switch to workspace mode
 launcher < w ; workspace
-# switch to writing mode
-launcher < i ; writing
 # [ ] ] next workspace
 launcher <0x1E : aerospace workspace --wrap-around next && skhd -k "return"
 # [ [ ] previous workspace
@@ -232,11 +229,3 @@ launcher <t : osascript -e 'tell application "kitty" to activate' && /bin/sh -c 
 launcher <c : open -a "Calendar" && skhd -k "return"
 # toggle keyboard layout (ABC/Colemak)
 launcher <z : skhd -k "return"
-
-# Writing mode bindings - distraction-free writing mode
-# return to default mode
-writing < escape ; default
-# switch to launcher mode
-writing < cmd - space ; launcher
-# switch to break mode
-writing < shift + ctrl + alt + cmd - b ; break
