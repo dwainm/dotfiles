@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "default_agent": "draft",
   "model": "opencode/deepseek-v4-flash-free",
   "instructions": ["~/.config/opencode/AGENTS.md", "AGENTS.md"],
   "plugin": [],
@@ -29,6 +30,15 @@
     }
   },
   "agent": {
+    "draft": {
+      "mode": "primary",
+      "model": "opencode/deepseek-v4-flash-free",
+      "description": "Free agent for rough drafts, brainstorming, prototyping, and iterative exploration. Use when still figuring things out before switching to expensive Plan or Build modes.",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask"
+      }
+    },
     "plan": {
       "mode": "primary",
       "model": "opencode/claude-opus-4-5",
