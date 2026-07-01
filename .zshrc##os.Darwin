@@ -548,7 +548,8 @@ dev() {
   done
 
   local port_file="$dir/.dev-port"
-  local http_port debug_port asset_port
+  local pg_port_file="$dir/.dev-postgres-port"
+  local http_port debug_port asset_port pg_port
 
   # Reuse saved port if it exists, otherwise generate a new one
   # .dev-port contains just the http port number (shared with bin/dev and bin/local-tunnel)
@@ -568,11 +569,55 @@ dev() {
     echo "💾 Saved new port to .dev-port"
   fi
 
+  # Reuse saved postgres port if it exists, otherwise generate a new one
+  if [[ -f "$pg_port_file" ]]; then
+    pg_port=$(cat "$pg_port_file")
+    if ! [[ "$pg_port" =~ ^[0-9]+$ ]]; then
+      pg_port=$((15432 + RANDOM % 1000))
+      echo "$pg_port" > "$pg_port_file"
+      echo "💾 Fixed invalid .dev-postgres-port, saved new port"
+    else
+      echo "🔄 Reusing postgres port $pg_port from .dev-postgres-port"
+    fi
+  else
+    pg_port=$((15432 + RANDOM % 1000))           # 15432–16431
+    echo "$pg_port" > "$pg_port_file"
+    echo "💾 Saved new postgres port to .dev-postgres-port"
+  fi
+
   # Derive other ports from http_port for consistency
   debug_port=$((http_port + 37000))              # e.g., 3395 -> 40395
   asset_port=$((http_port + 100))                # e.g., 3395 -> 3495
 
   local pid_file="tmp/pids/server.${http_port}.pid"
+
+  # Start isolated Postgres for this worktree (idempotent — no-op if already running)
+  echo "🐘 Ensuring Postgres for $(basename "$PWD") on port $pg_port..."
+  POSTGRES_PORT="$pg_port" docker compose up -d postgres
+  
+  # Wait for Postgres to be ready
+  local retries=30
+  while [[ $retries -gt 0 ]]; do
+    if POSTGRES_PORT="$pg_port" docker compose exec -T postgres pg_isready -U gesondheid -d gesondheid_development > /dev/null 2>&1; then
+      echo "✅ Postgres ready on localhost:$pg_port"
+      break
+    fi
+    sleep 1
+    retries=$((retries - 1))
+  done
+  
+  if [[ $retries -eq 0 ]]; then
+    echo "⚠️  Postgres failed to start. Check: POSTGRES_PORT=$pg_port docker compose logs postgres"
+  fi
+
+  # Setup database if needed (first run in this worktree)
+  local db_ready_file="$dir/.dev-db-ready"
+  if [[ ! -f "$db_ready_file" ]]; then
+    echo "🌱 Setting up database (create, migrate, seed)..."
+    POSTGRES_PORT="$pg_port" bin/rails db:prepare db:seed
+    touch "$db_ready_file"
+    echo "✅ Database ready"
+  fi
 
   echo "🚀 Starting Rails in $(basename "$PWD")"
   echo "   → http://localhost:$http_port  (debug: $debug_port)"
@@ -594,6 +639,7 @@ dev() {
   fi
 
   export PORT="$http_port"
+  export POSTGRES_PORT="$pg_port"
   export RUBY_DEBUG_OPEN="true"
   export RUBY_DEBUG_LAZY="true"
 
@@ -613,6 +659,7 @@ dev() {
   printf "│  Project: %-28s │\n" "$(basename "$PWD")"
   printf "│  Local:   http://localhost:%-11s │\n" "$http_port"
   printf "│  Debug:   %-29s │\n" "$debug_port"
+  printf "│  Postgres: localhost:%-17s │\n" "$pg_port"
   printf "│  Tailscale: %-26s │\n" "$tailscale_url"
   printf "└────────────────────────────────────────┘\n"
   printf "\033[%s;9999r" "$((header_lines + 1))"
