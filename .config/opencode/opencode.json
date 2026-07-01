@@ -33,10 +33,10 @@
     "draft": {
       "mode": "primary",
       "model": "opencode/deepseek-v4-flash-free",
-      "description": "Free agent for rough drafts, brainstorming, prototyping, and iterative exploration. Use when still figuring things out before switching to expensive Plan or Build modes.",
+      "description": "Free agent for rough drafts, brainstorming, and iterative exploration. No code edits — pure thinking and conversation only. Use when still figuring things out before switching to expensive Plan or Build modes.",
       "permission": {
-        "edit": "allow",
-        "bash": "ask"
+        "edit": "deny",
+        "bash": "deny"
       }
     },
     "plan": {
