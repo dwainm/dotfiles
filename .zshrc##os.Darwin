@@ -613,8 +613,8 @@ dev() {
   # Setup database if needed (first run in this worktree)
   local db_ready_file="$dir/.dev-db-ready"
   if [[ ! -f "$db_ready_file" ]]; then
-    echo "🌱 Setting up database (create, migrate, seed)..."
-    POSTGRES_PORT="$pg_port" bin/rails db:prepare db:seed
+    echo "🌱 Setting up database (db:prepare handles create, schema, and seed)..."
+    POSTGRES_PORT="$pg_port" bin/rails db:prepare
     touch "$db_ready_file"
     echo "✅ Database ready"
   fi
