@@ -2,7 +2,10 @@
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "draft",
   "model": "opencode/deepseek-v4-flash-free",
-  "instructions": ["~/.config/opencode/AGENTS.md", "AGENTS.md"],
+  "instructions": [
+    "~/.config/opencode/AGENTS.md",
+    "AGENTS.md"
+  ],
   "plugin": [],
   "permission": {
     "*": {
@@ -24,6 +27,7 @@
     "opencode-go": {
       "whitelist": [
         "kimi-k2.7-code",
+        "kimi-k2.6",
         "deepseek-v4-pro",
         "minimax-m3"
       ]
@@ -33,7 +37,7 @@
     "draft": {
       "mode": "primary",
       "model": "opencode/deepseek-v4-flash-free",
-      "description": "Free agent for rough drafts, brainstorming, and iterative exploration. No code edits — pure thinking and conversation only. Use when still figuring things out before switching to expensive Plan or Build modes.",
+      "description": "Free agent for rough drafts, brainstorming, and iterative exploration. No code edits \u2014 pure thinking and conversation only.",
       "permission": {
         "edit": "deny",
         "bash": "deny"
@@ -41,8 +45,8 @@
     },
     "plan": {
       "mode": "primary",
-      "model": "opencode/claude-opus-4-5",
-      "description": "Deep reasoning for architecture, planning, and complex analysis. No code edits — thinking only.",
+      "model": "opencode-go/kimi-k2.7-code",
+      "description": "Deep reasoning for architecture, planning, and complex analysis using Kimi 2.7. No code edits \u2014 thinking only.",
       "permission": {
         "edit": "deny",
         "bash": "deny"
@@ -50,31 +54,31 @@
     },
     "build": {
       "mode": "primary",
-      "model": "opencode-go/kimi-k2.7-code",
-      "description": "Orchestrator that delegates ALL implementation work to @general subagents. Cannot edit files directly — must use Task tool for any file changes. Focuses on task decomposition, reviewing results, and user communication.",
-      "permission": {
-        "edit": "deny",
-        "task": {
-          "*": "allow",
-          "general": "allow",
-          "explore": "allow"
-        }
-      }
-    },
-    "general": {
-      "mode": "subagent",
-      "model": "opencode/kimi-k2.5",
-      "description": "Worker agent for implementing features, writing code, running tests, and performing actual file edits. Invoked by build agent for all hands-on work.",
+      "model": "opencode-go/kimi-k2.6",
+      "description": "Implementation agent that edits files, runs commands, builds features, and handles deployments. Can delegate read-only research to @explore subagent.",
       "permission": {
         "edit": "allow",
         "bash": "allow",
-        "task": "deny"
+        "task": "allow"
       }
     },
     "explore": {
       "mode": "subagent",
       "model": "opencode/deepseek-v4-flash-free",
       "description": "Read-only codebase researcher. Finds files, searches patterns, and answers questions about existing code. No edits.",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow"
+      }
+    },
+    "expensive-planner": {
+      "mode": "primary",
+      "model": "opencode/claude-opus-4-5",
+      "description": "Premium reasoning agent for the hardest architecture, strategy, and design problems. No code edits \u2014 deep thinking only.",
       "permission": {
         "edit": "deny",
         "bash": "deny"
