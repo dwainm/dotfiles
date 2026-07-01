@@ -234,7 +234,13 @@ if [[ "$DELETE_MODE" = true ]]; then
     tmux kill-session -t "$SESS" 2>/dev/null || true
   fi
   
-  # 2. Move directory to /tmp/gwt/ instead of deleting (do before worktree remove)
+  # 2. Stop and remove Docker containers/volumes for this worktree
+  if [[ -d "$WORKTREE_PATH" && -f "$WORKTREE_PATH/compose.yml" ]]; then
+    echo -e "${YELLOW}Stopping Docker containers...${NC}"
+    (cd "$WORKTREE_PATH" && docker compose down -v 2>/dev/null) || true
+  fi
+  
+  # 3. Move directory to /tmp/gwt/ instead of deleting (do before worktree remove)
   if [[ -d "$WORKTREE_PATH" ]]; then
     GWT_TMP="/tmp/gwt"
     mkdir -p "$GWT_TMP"
