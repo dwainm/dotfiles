@@ -51,8 +51,9 @@
     "build": {
       "mode": "primary",
       "model": "opencode-go/kimi-k2.7-code",
-      "description": "Orchestrator that delegates all implementation work to @general subagents. Focuses on task decomposition, reviewing results, and user communication.",
+      "description": "Orchestrator that delegates ALL implementation work to @general subagents. Cannot edit files directly — must use Task tool for any file changes. Focuses on task decomposition, reviewing results, and user communication.",
       "permission": {
+        "edit": "deny",
         "task": {
           "*": "allow",
           "general": "allow",
