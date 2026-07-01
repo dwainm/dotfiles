@@ -14,6 +14,7 @@
         "claude-haiku-4-5",
         "gpt-5.5",
         "claude-opus-4-5",
+        "kimi-k2.5",
         "kimi-k2.6",
         "qwen3.6-plus",
         "deepseek-v4-flash-free"
@@ -51,7 +52,7 @@
     },
     "general": {
       "mode": "subagent",
-      "model": "opencode/kimi-k2.6",
+      "model": "opencode/kimi-k2.5",
       "description": "Worker agent for implementing features, writing code, running tests, and performing actual file edits. Invoked by build agent for all hands-on work.",
       "permission": {
         "edit": "allow",
