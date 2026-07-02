@@ -610,13 +610,26 @@ dev() {
     echo "⚠️  Postgres failed to start. Check: POSTGRES_PORT=$pg_port docker compose logs postgres"
   fi
 
-  # Setup database if needed (first run in this worktree)
+  # Smart database setup: create, schema-load, seed, and auto-migrate
   local db_ready_file="$dir/.dev-db-ready"
+  local migrate_status
+
   if [[ ! -f "$db_ready_file" ]]; then
-    echo "🌱 Setting up database (db:prepare handles create, schema, and seed)..."
+    echo "🌱 First run: setting up database (create, schema, seed)..."
     POSTGRES_PORT="$pg_port" bin/rails db:prepare
     touch "$db_ready_file"
     echo "✅ Database ready"
+  else
+    migrate_status=$(POSTGRES_PORT="$pg_port" bin/rails db:migrate:status 2>/dev/null)
+    if [[ $? -ne 0 || -z "$migrate_status" ]]; then
+      echo "🌱 Database not reachable, running db:prepare..."
+      POSTGRES_PORT="$pg_port" bin/rails db:prepare
+      echo "✅ Database ready"
+    elif echo "$migrate_status" | grep -q "^\s*down"; then
+      echo "🔄 Pending migrations detected, running db:migrate..."
+      POSTGRES_PORT="$pg_port" bin/rails db:migrate
+      echo "✅ Migrations complete"
+    fi
   fi
 
   echo "🚀 Starting Rails in $(basename "$PWD")"
