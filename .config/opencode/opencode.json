@@ -39,8 +39,12 @@
     }
   },
   "formatter": {
-    "rubocop": { "disabled": false },
-    "standardrb": { "disabled": false }
+    "rubocop": {
+      "disabled": false
+    },
+    "standardrb": {
+      "disabled": false
+    }
   },
   "lsp": {},
   "provider": {
@@ -51,7 +55,8 @@
         "claude-sonnet-5",
         "kimi-k2.5",
         "deepseek-v4-flash-free",
-        "claude-opus-4-8"
+        "claude-opus-4-8",
+        "glm-5.2"
       ]
     },
     "opencode-go": {
@@ -60,25 +65,17 @@
         "kimi-k2.6",
         "deepseek-v4-flash",
         "deepseek-v4-pro",
-        "minimax-m3"
+        "minimax-m3",
+        "glm-5.2"
       ]
     }
   },
   "agent": {
-    "free": {
-      "mode": "primary",
-      "model": "opencode/deepseek-v4-flash-free",
-      "description": "Free agent for rough drafts, brainstorming, and iterative exploration. No code edits \u2014 pure thinking and conversation only.",
-      "permission": {
-        "edit": "deny",
-        "bash": "deny"
-      }
-    },
     "plan": {
       "mode": "primary",
-      "model": "opencode/claude-sonnet-5",
+      "model": "opencode-go/glm-5.2",
       "variant": "high",
-      "description": "Intelligent planning agent (Claude Sonnet 5, high effort) \u2014 near-Opus quality for architecture and design at a fraction of the cost. No code edits \u2014 thinking only.",
+      "description": "Intelligent planning agent (GLM-5.2, high effort) \u2014 strong open-weight model for architecture, design, and long-horizon thinking at low cost. No code edits \u2014 thinking only.",
       "permission": {
         "edit": "deny",
         "bash": "deny"
@@ -86,12 +83,32 @@
     },
     "build": {
       "mode": "primary",
-      "model": "opencode-go/kimi-k2.7-code",
-      "description": "Implementation agent (Kimi K2.7 Code via OpenCode Go) that edits files, runs commands, builds features, and handles deployments. Can delegate read-only research to @explore subagent.",
+      "model": "opencode-go/deepseek-v4-flash",
+      "description": "Strict execution agent (DeepSeek V4 Flash) \u2014 only executes an existing plan. Requires a detailed todo list before starting any work. No independent planning or scope creep.",
       "permission": {
         "edit": "allow",
         "bash": "allow",
         "task": "allow"
+      },
+      "prompt": "You are a strict execution agent. You do not plan, prioritize, or decide what to do \u2014 you only execute an existing plan.\n\nBefore doing ANY work:\n1. Check whether a detailed todo list (via the TodoWrite tool) already exists for this task, created by the user or a planning agent (@plan or @expensive-planner).\n2. If no todo list exists, or it is vague/incomplete, STOP and ask the user to provide one (or suggest they run @plan or @expensive-planner first). Do not proceed with your own plan.\n3. If a todo list exists, execute it literally, one item at a time, in the order given. Mark each item complete via TodoWrite as you finish it.\n4. Do not add, remove, reorder, or reinterpret todo items. Do not expand scope or \"improve\" on the plan. If a step seems wrong or blocked, stop and ask \u2014 do not substitute your own judgment for the plan's.\n5. If new requirements come up mid-execution that aren't in the plan, stop and ask whether to update the plan before continuing."
+    },
+    "expensive-planner": {
+      "mode": "primary",
+      "model": "opencode/claude-sonnet-5",
+      "variant": "high",
+      "description": "Premium reasoning agent (Claude Sonnet 5, high effort) for the hardest architecture, strategy, and design problems. No code edits \u2014 deep thinking only.",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
+    },
+    "free": {
+      "mode": "primary",
+      "model": "opencode/deepseek-v4-flash-free",
+      "description": "Free agent for rough drafts, brainstorming, and iterative exploration. No code edits \u2014 pure thinking and conversation only.",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
       }
     },
     "explore": {
@@ -105,16 +122,6 @@
         "glob": "allow",
         "grep": "allow",
         "list": "allow"
-      }
-    },
-    "expensive-planner": {
-      "mode": "primary",
-      "model": "opencode/claude-opus-4-8",
-      "variant": "high",
-      "description": "Premium reasoning agent (Claude Opus 4.8, high effort) for the hardest architecture, strategy, and design problems. No code edits \u2014 deep thinking only.",
-      "permission": {
-        "edit": "deny",
-        "bash": "deny"
       }
     }
   }
