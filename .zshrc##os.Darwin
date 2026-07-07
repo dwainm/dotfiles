@@ -549,7 +549,7 @@ dev() {
 
   local port_file="$dir/.dev-port"
   local pg_port_file="$dir/.dev-postgres-port"
-  local http_port debug_port asset_port pg_port
+  local http_port debug_port asset_port pg_port pg_project_name
 
   # Reuse saved port if it exists, otherwise generate a new one
   # .dev-port contains just the http port number (shared with bin/dev and bin/local-tunnel)
@@ -569,20 +569,27 @@ dev() {
     echo "💾 Saved new port to .dev-port"
   fi
 
-  # Reuse saved postgres port if it exists, otherwise generate a new one
+  # Reuse saved postgres port/project if they exist, otherwise generate new ones.
+  # .dev-postgres-port now stores: line 1 = port, line 2 = COMPOSE_PROJECT_NAME.
+  # The project name is derived from the full checkout path so every worktree is
+  # isolated even when directory basenames collide (e.g. two repos both have "main").
   if [[ -f "$pg_port_file" ]]; then
-    pg_port=$(cat "$pg_port_file")
-    if ! [[ "$pg_port" =~ ^[0-9]+$ ]]; then
+    pg_port=$(sed -n '1p' "$pg_port_file")
+    pg_project_name=$(sed -n '2p' "$pg_port_file")
+
+    if ! [[ "$pg_port" =~ ^[0-9]+$ ]] || [[ -z "$pg_project_name" ]]; then
       pg_port=$((15432 + RANDOM % 1000))
-      echo "$pg_port" > "$pg_port_file"
-      echo "💾 Fixed invalid .dev-postgres-port, saved new port"
+      pg_project_name=$(echo "$dir" | tr '[:upper:]' '[:lower:]' | sed 's#^/##; s#[^a-z0-9]#_#g')
+      printf '%s\n%s\n' "$pg_port" "$pg_project_name" > "$pg_port_file"
+      echo "💾 Fixed invalid .dev-postgres-port, saved new port + project name"
     else
-      echo "🔄 Reusing postgres port $pg_port from .dev-postgres-port"
+      echo "🔄 Reusing postgres port $pg_port / project $pg_project_name from .dev-postgres-port"
     fi
   else
     pg_port=$((15432 + RANDOM % 1000))           # 15432–16431
-    echo "$pg_port" > "$pg_port_file"
-    echo "💾 Saved new postgres port to .dev-postgres-port"
+    pg_project_name=$(echo "$dir" | tr '[:upper:]' '[:lower:]' | sed 's#^/##; s#[^a-z0-9]#_#g')
+    printf '%s\n%s\n' "$pg_port" "$pg_project_name" > "$pg_port_file"
+    echo "💾 Saved new postgres port ($pg_port) and project name ($pg_project_name)"
   fi
 
   # Derive other ports from http_port for consistency
@@ -592,22 +599,25 @@ dev() {
   local pid_file="tmp/pids/server.${http_port}.pid"
 
   # Start isolated Postgres for this worktree (idempotent — no-op if already running)
-  echo "🐘 Ensuring Postgres for $(basename "$PWD") on port $pg_port..."
-  POSTGRES_PORT="$pg_port" docker compose up -d postgres
-  
-  # Wait for Postgres to be ready
-  local retries=30
+  echo "🐘 Ensuring Postgres for project '$pg_project_name' on port $pg_port..."
+  COMPOSE_PROJECT_NAME="$pg_project_name" POSTGRES_PORT="$pg_port" docker compose up -d postgres
+
+  # Wait for Postgres to be healthy, using each project's own compose healthcheck.
+  # No hardcoded user/db here — each compose.yml already defines the right pg_isready.
+  local pg_container retries=30
+  pg_container=$(COMPOSE_PROJECT_NAME="$pg_project_name" POSTGRES_PORT="$pg_port" docker compose ps -q postgres)
+
   while [[ $retries -gt 0 ]]; do
-    if POSTGRES_PORT="$pg_port" docker compose exec -T postgres pg_isready -U gesondheid -d gesondheid_development > /dev/null 2>&1; then
+    if [[ -n "$pg_container" ]] && [[ "$(docker inspect --format '{{.State.Health.Status}}' "$pg_container" 2>/dev/null)" == "healthy" ]]; then
       echo "✅ Postgres ready on localhost:$pg_port"
       break
     fi
     sleep 1
     retries=$((retries - 1))
   done
-  
+
   if [[ $retries -eq 0 ]]; then
-    echo "⚠️  Postgres failed to start. Check: POSTGRES_PORT=$pg_port docker compose logs postgres"
+    echo "⚠️  Postgres failed to start. Check: COMPOSE_PROJECT_NAME=$pg_project_name POSTGRES_PORT=$pg_port docker compose logs postgres"
   fi
 
   # Smart database setup: create, schema-load, seed, and auto-migrate
