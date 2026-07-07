@@ -2,7 +2,7 @@
 name: dotfiles
 description: Dotfile and config management using yadm - track, sync, and deploy configuration across machines
 metadata:
-  tags: dotfiles, config, yadm, dotfiles, configuration, symlink, backup
+  tags: dotfiles, config, yadm, configuration, symlink, backup
 triggers:
   - "dotfiles"
   - "config"

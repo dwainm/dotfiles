@@ -1,6 +1,6 @@
 ---
 name: remotion
-description: Best practices for Remotion - Video creation in React
+description: Best practices for Remotion - Video creation in React. Includes a 27-file rule library covering 3D, animations, audio, captions, charts, compositions, fonts, and transitions.
 metadata:
   tags: remotion, video, react, animation, composition
 ---

@@ -1,40 +1,71 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "draft",
+  "default_agent": "free",
   "model": "opencode/deepseek-v4-flash-free",
   "instructions": [
-    "~/.config/opencode/AGENTS.md",
-    "AGENTS.md"
+    "~/.config/opencode/AGENTS.md"
   ],
   "plugin": [],
   "permission": {
-    "*": {
-      "*": "allow"
+    "*": "allow",
+    "bash": {
+      "*": "allow",
+      "rm -rf *": "deny",
+      "git push --force*": "deny",
+      "git reset --hard*": "deny",
+      "git clean -f*": "deny",
+      "git checkout .": "deny",
+      "git restore .": "deny"
+    },
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny"
+    },
+    "edit": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny"
+    },
+    "external_directory": {
+      "*": "ask"
     }
   },
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    }
+  },
+  "formatter": {
+    "rubocop": { "disabled": false },
+    "standardrb": { "disabled": false }
+  },
+  "lsp": {},
   "provider": {
     "opencode": {
       "whitelist": [
         "claude-haiku-4-5",
         "gpt-5.5",
-        "claude-opus-4-5",
+        "claude-sonnet-5",
         "kimi-k2.5",
-        "kimi-k2.6",
-        "qwen3.6-plus",
-        "deepseek-v4-flash-free"
+        "deepseek-v4-flash-free",
+        "claude-opus-4-8"
       ]
     },
     "opencode-go": {
       "whitelist": [
         "kimi-k2.7-code",
         "kimi-k2.6",
+        "deepseek-v4-flash",
         "deepseek-v4-pro",
         "minimax-m3"
       ]
     }
   },
   "agent": {
-    "draft": {
+    "free": {
       "mode": "primary",
       "model": "opencode/deepseek-v4-flash-free",
       "description": "Free agent for rough drafts, brainstorming, and iterative exploration. No code edits \u2014 pure thinking and conversation only.",
@@ -45,8 +76,9 @@
     },
     "plan": {
       "mode": "primary",
-      "model": "opencode-go/kimi-k2.7-code",
-      "description": "Deep reasoning for architecture, planning, and complex analysis using Kimi 2.7. No code edits \u2014 thinking only.",
+      "model": "opencode/claude-sonnet-5",
+      "variant": "high",
+      "description": "Intelligent planning agent (Claude Sonnet 5, high effort) \u2014 near-Opus quality for architecture and design at a fraction of the cost. No code edits \u2014 thinking only.",
       "permission": {
         "edit": "deny",
         "bash": "deny"
@@ -54,8 +86,8 @@
     },
     "build": {
       "mode": "primary",
-      "model": "opencode-go/kimi-k2.6",
-      "description": "Implementation agent that edits files, runs commands, builds features, and handles deployments. Can delegate read-only research to @explore subagent.",
+      "model": "opencode-go/kimi-k2.7-code",
+      "description": "Implementation agent (Kimi K2.7 Code via OpenCode Go) that edits files, runs commands, builds features, and handles deployments. Can delegate read-only research to @explore subagent.",
       "permission": {
         "edit": "allow",
         "bash": "allow",
@@ -64,7 +96,7 @@
     },
     "explore": {
       "mode": "subagent",
-      "model": "opencode/deepseek-v4-flash-free",
+      "model": "opencode-go/deepseek-v4-flash",
       "description": "Read-only codebase researcher. Finds files, searches patterns, and answers questions about existing code. No edits.",
       "permission": {
         "edit": "deny",
@@ -77,8 +109,9 @@
     },
     "expensive-planner": {
       "mode": "primary",
-      "model": "opencode/claude-opus-4-5",
-      "description": "Premium reasoning agent for the hardest architecture, strategy, and design problems. No code edits \u2014 deep thinking only.",
+      "model": "opencode/claude-opus-4-8",
+      "variant": "high",
+      "description": "Premium reasoning agent (Claude Opus 4.8, high effort) for the hardest architecture, strategy, and design problems. No code edits \u2014 deep thinking only.",
       "permission": {
         "edit": "deny",
         "bash": "deny"
