@@ -5,6 +5,12 @@
   "instructions": [
     "~/.config/opencode/AGENTS.md"
   ],
+  "references": {
+    "proofwork-references": {
+      "path": "~/.agents/skills/proofwork/references",
+      "description": "Proofwork skill reference docs — architecture, authentication, data model, UI framework, and how-to-update"
+    }
+  },
   "plugin": [],
   "permission": {
     "*": "allow",
@@ -28,7 +34,8 @@
       "*.env.*": "deny"
     },
     "external_directory": {
-      "*": "ask"
+      "*": "ask",
+      "~/.agents/skills/proofwork/references/**": "allow"
     }
   },
   "mcp": {
