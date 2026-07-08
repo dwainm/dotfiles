@@ -75,10 +75,27 @@
       "mode": "primary",
       "model": "opencode-go/glm-5.2",
       "variant": "high",
-      "description": "Intelligent planning agent (GLM-5.2, high effort) \u2014 strong open-weight model for architecture, design, and long-horizon thinking at low cost. No code edits \u2014 thinking only.",
+      "description": "Intelligent planning agent (GLM-5.2, high effort) — strong open-weight model for architecture, design, and long-horizon thinking at low cost. Read-only, but can research freely.",
       "permission": {
         "edit": "deny",
-        "bash": "deny"
+        "bash": {
+          "*": "allow",
+          "rm -rf *": "deny",
+          "git push --force*": "deny",
+          "git reset --hard*": "deny",
+          "git clean -f*": "deny",
+          "git checkout .": "deny",
+          "git restore .": "deny"
+        },
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "allow",
+        "todowrite": "allow",
+        "question": "allow",
+        "webfetch": "allow",
+        "websearch": "allow"
       }
     },
     "build": {
@@ -96,19 +113,53 @@
       "mode": "primary",
       "model": "opencode/claude-sonnet-5",
       "variant": "high",
-      "description": "Premium reasoning agent (Claude Sonnet 5, high effort) for the hardest architecture, strategy, and design problems. No code edits \u2014 deep thinking only.",
+      "description": "Premium reasoning agent (Claude Sonnet 5, high effort) for the hardest architecture, strategy, and design problems. Read-only, but can research freely.",
       "permission": {
         "edit": "deny",
-        "bash": "deny"
+        "bash": {
+          "*": "allow",
+          "rm -rf *": "deny",
+          "git push --force*": "deny",
+          "git reset --hard*": "deny",
+          "git clean -f*": "deny",
+          "git checkout .": "deny",
+          "git restore .": "deny"
+        },
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "allow",
+        "todowrite": "allow",
+        "question": "allow",
+        "webfetch": "allow",
+        "websearch": "allow"
       }
     },
     "free": {
       "mode": "primary",
       "model": "opencode/deepseek-v4-flash-free",
-      "description": "Free agent for rough drafts, brainstorming, and iterative exploration. No code edits \u2014 pure thinking and conversation only.",
+      "description": "Free agent for rough drafts, brainstorming, and iterative exploration. Read-only, but can research freely.",
       "permission": {
         "edit": "deny",
-        "bash": "deny"
+        "bash": {
+          "*": "allow",
+          "rm -rf *": "deny",
+          "git push --force*": "deny",
+          "git reset --hard*": "deny",
+          "git clean -f*": "deny",
+          "git checkout .": "deny",
+          "git restore .": "deny"
+        },
+        "read": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "task": "allow",
+        "todowrite": "allow",
+        "question": "allow",
+        "webfetch": "allow",
+        "websearch": "allow"
       }
     },
     "explore": {
