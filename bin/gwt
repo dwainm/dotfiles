@@ -279,6 +279,21 @@ if [[ "$DELETE_MODE" = true ]]; then
     done < <(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{wt=$2} /^branch /{print wt" "$2}')
   fi
   
+  # Try converting safe-name dashes to slashes (review-40 → review/40)
+  if [[ -z "$WORKTREE_PATH" ]]; then
+    ALT_BRANCH="${BRANCH_NAME//-//}"
+    if [[ "$ALT_BRANCH" != "$BRANCH_NAME" ]]; then
+      while read -r wt_path _branch; do
+        _branch="${_branch##refs/heads/}"
+        if [[ "$_branch" = "$ALT_BRANCH" ]]; then
+          WORKTREE_PATH="$wt_path"
+          ACTUAL_BRANCH="$ALT_BRANCH"
+          break
+        fi
+    done < <(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{wt=$2} /^branch /{print wt" "$2}')
+    fi
+  fi
+
   if [[ -z "$WORKTREE_PATH" ]]; then
     echo -e "${RED}Worktree not found for: $BRANCH_NAME${NC}" >&2
     exit 1
