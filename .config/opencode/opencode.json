@@ -81,8 +81,8 @@
     "plan": {
       "mode": "primary",
       "model": "opencode-go/glm-5.2",
-      "variant": "high",
-      "description": "Intelligent planning agent (GLM-5.2, high effort) — strong open-weight model for architecture, design, and long-horizon thinking at low cost. Read-only, but can research freely.",
+      "variant": "default",
+      "description": "Intelligent planning agent (GLM-5.2) — strong open-weight model for architecture, design, and long-horizon thinking at low cost. Read-only, but can research freely.",
       "permission": {
         "edit": "deny",
         "bash": {
@@ -107,8 +107,8 @@
     },
     "build": {
       "mode": "primary",
-      "model": "opencode-go/deepseek-v4-flash",
-      "description": "Strict execution agent (DeepSeek V4 Flash) \u2014 only executes an existing plan. Requires a detailed todo list before starting any work. No independent planning or scope creep.",
+      "model": "opencode-go/deepseek-v4-pro",
+      "description": "Strict execution agent (DeepSeek V4 Pro) \u2014 only executes an existing plan. Requires a detailed todo list before starting any work. No independent planning or scope creep.",
       "permission": {
         "edit": "allow",
         "bash": "allow",
@@ -119,8 +119,8 @@
     "expensive-planner": {
       "mode": "primary",
       "model": "opencode/claude-sonnet-5",
-      "variant": "high",
-      "description": "Premium reasoning agent (Claude Sonnet 5, high effort) for the hardest architecture, strategy, and design problems. Read-only, but can research freely.",
+      "variant": "default",
+      "description": "Premium reasoning agent (Claude Sonnet 5) for the hardest architecture, strategy, and design problems. Read-only, but can research freely.",
       "permission": {
         "edit": "deny",
         "bash": {
