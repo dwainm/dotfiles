@@ -25,11 +25,15 @@ Options:
   gwt -b <base> <branch>    Create from base branch
   gwt -c <branch>           Create from current branch
   gwt -B <branch>           Checkout existing branch
+  gwt -p <pr-number|url>     Checkout PR for review
+
 
 Examples:
   gwt feature "Add auth #42"
   gwt -i "fix login bug from issue #42"
   gwt hotfix
+  gwt -p 42                  Review PR #42
+  gwt -p https://github.com/org/repo/pull/42
   gwt -d feature
 EOF
 }
@@ -44,6 +48,9 @@ SHOW_MODE=false
 CHECKOUT_EXISTING=false
 INSTRUCTION_MODE=false
 INSTRUCTION=""
+PR_MODE=false
+PR_INPUT=""
+
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -57,6 +64,11 @@ while [[ $# -gt 0 ]]; do
     -i)
       INSTRUCTION_MODE=true
       INSTRUCTION="$2"
+      shift 2
+      ;;
+    -p)
+      PR_MODE=true
+      PR_INPUT="$2"
       shift 2
       ;;
     -*)
@@ -182,6 +194,55 @@ Only write the JSON."
   echo -e "${GREEN}Purpose: $PURPOSE${NC}"
 fi
 
+
+# PR mode - create review worktree from GitHub PR
+if [[ "$PR_MODE" = true ]]; then
+  if ! command -v gh &>/dev/null; then
+    echo -e "${RED}gh CLI not found. Install: brew install gh${NC}" >&2
+    exit 1
+  fi
+
+  # Parse PR number from input (number, #number, URL, org/repo#number)
+  if [[ "$PR_INPUT" =~ ^[0-9]+$ ]]; then
+    PR_NUMBER="$PR_INPUT"
+  elif [[ "$PR_INPUT" =~ ^#([0-9]+)$ ]]; then
+    PR_NUMBER="${BASH_REMATCH[1]}"
+  elif [[ "$PR_INPUT" =~ ^https?://github\.com/[^/]+/[^/]+/pull/([0-9]+) ]]; then
+    PR_NUMBER="${BASH_REMATCH[1]}"
+  elif [[ "$PR_INPUT" =~ ^[^/]+/[^/]+#([0-9]+)$ ]]; then
+    PR_NUMBER="${BASH_REMATCH[1]}"
+  else
+    echo -e "${RED}Invalid PR input: $PR_INPUT${NC}" >&2
+    exit 1
+  fi
+
+  echo -e "${BLUE}Fetching PR #$PR_NUMBER...${NC}"
+  PR_TITLE=$(gh pr view "$PR_NUMBER" --json title -q '.title' 2>/dev/null)
+  if [[ -z "$PR_TITLE" ]]; then
+    echo -e "${RED}Failed to fetch PR #$PR_NUMBER${NC}" >&2
+    exit 1
+  fi
+  echo -e "${GREEN}PR #$PR_NUMBER: $PR_TITLE${NC}"
+
+  BRANCH_NAME="review/$PR_NUMBER"
+  PURPOSE="Review PR #$PR_NUMBER: $PR_TITLE"
+  CHECKOUT_EXISTING=true
+
+  # Fetch PR head and create local branch
+  if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME" 2>/dev/null; then
+    echo -e "${YELLOW}Updating existing branch: $BRANCH_NAME${NC}"
+    git fetch origin "+pull/$PR_NUMBER/head:refs/heads/$BRANCH_NAME" 2>/dev/null || {
+      echo -e "${RED}Failed to update PR #$PR_NUMBER${NC}" >&2
+      exit 1
+    }
+  else
+    git fetch origin "pull/$PR_NUMBER/head:$BRANCH_NAME" 2>/dev/null || {
+      echo -e "${RED}Failed to fetch PR #$PR_NUMBER${NC}" >&2
+      exit 1
+    }
+  fi
+  echo -e "${GREEN}Branch: $BRANCH_NAME${NC}"
+fi
 # Compute safe name for worktree directory paths (replace / with -)
 SAFE_NAME=$(echo "$BRANCH_NAME" | tr '/' '-')
 
@@ -331,3 +392,4 @@ else
 fi
 
 echo -e "${GREEN}✓ Done${NC}"
+
