@@ -4,6 +4,7 @@
 (defcfg
   process-unmapped-keys yes
   danger-enable-cmd yes
+  tap-hold-require-prior-idle 200
 )
 
 (defsrc
@@ -23,16 +24,16 @@
 
   ;; Physical key positions (QWERTY home row)
   ;; Left hand = LEFT modifiers (Colemak: a, r, s, t)
-  a (tap-hold-release $tap-time $hold-time a lmet)  ;; A -> Left Cmd (Colemak 'a')
-  s (tap-hold-release $tap-time $hold-time s lalt)  ;; S -> Left Alt (Colemak 'r')
-  d (tap-hold-release $tap-time $hold-time d lsft)  ;; D -> Left Shift (Colemak 's')
-  f (tap-hold-release $tap-time $hold-time f lctl)  ;; F -> Left Ctrl (Colemak 't')
+  a (tap-hold $tap-time $hold-time a lmet)  ;; A -> Left Cmd (Colemak 'a')
+  s (tap-hold $tap-time $hold-time s lalt)  ;; S -> Left Alt (Colemak 'r')
+  d (tap-hold $tap-time $hold-time d lsft)  ;; D -> Left Shift (Colemak 's')
+  f (tap-hold $tap-time $hold-time f lctl)  ;; F -> Left Ctrl (Colemak 't')
 
   ;; Right hand = RIGHT modifiers (Colemak: n, e, i, o)
-  j (tap-hold-release $tap-time $hold-time j rctl)  ;; J -> Right Ctrl (Colemak 'n')
-  k (tap-hold-release $tap-time $hold-time k rsft)  ;; K -> Right Shift (Colemak 'e')
-  l (tap-hold-release $tap-time $hold-time l ralt)  ;; L -> Right Alt (Colemak 'i')
-  ; (tap-hold-release $tap-time $hold-time ; rmet)  ;; ; -> Right Cmd (Colemak 'o')
+  j (tap-hold $tap-time $hold-time j rctl)  ;; J -> Right Ctrl (Colemak 'n')
+  k (tap-hold $tap-time $hold-time k rsft)  ;; K -> Right Shift (Colemak 'e')
+  l (tap-hold $tap-time $hold-time l ralt)  ;; L -> Right Alt (Colemak 'i')
+  ; (tap-hold $tap-time $hold-time ; rmet)  ;; ; -> Right Cmd (Colemak 'o')
 )
 
 (deflayer base
