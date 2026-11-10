@@ -13,9 +13,8 @@ if [[ ! -x "$BLUR_OVERLAY" ]] || [[ "$BLUR_SOURCE" -nt "$BLUR_OVERLAY" ]]; then
   swiftc "$BLUR_SOURCE" -o "$BLUR_OVERLAY" 2>/dev/null || true
 fi
 
-BOUNDS=$(osascript -e 'tell application "Finder" to return bounds of window of desktop')
-MONITOR_W=$(echo "$BOUNDS" | awk -F', ' '{print $3}')
-MONITOR_H=$(echo "$BOUNDS" | awk -F', ' '{print $4}')
+# Frame of the screen holding the focused window (not the union of all screens)
+read -r MONITOR_X MONITOR_Y MONITOR_W MONITOR_H < <("$BLUR_OVERLAY" screen)
 
 if [ "$MONITOR_W" -gt 2560 ]; then
   PCT=50
@@ -27,8 +26,8 @@ fi
 
 W=$((MONITOR_W * PCT / 100))
 H=$((MONITOR_H))
-X=$(( (MONITOR_W - W) / 2 ))
-Y=0
+X=$(( MONITOR_X + (MONITOR_W - W) / 2 ))
+Y=$MONITOR_Y
 
 if aerospace layout floating; then
   # Save current app before any focus changes

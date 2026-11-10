@@ -34,6 +34,41 @@ func clearState() {
     try? FileManager.default.removeItem(atPath: stateFile)
 }
 
+// MARK: - Coordinates
+// Primary screen height; AX and Cocoa coordinates share the primary screen's origin, flipped.
+func primaryScreenHeight() -> CGFloat {
+    NSScreen.screens.first?.frame.height ?? 0
+}
+
+func axToCocoa(_ rect: NSRect) -> NSRect {
+    NSRect(x: rect.minX, y: primaryScreenHeight() - rect.minY - rect.height,
+           width: rect.width, height: rect.height)
+}
+
+func cocoaToAX(_ rect: NSRect) -> NSRect {
+    // The flip is its own inverse
+    axToCocoa(rect)
+}
+
+// Frame (in Cocoa coordinates) of the frontmost app's focused window, if any
+func focusedWindowFrame() -> NSRect? {
+    guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
+    let appRef = AXUIElementCreateApplication(app.processIdentifier)
+    var focusedWindow: CFTypeRef?
+    guard AXUIElementCopyAttributeValue(appRef, kAXFocusedWindowAttribute as CFString, &focusedWindow) == .success,
+          let window = focusedWindow else { return nil }
+    var positionValue: CFTypeRef?
+    var sizeValue: CFTypeRef?
+    AXUIElementCopyAttributeValue(window as! AXUIElement, kAXPositionAttribute as CFString, &positionValue)
+    AXUIElementCopyAttributeValue(window as! AXUIElement, kAXSizeAttribute as CFString, &sizeValue)
+    var position = CGPoint.zero
+    var size = CGSize.zero
+    guard let posRef = positionValue, let sizeRef = sizeValue,
+          AXValueGetValue(posRef as! AXValue, .cgPoint, &position),
+          AXValueGetValue(sizeRef as! AXValue, .cgSize, &size) else { return nil }
+    return axToCocoa(NSRect(origin: position, size: size))
+}
+
 // MARK: - Configuration
 struct BlurConfig {
     static var material: Int = 0          // 0=dark, 1=light, 2=ultra dark
@@ -65,7 +100,7 @@ class BlurOverlayWindow: NSWindow {
         self.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
         
         // Create visual effect view with strong blur
-        effectView = NSVisualEffectView(frame: screen.frame)
+        effectView = NSVisualEffectView(frame: NSRect(origin: .zero, size: screen.frame.size))
         effectView.blendingMode = .behindWindow
         effectView.state = .active
         effectView.wantsLayer = true
@@ -109,12 +144,16 @@ class OverlayManager: NSObject, NSApplicationDelegate {
         }
         
         // Create overlays for each screen
-        for screen in NSScreen.screens {
-            let overlay = BlurOverlayWindow(screen: screen)
-            overlay.orderFront(nil)
-            overlays.append(overlay)
-        }
-        
+        rebuildOverlays()
+
+        // Recreate overlays when screens are attached/detached/rotated/rearranged
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(screensChanged(_:)),
+            name: NSApplication.didChangeScreenParametersNotification,
+            object: nil
+        )
+
         // Track focused window
         NSWorkspace.shared.notificationCenter.addObserver(
             self,
@@ -139,6 +178,26 @@ class OverlayManager: NSObject, NSApplicationDelegate {
         }
     }
     
+    func rebuildOverlays() {
+        for overlay in overlays {
+            overlay.orderOut(nil)
+            overlay.close()
+        }
+        overlays = NSScreen.screens.map { screen in
+            let overlay = BlurOverlayWindow(screen: screen)
+            overlay.isReleasedWhenClosed = false
+            overlay.orderFront(nil)
+            return overlay
+        }
+        if let app = NSWorkspace.shared.frontmostApplication {
+            updateCutout(for: app)
+        }
+    }
+
+    @objc func screensChanged(_ notification: Notification) {
+        rebuildOverlays()
+    }
+
     @objc func appActivated(_ notification: Notification) {
         if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
             updateCutout(for: app)
@@ -187,19 +246,16 @@ class OverlayManager: NSObject, NSApplicationDelegate {
             AXValueGetValue(sizeRef as! AXValue, .cgSize, &size)
         }
         
-        let windowFrame = NSRect(origin: position, size: size)
-        
+        // AX coordinates are top-left origin (y down) relative to the primary screen;
+        // Cocoa window/screen frames are bottom-left origin (y up). Convert to Cocoa.
+        let windowFrame = axToCocoa(NSRect(origin: position, size: size))
+
         // Update each overlay with a cutout for the focused window
         for overlay in overlays {
             let screenFrame = overlay.frame
-            
-            // Convert window frame to screen coordinates
-            let cutoutRect = NSRect(
-                x: windowFrame.origin.x - screenFrame.origin.x,
-                y: screenFrame.height - (windowFrame.origin.y - screenFrame.origin.y) - windowFrame.height,
-                width: windowFrame.width,
-                height: windowFrame.height
-            )
+
+            // Window frame relative to this overlay
+            let cutoutRect = windowFrame.offsetBy(dx: -screenFrame.minX, dy: -screenFrame.minY)
             
             // Create mask layer with cutout
             let maskLayer = CAShapeLayer()
@@ -273,7 +329,8 @@ func printUsage() {
       off     Stop blur overlay
       toggle  Toggle blur overlay
       status  Check if running
-    
+      screen  Print "x y w h" of the focused window's screen (top-left origin)
+
     Options (with 'on'):
       --material <0-2>  0=dark, 1=light, 2=ultradark (default: 0)
       --dim <0-100>     Additional dim percentage (default: 30)
@@ -354,6 +411,20 @@ case "toggle":
         print("Blur ON")
     }
     
+case "screen":
+    // Print "x y w h" (top-left origin, like AppleScript/AX) of the screen holding the focused window
+    var target = NSScreen.main ?? NSScreen.screens.first
+    if let frame = focusedWindowFrame() {
+        let center = NSPoint(x: frame.midX, y: frame.midY)
+        target = NSScreen.screens.first(where: { $0.frame.contains(center) })
+            ?? NSScreen.screens.max(by: { $0.frame.intersection(frame).width * $0.frame.intersection(frame).height
+                                          < $1.frame.intersection(frame).width * $1.frame.intersection(frame).height })
+            ?? target
+    }
+    guard let screen = target else { exit(1) }
+    let f = cocoaToAX(screen.frame)
+    print("\(Int(f.minX)) \(Int(f.minY)) \(Int(f.width)) \(Int(f.height))")
+
 case "status":
     if let pid = isRunning() {
         print("Running (PID \(pid))")
